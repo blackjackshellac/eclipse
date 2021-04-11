@@ -1,0 +1,8 @@
+{
+  "name": "clippie",
+  "description": "Clipboard interface to gpaste-client output",
+  "uuid": "clippie@blackjackshellac.ca",
+  "shell-version": [
+    "3.38"
+  ]
+}
