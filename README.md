@@ -1,2 +1,5 @@
 # clippie
-Clipboard interface to gpaste-client output
+
+Gnome shell extension to interface with gpaste-client output
+
+

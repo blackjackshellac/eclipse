@@ -1,8 +1,13 @@
 {
   "name": "clippie",
   "description": "Clipboard interface to gpaste-client output",
+  "gettext-domain": "clippie-blackjackshellac",
   "uuid": "clippie@blackjackshellac.ca",
   "shell-version": [
-    "3.38"
-  ]
+    "3.38",
+    "40"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.clippie-blackjackshellac",
+  "url": "https://github.com/blackjackshellac/clippie",
+  "version": "0"
 }
