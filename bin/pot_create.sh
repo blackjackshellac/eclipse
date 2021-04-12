@@ -17,6 +17,7 @@ opts="--from-code=UTF-8 -F -j --output=$pot"
 opts="$opts --package-name=clippie-blackjackshellac"
 #opts="$opts --package-version='5'"
 files="*.js *.ui schemas/*.xml"
+files="*.js schemas/*.xml"
 
 cmd="xgettext $opts $files $pot"
 echo $cmd
@@ -38,7 +39,7 @@ $cmd
 # "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 # "Language-Team: LANGUAGE <LL@li.org>\n"
 
-sed -i 's/SOME DESCRIPTIVE TITLE./Kitchen Timer/' $pot
+sed -i 's/SOME DESCRIPTIVE TITLE./Clippie/' $pot
 sed -i 's/YEAR THE PACKAGE.S COPYRIGHT HOLDER/2021, Steeve McCauley/' $pot
 sed -i 's/FIRST AUTHOR/Steeve McCauley/' $pot
 sed -i 's/EMAIL.ADDRESS/steeve.mccauley@gmail.com/' $pot
