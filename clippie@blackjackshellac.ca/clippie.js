@@ -98,15 +98,23 @@ var Clippie = class Clippie extends Array {
           if (!clip) {
             continue;
           }
-          if (!this.has(clip)) {
-            this.logger.debug('Adding clip=[%s]', clip.uuid);
-            this.push(clip);
-          } else {
-            ; //this.logger.debug('Clip already in clippie [%s]', clip.uuid);
+          let idx = this.find(clip);
+          if (idx >= 0) {
+            if (idx === i) {
+              continue;
+            }
+            this.logger.debug('clip already exists at idx=%d', idx);
+            clip = this[idx];
           }
+          //this.logger.debug('Adding clip=[%s]', clip.uuid);
+          this[i] = clip;
         }
       }
     }
+  }
+
+  find(clip) {
+    return this.findIndex(c => c.uuid === clip.uuid);
   }
 
   has(clip) {
@@ -125,6 +133,7 @@ var Clip = class Clip {
   constructor(uuid, content=undefined) {
     this._uuid = uuid;
     this._content = content;
+    this._password = false;
     this.logger = clippieInstance.logger;
   }
 
@@ -137,12 +146,17 @@ var Clip = class Clip {
     return undefined;
   }
 
+  get clippie() {
+    return clippieInstance;
+  }
+
   get uuid() {
     return this._uuid;
   }
 
   get content() {
     if (!this._content) {
+      this.logger.debug("Refreshing %s", this.uuid);
       this.refresh();
     }
     return this._content
@@ -167,6 +181,38 @@ var Clip = class Clip {
         this.logger.error("uuid not in gpaste: %s", this.uuid);
       }
     }
+  }
+
+  label_text() {
+    var label = this.content.substring(0, 50);
+    label = this._password ? label.replaceAll(/./g, '·') : label.trim();
+    return label;
+  }
+
+  password() {
+    this._password = !this._password;
+  }
+
+  select() {
+    // gpaste-client select <uuid>
+    let cmdargs = [ "gpaste-client", "select", this.uuid ];
+    let result = Utils.execute(cmdargs);
+    if (result[0] == 0) {
+      return true;
+    }
+    this.logger.error("uuid not in gpaste: %s", this.uuid);
+    return false;
+  }
+
+  delete() {
+    let cmdargs = [ "gpaste-client", "delete", this.uuid ];
+    let result = Utils.execute(cmdargs);
+    if (result[0] == 0) {
+      this.logger.debug('gpaste-client deleted uuid=%s', this.uuid);
+      return true;
+    }
+    this.logger.error("uuid not in gpaste: %s", this.uuid);
+    return false;
   }
 }
 

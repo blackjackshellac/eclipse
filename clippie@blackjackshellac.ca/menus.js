@@ -36,9 +36,13 @@ var ClippieMenu = class ClippieMenu {
   constructor(menu, clippie) {
     log("");
     this._menu = menu;
+
     this._clippie = clippie;
 
     logger.settings = clippie.settings;
+
+    //logger.debug("menu style=%s", this.menu.box.style_class);
+    //this.menu.box.style_class = 'clippie-menu-content';
 
     this._menu.connect('open-state-changed', (self, open) => {
       if (open) {
@@ -96,19 +100,20 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         x_expand: true,
         x_align: St.Align.START
       });
-      label.set_text(clip.content.substring(0, 40));
+      label.set_text(clip.label_text());
 
-      box.add_child(new ClipItemControlButton(clip, 'password'));
       box.add_child(new ClipItemControlButton(clip, 'delete'));
-
-      //box.add_child(clip.label);
       box.add_child(label);
+      box.add_child(new ClipItemControlButton(clip, 'password'));
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
+        if (mi.clip.select()) {
+          mi.clip.rebuild();
+        }
       });
 
-      logger.debug("Adding clip %s", clip.uuid);
+      //logger.debug("Adding clip %s", clip.uuid);
       menu.addMenuItem(this);
   }
 
@@ -118,8 +123,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 });
 
 var CICBTypes = {
-  'password': 'dialog-password-symbolic',
-  'delete' : 'edit-delete-symbolic',
+  'password': { icon: 'dialog-password-symbolic', style: 'clippie-menu-password-icon' },
+  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -133,8 +138,8 @@ class ClipItemControlButton extends St.Button {
         // 'media-playback-stop-symbolic'
         // 'edit-delete-symbolic'
         var icon = new St.Icon({
-            icon_name: CICBTypes[type],
-            style_class: 'clippie-menu-delete-icon'
+            icon_name: CICBTypes[type].icon,
+            style_class: CICBTypes[type].style
         });
         icon.set_icon_size(20);
 

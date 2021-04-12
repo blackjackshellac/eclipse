@@ -19,18 +19,26 @@
   border-right: 10px;
   font-family: monospace;
   font-size: smaller;
+  border-top: 1px;
+  border-bottom: 1px;
 }
 
 .clippie-menu-delete-icon {
   border-left: 10px;
-  icon-size: 1.2em;
+  icon-size: 1em;
+}
+
+.clippie-menu-password-icon {
+  border-left: 0px;
+  border-right: 10px;
+  icon-size: 1em;
 }
 
 .clippie-menu-content {
-  font-weight: lighter;
+  font-weight: normal;
   font-size: smaller;
   font-family: monospace;
-  border-right: 10px;
+  border-right: 0px;
 }
 
 .clippie-panel-box {

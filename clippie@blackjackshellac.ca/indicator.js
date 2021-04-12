@@ -51,12 +51,6 @@ class ClippieIndicator extends PanelMenu.Button {
     box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
 
-    let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
-    item.connect('activate', () => {
-        Main.notify(_('Whatʼs up, folks?'));
-    });
-    this.menu.addMenuItem(item);
-
     this._pm = new ClippieMenu(this.menu, this.clippie);
     this._pm.build();
 
