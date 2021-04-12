@@ -25,5 +25,9 @@
       <default>false</default>
       <summary>Turn on debugging</summary>
     </key>
+    <key name="entries" type="i">
+      <default>20</default>
+      <summary>Maximum number of clipboard entries to show on the main menu</summary>
+    </key>
   </schema>
 </schemalist>

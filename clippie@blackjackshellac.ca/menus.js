@@ -61,9 +61,17 @@ var ClippieMenu = class ClippieMenu {
     this._menu.removeAll();
     this.clippie.refresh();
 
-    this.clippie.forEach( (clip) => {
-      new ClipMenuItem(clip, this._menu);
-    });
+    let menu = this._menu;
+    let more = undefined;
+    for (let i=0; i < this.clippie.length; i++) {
+      let clip=this.clippie[i];
+      if (i === this.clippie.settings.entries) {
+        more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
+        menu.addMenuItem(more);
+        menu = more.menu;
+      }
+      new ClipMenuItem(clip, menu);
+    }
   }
 
   // this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -104,12 +112,12 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 
       box.add_child(new ClipItemControlButton(clip, 'delete'));
       box.add_child(label);
-      box.add_child(new ClipItemControlButton(clip, 'password'));
+      box.add_child(new ClipItemControlButton(clip, clip.password ? 'lock' : 'unlock'));
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
         if (mi.clip.select()) {
-          mi.clip.rebuild();
+          mi.clip.clippie.indicator.rebuild_menu();
         }
       });
 
@@ -123,7 +131,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 });
 
 var CICBTypes = {
-  'password': { icon: 'dialog-password-symbolic', style: 'clippie-menu-password-icon' },
+  'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-password-icon' },
+  'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-password-icon' },
   'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' }
 }
 
@@ -150,9 +159,10 @@ class ClipItemControlButton extends St.Button {
 
     connect_type() {
         switch(this.type) {
-        case "password":
+        case "lock":
+        case "unlock":
           this.connect('clicked', (cb) => {
-            this.clip.password();
+            this.clip.toggle_password();
             this.rebuild();
           });
           break;

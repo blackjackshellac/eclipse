@@ -116,6 +116,14 @@ var Settings = class Settings {
     return this.settings.get_default_value(key);
   }
 
+  get entries() {
+    return this.settings.get_int('entries');
+  }
+
+  set entries(val) {
+    this.settings.set_int(val);
+  }
+
   get debug() {
     return this.settings.get_boolean('debug');
   }

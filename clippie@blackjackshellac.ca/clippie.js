@@ -100,13 +100,10 @@ var Clippie = class Clippie extends Array {
           }
           let idx = this.find(clip);
           if (idx >= 0) {
-            if (idx === i) {
-              continue;
-            }
             this.logger.debug('clip already exists at idx=%d', idx);
             clip = this[idx];
           }
-          //this.logger.debug('Adding clip=[%s]', clip.uuid);
+          this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
           this[i] = clip;
         }
       }
@@ -119,6 +116,13 @@ var Clippie = class Clippie extends Array {
 
   has(clip) {
     return this.some(c => c.uuid === clip.uuid);
+  }
+
+  delete(clip) {
+    let idx = this.find(clip);
+    if (idx >= -1) {
+      this.splice(idx, 1);
+    }
   }
 
 }
@@ -170,6 +174,10 @@ var Clip = class Clip {
     return clippieInstance.settings;
   }
 
+  get password() {
+    return this._password;
+  }
+
   refresh() {
     if (!this.content) {
       // gpaste-client get --oneline uuid
@@ -189,7 +197,7 @@ var Clip = class Clip {
     return label;
   }
 
-  password() {
+  toggle_password() {
     this._password = !this._password;
   }
 
@@ -209,6 +217,7 @@ var Clip = class Clip {
     let result = Utils.execute(cmdargs);
     if (result[0] == 0) {
       this.logger.debug('gpaste-client deleted uuid=%s', this.uuid);
+      this.clippie.delete(this);
       return true;
     }
     this.logger.error("uuid not in gpaste: %s", this.uuid);
