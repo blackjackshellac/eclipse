@@ -65,6 +65,10 @@ var ClippieMenu = class ClippieMenu {
     let more = undefined;
     for (let i=0; i < this.clippie.length; i++) {
       let clip=this.clippie[i];
+      if (!clip) {
+        logger.error("clip is null for i=%d", i);
+        break;
+      }
       if (i === this.clippie.settings.entries) {
         more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
         menu.addMenuItem(more);

@@ -42,7 +42,6 @@ var Clippie = class Clippie extends Array {
     this._attached = false;
 
     this.logger = new Logger('clippie', this.settings);
-
   }
 
   static attach(indicator) {
@@ -56,6 +55,8 @@ var Clippie = class Clippie extends Array {
     clippieInstance.indicator = indicator;
 
     clippieInstance.attached = true;
+
+    clippieInstance.refresh();
 
     return clippieInstance;
   }
@@ -89,25 +90,34 @@ var Clippie = class Clippie extends Array {
   refresh() {
     let cmdargs = [ "gpaste-client", "--oneline"];
     let result = Utils.execute(cmdargs);
-    if (result[0] === 0) {
-      let lines=result[1].split(/\r?\n/);
-      for (var i=0; i < lines.length; i++) {
-        let line=lines[i];
-        if (line.length > 0) {
-          let clip=Clip.parse(line);
-          if (!clip) {
-            continue;
-          }
-          let idx = this.find(clip);
-          if (idx >= 0) {
-            this.logger.debug('clip already exists at idx=%d', idx);
-            clip = this[idx];
-          }
-          this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
-          this[i] = clip;
+    if (result[0] != 0) {
+      this.logger.error("Failed to execute %s", cmdargs.join(" "));
+      return;
+    }
+
+    let lines=result[1].replace(/\r?\n$/, "").split(/\r?\n/);
+    let arr = [];
+    for (let i=0; i < lines.length; i++) {
+      let line=lines[i];
+      if (line.length > 0) {
+        let clip=Clip.parse(line);
+        if (!clip) {
+          this.logger.error("failed to parse output=%s", line);
+          continue;
         }
+        let idx = this.find(clip);
+        if (idx >= 0) {
+          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
+          clip = this[idx];
+        }
+        this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
+        arr[i] = clip;
       }
     }
+    for (let i=0; i < lines.length; i++) {
+      this[i]=arr[i];
+    }
+    this.length = lines.length;
   }
 
   find(clip) {
@@ -146,7 +156,6 @@ var Clip = class Clip {
     if (m) {
       return new Clip(m[1], m[2]);
     }
-    clippieInstance.logger.error("failed to parse output=%s", line);
     return undefined;
   }
 
@@ -222,6 +231,10 @@ var Clip = class Clip {
     }
     this.logger.error("uuid not in gpaste: %s", this.uuid);
     return false;
+  }
+
+  toString() {
+    return "uuid=%s".format(this.uuid);
   }
 }
 
