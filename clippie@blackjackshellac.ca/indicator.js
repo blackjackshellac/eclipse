@@ -28,23 +28,49 @@ const _ = Gettext.gettext;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const ClippieIndicator = GObject.registerClass(
+const Clippie = Me.imports.clippie.Clippie;
+const ClippieMenu = Me.imports.menus.ClippieMenu;
+const Logger = Me.imports.logger.Logger;
+
+var ClippieIndicator = GObject.registerClass(
 class ClippieIndicator extends PanelMenu.Button {
-    _init() {
-        super._init(0.0, _('Clippie'));
+  _init() {
+    super._init(0.0, _('Clippie'));
 
-        let box = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
-        box.add_child(new St.Icon({
-            icon_name: 'view-paged-symbolic',
-            style_class: 'system-status-icon',
-        }));
-        box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
-        this.add_child(box);
+    // settings lives in Clippie singleton
+    this._clippie = Clippie.attach(this);
 
-        let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
-        item.connect('activate', () => {
-            Main.notify(_('Whatʼs up, folks?'));
-        });
-        this.menu.addMenuItem(item);
-    }
+    this.logger = new Logger('indicator', this.settings);
+    this.logger.info('Initializing extension');
+
+    let box = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
+    box.add_child(new St.Icon({
+        icon_name: 'view-paged-symbolic',
+        style_class: 'system-status-icon',
+    }));
+    box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
+    this.add_child(box);
+
+    let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
+    item.connect('activate', () => {
+        Main.notify(_('Whatʼs up, folks?'));
+    });
+    this.menu.addMenuItem(item);
+
+    this._pm = new ClippieMenu(this.menu, this.clippie);
+    this._pm.build();
+
+  }
+
+  get settings() {
+    return this.clippie.settings;
+  }
+
+  get clippie() {
+    return this._clippie;
+  }
+
+  rebuild_menu() {
+    this._pm.build();
+  }
 });

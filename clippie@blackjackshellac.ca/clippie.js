@@ -47,42 +47,127 @@ var Clippie = class Clippie extends Array {
 
   static attach(indicator) {
     // reload settings
-    timersInstance._settings = new Settings();
-    timersInstance._inhibitor.settings = timersInstance._settings;
+    clippieInstance._settings = new Settings();
 
-    timersInstance.logger.settings = timersInstance._settings;
+    clippieInstance.logger.settings = clippieInstance._settings;
 
-    timersInstance.logger.info("Attaching indicator");
+    clippieInstance.logger.info("Attaching indicator");
 
-    timersInstance.indicator = indicator;
+    clippieInstance.indicator = indicator;
 
-    timersInstance.refresh();
+    clippieInstance.attached = true;
 
-    timersInstance.restoreRunningClippie();
-
-    timersInstance.attached = true;
-
-    return timersInstance;
+    return clippieInstance;
   }
 
   static detach() {
-    timersInstance.logger.info("Detaching indicator from Clippie");
-    timersInstance.attached = false;
-    timersInstance.indicator = undefined;
+    clippieInstance.logger.info("Detaching indicator from Clippie");
+    clippieInstance.attached = false;
+    clippieInstance.indicator = undefined;
+  }
+
+  get clippie() {
+    return clippieInstance;
+  }
+
+  get attached() {
+    return this._attached;
+  }
+
+  set attached(b) {
+    this._attached = b;
+  }
+
+  get settings() {
+    return this._settings;
+  }
+
+  set settings(v) {
+    this._settings = v;
+  }
+
+  refresh() {
+    let cmdargs = [ "gpaste-client", "--oneline"];
+    let result = Utils.execute(cmdargs);
+    if (result[0] === 0) {
+      let lines=result[1].split(/\r?\n/);
+      for (var i=0; i < lines.length; i++) {
+        let line=lines[i];
+        if (line.length > 0) {
+          let clip=Clip.parse(line);
+          if (!clip) {
+            continue;
+          }
+          if (!this.has(clip)) {
+            this.logger.debug('Adding clip=[%s]', clip.uuid);
+            this.push(clip);
+          } else {
+            ; //this.logger.debug('Clip already in clippie [%s]', clip.uuid);
+          }
+        }
+      }
+    }
+  }
+
+  has(clip) {
+    return this.some(c => c.uuid === clip.uuid);
   }
 
 }
 
-// timers is a singleton class
-var timersInstance = new Clippie();
+// clippie is a singleton class
+var clippieInstance = new Clippie();
+
+const GPASTE_LINE_RE=/^([-0-9a-f]+):\s(.*$)/;
 
 var Clip = class Clip {
 
   constructor(uuid, content=undefined) {
     this._uuid = uuid;
     this._content = content;
+    this.logger = clippieInstance.logger;
   }
 
+  static parse(line) {
+    let m = line.match(GPASTE_LINE_RE);
+    if (m) {
+      return new Clip(m[1], m[2]);
+    }
+    clippieInstance.logger.error("failed to parse output=%s", line);
+    return undefined;
+  }
+
+  get uuid() {
+    return this._uuid;
+  }
+
+  get content() {
+    if (!this._content) {
+      this.refresh();
+    }
+    return this._content
+  }
+
+  set content(val) {
+    this._content = val;
+  }
+
+  get settings() {
+    return clippieInstance.settings;
+  }
+
+  refresh() {
+    if (!this.content) {
+      // gpaste-client get --oneline uuid
+      let cmdargs = [ "gpaste-client", "get", "--oneline", this.uuid ];
+      let result = Utils.execute(cmdargs);
+      if (result[0] == 0) {
+        this.content = result[1];
+      } else {
+        this.logger.error("uuid not in gpaste: %s", this.uuid);
+      }
+    }
+  }
 }
 
 

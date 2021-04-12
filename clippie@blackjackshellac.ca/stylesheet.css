@@ -18,6 +18,7 @@
 .clippie-menu-label {
   border-right: 10px;
   font-family: monospace;
+  font-size: smaller;
 }
 
 .clippie-menu-delete-icon {
@@ -25,8 +26,11 @@
   icon-size: 1.2em;
 }
 
-.clippie-menu-name {
-  font-weight: normal;
+.clippie-menu-content {
+  font-weight: lighter;
+  font-size: smaller;
+  font-family: monospace;
+  border-right: 10px;
 }
 
 .clippie-panel-box {
@@ -46,3 +50,5 @@
   font-family: sans-serif;
   font-size: smaller;
 }
+
+
