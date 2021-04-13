@@ -59,7 +59,7 @@ var Clippie = class Clippie extends Array {
 
     clippieInstance.restore_state();
 
-    clippieInstance.refresh();
+    //clippieInstance.refresh();
 
     return clippieInstance;
   }
@@ -130,6 +130,7 @@ var Clippie = class Clippie extends Array {
 
   refresh() {
     let cmdargs = [ "gpaste-client", "--oneline"];
+    // TODO make this asynchronous
     let result = Utils.execute(cmdargs);
     if (result[0] != 0) {
       this.logger.error("Failed to execute %s", cmdargs.join(" "));
