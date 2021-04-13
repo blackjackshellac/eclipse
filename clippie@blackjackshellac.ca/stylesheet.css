@@ -1,5 +1,19 @@
 /* Add your custom extension styling here */
 
+.clippie-search-entry {
+  font-weight: normal;
+  font-family: monospace;
+  /* color: transparent;
+  background-color: lightgrey; */
+}
+
+.clippie-search-menu {
+  padding: 0px;
+  border: 0px;
+  icon-size: 1em;
+  size: 1em;
+}
+
 .clippie-quick-layout {
   padding: 0px;
   spacing: 5px;

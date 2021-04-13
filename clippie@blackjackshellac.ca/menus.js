@@ -243,18 +243,22 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     logger.settings = this.clippie.settings;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-search-menu',
-      x_expand: true
+      //style_class: 'clippie-search-menu',
+      x_expand: true,
+      y_expand: false,
+      vertical: false
     });
 
     this.add(layout);
 
     this._entry = new St.Entry( {
       x_expand: true,
+      y_expand: false,
       can_focus: true,
-      x_align: St.Align.START,
-      y_align: Clutter.ActorAlign.CENTER,
-      hint_text: _("Search")
+      //x_align: St.Align.START,
+      //y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
+      hint_text: _("Search"),
+      //style_class: 'clippie-search-entry'
     });
     //this._entry.set_hint_text();
 
@@ -264,7 +268,42 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     //entry_text.set_activatable(true);
     entry_text.set_editable(true);
 
+    this._prefs = new St.Button( {
+      x_expand: false,
+      y_expand: false,
+      can_focus: true,
+      x_align: St.Align.END,
+      y_align: Clutter.ActorAlign.CENTER
+    });
+
+    this._icon = new St.Icon( {
+      x_expand: false,
+      icon_name: 'open-menu-symbolic',
+    });
+
+    this._prefs.connect('button_press_event', (bin, event) => {
+      logger.debug("mouse button pressed in bin");
+    });
+
+    this._prefs.connect('enter_event', (btn, event) => {
+      btn.get_child().icon_name = 'preferences-system-symbolic';
+    })
+
+    this._prefs.connect('leave_event', (btn, event) => {
+      btn.get_child().icon_name = 'open-menu-symbolic';
+    })
+
+    this._prefs.set_child(this._icon);
+
+    this._search_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      icon_name: 'edit-find-symbolic'
+    });
+
+    //layout.add_child(this._search_icon);
     layout.add_child(this._entry);
+    layout.add_child(this._prefs);
 
     // entry_text.connect('activate', (e) => {
     //   var entry = e.get_text();
