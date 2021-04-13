@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const { GObject, St } = imports.gi;
+const { GObject, St, Clutter } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -36,6 +36,7 @@ var ClippieMenu = class ClippieMenu {
   constructor(menu, clippie) {
     log("");
     this._menu = menu;
+    this._items = [];
 
     this._clippie = clippie;
 
@@ -46,10 +47,10 @@ var ClippieMenu = class ClippieMenu {
 
     this._menu.connect('open-state-changed', (self, open) => {
       if (open) {
-        logger.debug("Opening clippieMenu")
+        //logger.debug("Opening clippieMenu")
         this.build();
       } else {
-        logger.debug("Closing ClippieMenu")
+        //logger.debug("Closing ClippieMenu")
         // this.clippie.forEach( (clip) => {
         //   logger.debug("clip=%s", clip.uuid);
         // });
@@ -57,30 +58,62 @@ var ClippieMenu = class ClippieMenu {
     });
   }
 
-  build() {
-    this._menu.removeAll();
-    this.clippie.refresh();
-
+  build(filter=undefined) {
     let menu = this._menu;
-    let more = undefined;
-    for (let i=0; i < this.clippie.length; i++) {
-      let clip=this.clippie[i];
+    let needs_search = false;
+
+    if (menu.isEmpty()) {
+      needs_search = true;
+      this.items = [];
+    }
+    if (filter) {
+      logger.debug("items=%d", this.items.length);
+      for (let i=0; i < this.items.length; i++) {
+        this.items[i].destroy();
+      }
+      this.items.length = 1;
+    } else {
+      logger.debug('Refreshing all menu items');
+      menu.removeAll();
+      this.clippie.refresh();
+      needs_search = true;
+      this.items = [];
+    }
+
+    if (needs_search) {
+      new ClippieSearchItem(this);
+    }
+
+    let entries = this.clippie.search(filter);
+    logger.debug("found %d entries with filter=%s", entries.length, filter);
+
+    for (let i=0; i < entries.length; i++) {
+      let clip=entries[i];
       if (!clip) {
         logger.error("clip is null for i=%d", i);
-        break;
       }
       if (i === this.clippie.settings.entries) {
-        more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
+        let more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
         menu.addMenuItem(more);
+        this.items.push(more);
         menu = more.menu;
       }
-      new ClipMenuItem(clip, menu);
+      let item = new ClipMenuItem(clip, menu);
+      this.items.push(item);
     }
   }
 
   // this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
   _addSeparator() {
     this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+  }
+
+  get items() {
+    return this._items;
+  }
+
+  set items(array) {
+    this._items = array;
   }
 
   get menu() {
@@ -196,3 +229,72 @@ class ClipItemControlButton extends St.Button {
     }
 });
 
+var ClippieSearchItem = GObject.registerClass(
+class ClippieSearchItem extends PopupMenu.PopupMenuItem {
+  _init(clippie_menu) {
+    super._init("", { reactive: false, can_focus: false });
+
+    this._clippie_menu = clippie_menu;
+    this._menu = clippie_menu.menu;
+    this._clippie = clippie_menu.clippie;
+
+    this._menu.addMenuItem(this);
+
+    logger.settings = this.clippie.settings;
+
+    var layout = new St.BoxLayout({
+      style_class: 'clippie-search-menu',
+      x_expand: true
+    });
+
+    this.add(layout);
+
+    this._entry = new St.Entry( {
+      x_expand: true,
+      can_focus: true,
+      x_align: St.Align.START,
+      y_align: Clutter.ActorAlign.CENTER,
+      hint_text: _("Search")
+    });
+    //this._entry.set_hint_text();
+
+    this._entry.set_track_hover(true);
+
+    let entry_text = this._entry.get_clutter_text();
+    //entry_text.set_activatable(true);
+    entry_text.set_editable(true);
+
+    layout.add_child(this._entry);
+
+    // entry_text.connect('activate', (e) => {
+    //   var entry = e.get_text();
+    //   logger.debug('activate: '+entry);
+    // });
+
+    // entry_text.connect('key-focus-out', (e) => {
+    //   var entry = e.get_text();
+    //   if (entry.length > 0) {
+    //     logger.debug('key out hours: '+entry);
+    //   }
+    // });
+
+    entry_text.connect('text-changed', (e) => {
+      var entry = e.get_text().trim();
+      logger.debug('text-changed: '+entry);
+      this.clippie_menu.build(entry);
+    });
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get menu() {
+    return this._menu;
+  }
+
+  get clippie() {
+    return this._clippie;
+  }
+
+});

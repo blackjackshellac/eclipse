@@ -23,7 +23,7 @@ const _ = Gettext.gettext;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-const {GLib, St, Clutter, Gio} = imports.gi;
+const {GLib, St, Clutter, Gio } = imports.gi;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
 
@@ -87,6 +87,29 @@ var Clippie = class Clippie extends Array {
     this._settings = v;
   }
 
+  escapeRegex(string) {
+    let escaped=string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    this.logger.debug("regex excaped "+escaped);
+    return escaped;
+  }
+
+  search(filter) {
+    if (!filter || filter.length == 0) {
+      return this;
+    }
+
+    let filter_re=new RegExp(this.escapeRegex(filter), 'im');
+
+    let entries = [];
+    for (let i=0; i < this.length; i++) {
+      let clip=this[i];
+      if (clip.search(filter_re)) {
+        entries.push(clip);
+      }
+    }
+    return entries;
+  }
+
   refresh() {
     let cmdargs = [ "gpaste-client", "--oneline"];
     let result = Utils.execute(cmdargs);
@@ -107,10 +130,10 @@ var Clippie = class Clippie extends Array {
         }
         let idx = this.find(clip);
         if (idx >= 0) {
-          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
+          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
           clip = this[idx];
         }
-        this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
+        //this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
         arr[i] = clip;
       }
     }
@@ -235,6 +258,11 @@ var Clip = class Clip {
 
   toString() {
     return "uuid=%s".format(this.uuid);
+  }
+
+  search(filter_re) {
+    let m = this.content.match(filter_re);
+    return (m) ? true : false;
   }
 }
 
