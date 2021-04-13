@@ -37,6 +37,7 @@ var Clippie = class Clippie extends Array {
 
     // id => clip
     this._lookup = {};
+    this._state = {};
 
     this._settings = new Settings();
     this._attached = false;
@@ -50,11 +51,13 @@ var Clippie = class Clippie extends Array {
 
     clippieInstance.logger.settings = clippieInstance._settings;
 
-    clippieInstance.logger.info("Attaching indicator");
+    clippieInstance.logger.info("Attaching indicator, size=%d items", clippieInstance.length);
 
     clippieInstance.indicator = indicator;
 
     clippieInstance.attached = true;
+
+    clippieInstance.restore_state();
 
     clippieInstance.refresh();
 
@@ -85,6 +88,21 @@ var Clippie = class Clippie extends Array {
 
   set settings(v) {
     this._settings = v;
+  }
+
+  restore_state() {
+    this._state = JSON.parse(this.settings.state);
+  }
+
+  save_state() {
+    this._state={};
+    for (let i=0; i < this.length; i++) {
+      let clip = this[i];
+      if (clip.lock) {
+        this._state[clip.uuid] = { lock: true }
+      }
+    }
+    this.settings.state = JSON.stringify(this._state);
   }
 
   escapeRegex(string) {
@@ -132,8 +150,14 @@ var Clippie = class Clippie extends Array {
         if (idx >= 0) {
           //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
           clip = this[idx];
+          if (clip.lock) {
+            this.logger.debug('Found lock entry %s', clip.toString());
+          }
         }
-        //this.logger.debug('Adding clip=[%s] (password=%s)', clip.uuid, clip.password);
+        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+        if (this._state[clip.uuid]) {
+          clip.lock = this._state[clip.uuid].lock;
+        }
         arr[i] = clip;
       }
     }
@@ -170,7 +194,7 @@ var Clip = class Clip {
   constructor(uuid, content=undefined) {
     this._uuid = uuid;
     this._content = content;
-    this._password = false;
+    this._lock = false;
     this.logger = clippieInstance.logger;
   }
 
@@ -206,8 +230,12 @@ var Clip = class Clip {
     return clippieInstance.settings;
   }
 
-  get password() {
-    return this._password;
+  get lock() {
+    return this._lock;
+  }
+
+  set lock(b) {
+    this._lock = b;
   }
 
   refresh() {
@@ -225,12 +253,13 @@ var Clip = class Clip {
 
   label_text() {
     var label = this.content.substring(0, 50);
-    label = this._password ? label.replaceAll(/./g, '·') : label.trim();
+    label = this._lock ? label.replaceAll(/./g, '·') : label.trim();
     return label;
   }
 
-  toggle_password() {
-    this._password = !this._password;
+  toggle_lock() {
+    this._lock = !this._lock;
+    clippieInstance.save_state();
   }
 
   select() {

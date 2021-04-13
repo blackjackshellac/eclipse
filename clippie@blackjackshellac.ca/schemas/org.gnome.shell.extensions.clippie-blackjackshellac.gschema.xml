@@ -29,5 +29,9 @@
       <default>20</default>
       <summary>Maximum number of clipboard entries to show on the main menu</summary>
     </key>
+    <key name="state" type="s">
+      <default>'{}'</default>
+      <summary>Information to restore state after restart</summary>
+    </key>
   </schema>
 </schemalist>

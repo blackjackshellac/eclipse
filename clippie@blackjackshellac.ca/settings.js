@@ -124,6 +124,14 @@ var Settings = class Settings {
     this.settings.set_int(val);
   }
 
+  get state() {
+    return this.settings.get_string('state');
+  }
+
+  set state(str) {
+    return this.settings.set_string('state', str);
+  }
+
   get debug() {
     return this.settings.get_boolean('debug');
   }

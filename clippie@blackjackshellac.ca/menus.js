@@ -149,7 +149,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 
       box.add_child(new ClipItemControlButton(clip, 'delete'));
       box.add_child(label);
-      box.add_child(new ClipItemControlButton(clip, clip.password ? 'lock' : 'unlock'));
+      box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
@@ -168,8 +168,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 });
 
 var CICBTypes = {
-  'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-password-icon' },
-  'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-password-icon' },
+  'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
+  'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
   'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' }
 }
 
@@ -199,7 +199,7 @@ class ClipItemControlButton extends St.Button {
         case "lock":
         case "unlock":
           this.connect('clicked', (cb) => {
-            this.clip.toggle_password();
+            this.clip.toggle_lock();
             this.rebuild();
           });
           break;
