@@ -44,43 +44,26 @@ var ClippieMenu = class ClippieMenu {
 
     //logger.debug("menu style=%s", this.menu.box.style_class);
     //this.menu.box.style_class = 'clippie-menu-content';
-
-    this._menu.connect('open-state-changed', (self, open) => {
-      if (open) {
-        //logger.debug("Opening clippieMenu")
-        this.build();
-      } else {
-        //logger.debug("Closing ClippieMenu")
-        // this.clippie.forEach( (clip) => {
-        //   logger.debug("clip=%s", clip.uuid);
-        // });
-      }
-    });
   }
 
   build(filter=undefined) {
-    let menu = this._menu;
-    let needs_search = false;
+    logger.debug("Building clippie menu filter=[%s]", filter);
 
-    if (menu.isEmpty()) {
-      needs_search = true;
-      this.items = [];
-    }
-    if (filter) {
+    let menu = this._menu;
+
+    if (filter === undefined) {
+      logger.debug('Refreshing all menu items');
+      menu.removeAll();
+      this.clippie.refresh();
+    } else {
       logger.debug("items=%d", this.items.length);
       for (let i=0; i < this.items.length; i++) {
         this.items[i].destroy();
       }
-      this.items.length = 1;
-    } else {
-      logger.debug('Refreshing all menu items');
-      menu.removeAll();
-      this.clippie.refresh();
-      needs_search = true;
-      this.items = [];
     }
 
-    if (needs_search) {
+    if (menu.isEmpty()) {
+      this.items = [];
       new ClippieSearchItem(this);
     }
 

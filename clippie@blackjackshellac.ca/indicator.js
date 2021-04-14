@@ -40,8 +40,8 @@ class ClippieIndicator extends PanelMenu.Button {
     // settings lives in Clippie singleton
     this._clippie = Clippie.attach(this);
 
-    this.logger = new Logger('indicator', this.settings);
-    this.logger.info('Initializing extension');
+    this.logger = new Logger('cl_indicator', this.settings);
+    this.logger.debug('Initializing extension');
 
     let box = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
     box.add_child(new St.Icon({
@@ -51,8 +51,20 @@ class ClippieIndicator extends PanelMenu.Button {
     box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
 
-    this._pm = new ClippieMenu(this.menu, this.clippie);
-    this._pm.build();
+    this._clippieMenu = new ClippieMenu(this.menu, this.clippie);
+    // set the filter to an empty string to prevent refreshing on startup
+    this._clippieMenu.build("");
+
+    this.menu.connect('open-state-changed', (self, open) => {
+      this.logger.debug("menu open="+open);
+      if (open) {
+        this.rebuild_menu();
+      } else {
+        // this.clippie.forEach( (clip) => {
+        //   logger.debug("clip=%s", clip.uuid);
+        // });
+      }
+    });
 
   }
 
@@ -64,7 +76,7 @@ class ClippieIndicator extends PanelMenu.Button {
     return this._clippie;
   }
 
-  rebuild_menu() {
-    this._pm.build();
+  rebuild_menu(filter=undefined) {
+    this._clippieMenu.build(filter);
   }
 });
