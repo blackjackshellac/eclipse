@@ -54,18 +54,6 @@ class ClippieIndicator extends PanelMenu.Button {
     this._clippieMenu = new ClippieMenu(this.menu, this.clippie);
     // set the filter to an empty string to prevent refreshing on startup
     this._clippieMenu.build("");
-
-    this.menu.connect('open-state-changed', (self, open) => {
-      this.logger.debug("menu open="+open);
-      if (open) {
-        this.rebuild_menu();
-      } else {
-        // this.clippie.forEach( (clip) => {
-        //   logger.debug("clip=%s", clip.uuid);
-        // });
-      }
-    });
-
   }
 
   get settings() {

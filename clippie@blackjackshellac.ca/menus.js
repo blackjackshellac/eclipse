@@ -42,6 +42,18 @@ var ClippieMenu = class ClippieMenu {
 
     logger.settings = clippie.settings;
 
+    this.menu.connect('open-state-changed', (self, open) => {
+      logger.debug("menu open="+open);
+      if (open) {
+        this.build();
+        global.stage.set_key_focus(this._searchItem.entry);
+      } else {
+        // this.clippie.forEach( (clip) => {
+        //   logger.debug("clip=%s", clip.uuid);
+        // });
+      }
+    });
+
     //logger.debug("menu style=%s", this.menu.box.style_class);
     //this.menu.box.style_class = 'clippie-menu-content';
   }
@@ -49,7 +61,7 @@ var ClippieMenu = class ClippieMenu {
   build(filter=undefined) {
     logger.debug("Building clippie menu filter=[%s]", filter);
 
-    let menu = this._menu;
+    let menu = this.menu;
 
     if (filter === undefined) {
       logger.debug('Refreshing all menu items');
@@ -64,7 +76,7 @@ var ClippieMenu = class ClippieMenu {
 
     if (menu.isEmpty()) {
       this.items = [];
-      new ClippieSearchItem(this);
+      this._searchItem = new ClippieSearchItem(this);
     }
 
     let entries = this.clippie.search(filter);
@@ -234,14 +246,22 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
     this.add(layout);
 
+    // name: 'searchEntry',
+    // style_class: 'search-entry',
+    // can_focus: true,
+    // hint_text: _('Type here to search…'),
+    // track_hover: true,
+    // x_expand: true,
+
     this._entry = new St.Entry( {
       x_expand: true,
       y_expand: false,
       can_focus: true,
+      track_hover: true,
       //x_align: St.Align.START,
       //y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
       hint_text: _("Search"),
-      //style_class: 'clippie-search-entry'
+      style_class: 'search-entry'
     });
     //this._entry.set_hint_text();
 
@@ -317,6 +337,10 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
   get clippie() {
     return this._clippie;
+  }
+
+  get entry() {
+    return this._entry;
   }
 
 });
