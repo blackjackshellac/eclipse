@@ -30,7 +30,7 @@ const PopupMenu = imports.ui.popupMenu;
 
 const Logger = Me.imports.logger.Logger;
 
-const logger = new Logger('menus');
+const logger = new Logger('cl_menus');
 
 var ClippieMenu = class ClippieMenu {
   constructor(menu, clippie) {

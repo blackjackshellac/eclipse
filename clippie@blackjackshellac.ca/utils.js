@@ -22,7 +22,7 @@ const _ = Gettext.gettext;
 
 String.prototype.format = imports.format.format;
 
-const GLib = imports.gi.GLib;
+const { Gio, GLib} = imports.gi;
 const ByteArray = imports.byteArray;
 
 var clearTimeout, clearInterval;
@@ -120,6 +120,53 @@ function addSignalsHelperMethods(prototype) {
         });
         this._signals = [];
     };
+}
+
+/**
+ * https://wiki.gnome.org/AndyHolmes/Sandbox/SpawningProcesses
+ *
+ * execCommandAsync:
+ * @argv: an array of arguments
+ * @input: (nullable): input text
+ * @cancellable: (nullable): an optional Gio.Cancellable to cancel the execution
+ *
+ * A simple, asynchronous process launcher wrapped in a Promise.
+ *
+ * Returns: stdout text output
+ */
+async function execCommandAsync(argv, input = null, cancellable = null) {
+    try {
+        // We'll assume we want output, or that returning none is not a problem
+        let flags = Gio.SubprocessFlags.STDOUT_PIPE;
+
+        // If we aren't given any input, we don't need to open stdin
+        if (input !== null)
+            flags |= Gio.SubprocessFlags.STDIN_PIPE;
+
+        let proc = new Gio.Subprocess({
+            argv: argv,
+            flags: flags
+        });
+
+        // Classes that implement GInitable must be initialized before use, but
+        // an alternative in GJS is to just use Gio.Subprocess.new(argv, flags)
+        proc.init(cancellable);
+
+        let stdout = await new Promise((resolve, reject) => {
+            proc.communicate_utf8_async(input, cancellable, (proc, res) => {
+                try {
+                    let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
+                    resolve(stdout);
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        });
+
+        return stdout;
+    } catch (e) {
+        logError(e);
+    }
 }
 
 

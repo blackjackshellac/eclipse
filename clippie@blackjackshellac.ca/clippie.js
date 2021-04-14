@@ -42,7 +42,7 @@ var Clippie = class Clippie extends Array {
     this._settings = new Settings();
     this._attached = false;
 
-    this.logger = new Logger('clippie', this.settings);
+    this.logger = new Logger('cl_ippie', this.settings);
   }
 
   static attach(indicator) {
@@ -128,9 +128,46 @@ var Clippie = class Clippie extends Array {
     return entries;
   }
 
+  refresh_result(stdout) {
+    let lines=stdout.replace(/\r?\n$/, "").split(/\r?\n/);
+    let arr = [];
+    for (let i=0; i < lines.length; i++) {
+      let line=lines[i];
+      if (line.length > 0) {
+        let clip=Clip.parse(line);
+        if (!clip) {
+          this.logger.error("failed to parse output=%s", line);
+          continue;
+        }
+        let idx = this.find(clip);
+        if (idx >= 0) {
+          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
+          clip = this[idx];
+          if (clip.lock) {
+            this.logger.debug('Found lock entry %s', clip.toString());
+          }
+        }
+        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+        if (this._state[clip.uuid]) {
+          clip.lock = this._state[clip.uuid].lock;
+        }
+        arr[i] = clip;
+      }
+    }
+    for (let i=0; i < lines.length; i++) {
+      this[i]=arr[i];
+    }
+    this.length = lines.length;
+  }
+
   refresh() {
     let cmdargs = [ "gpaste-client", "--oneline"];
+
     // TODO make this asynchronous
+    // Utils.execCommandAsync(cmdargs).then(stdout => {
+    //   this.refresh_result(stdout);
+    // });
+
     let result = Utils.execute(cmdargs);
     if (result[0] != 0) {
       this.logger.error("Failed to execute %s", cmdargs.join(" "));
