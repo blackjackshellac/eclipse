@@ -233,6 +233,7 @@ var Clip = class Clip {
     this._uuid = uuid;
     this._content = content;
     this._lock = false;
+    this._menu_item = undefined; // clippie menu
     this.logger = clippieInstance.logger;
   }
 
@@ -274,6 +275,14 @@ var Clip = class Clip {
 
   set lock(b) {
     this._lock = b;
+  }
+
+  get menu_item() {
+    return this._menu_item;
+  }
+
+  set menu_item(m) {
+    this._menu_item = m;
   }
 
   refresh() {

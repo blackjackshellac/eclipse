@@ -64,7 +64,11 @@ class ClippieIndicator extends PanelMenu.Button {
     return this._clippie;
   }
 
+  get clippieMenu() {
+    return this._clippieMenu;
+  }
+
   rebuild_menu(filter=undefined) {
-    this._clippieMenu.build(filter);
+    this.clippieMenu.build(filter);
   }
 });

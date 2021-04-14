@@ -42,6 +42,8 @@ var ClippieMenu = class ClippieMenu {
 
     logger.settings = clippie.settings;
 
+    this._searchItem = new ClippieSearchItem(this);
+
     this.menu.connect('open-state-changed', (self, open) => {
       logger.debug("menu open="+open);
       if (open) {
@@ -65,18 +67,12 @@ var ClippieMenu = class ClippieMenu {
 
     if (filter === undefined) {
       logger.debug('Refreshing all menu items');
-      menu.removeAll();
       this.clippie.refresh();
     } else {
       logger.debug("items=%d", this.items.length);
-      for (let i=0; i < this.items.length; i++) {
-        this.items[i].destroy();
-      }
     }
-
-    if (menu.isEmpty()) {
-      this.items = [];
-      this._searchItem = new ClippieSearchItem(this);
+    for (let i=0; i < this.items.length; i++) {
+      this.items[i].destroy();
     }
 
     let entries = this.clippie.search(filter);
@@ -126,6 +122,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       super._init("", { reactive: true });
 
       this._clip = clip;
+
+      clip.menu_item = this;
 
       var box = new St.BoxLayout({
         x_expand: true,
