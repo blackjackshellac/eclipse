@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const { Gio, Gtk, GLib } = imports.gi;
+const { Gio, Gtk, GLib, Gdk } = imports.gi;
 const ByteArray = imports.byteArray;
 
 const GETTEXT_DOMAIN = 'clippie-blackjackshellac';
@@ -51,17 +51,75 @@ class PreferencesBuilder {
     this.logger.info("Create preferences widget shell version %s", shellVersion < 40 ? "3.38 or less" : ""+shellVersion);
 
     this._builder.add_from_file(Me.path + '/prefs.ui');
-    this._prefsBox = this._builder.get_object('clippie_prefs');
+    this._prefs_box = this._builder.get_object('prefs_box');
 
     this._viewport = new Gtk.Viewport();
     this._widget = new Gtk.ScrolledWindow();
     if (shellVersion < 40) {
-      this._viewport.add(this._prefsBox);
+      this._viewport.add(this._prefs_box);
       this._widget.add(this._viewport);
     } else {
-      this._viewport.set_child(this._prefsBox);
+      this._viewport.set_child(this._prefs_box);
       this._widget.set_child(this._viewport);
     }
+
+    let provider = new Gtk.CssProvider();
+
+    provider.load_from_path(Me.dir.get_path() + '/prefs.css');
+    Gtk.StyleContext.add_provider_for_display(
+      Gdk.Display.get_default(),
+      provider,
+      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+    this._prefs_grid = this._bo('prefs_grid');
+    this._prefs_grid.set_margin_top(10);
+    this._prefs_grid.set_margin_start(10);
+    this._prefs_grid.set_margin_end(10);
+
+    this._title = this._bo('title');
+
+    this._prefs_box.append(this._title);
+    this._prefs_box.append(this._prefs_grid);
+
+    if (shellVersion >= 40) {
+      this._title.add_css_class('prefs-title');
+    }
+
+    this._track_changes = this._bo('track_changes');
+    this._daemon_reexec = this._bo('daemon_reexec');
+
+    // left, top, width, height
+    this._prefs_grid.attach(this._bo('track_changes_text'), 0, 1, 1, 1);
+    this._prefs_grid.attach(this._track_changes, 1, 1, 1, 1);
+    this._prefs_grid.attach(this._bo('debug_text'), 0, 2, 1, 1);
+    this._prefs_grid.attach(this._bo('debug'),      1, 2, 1, 1);
+    this._prefs_grid.attach(this._daemon_reexec,    0, 3, 2, 1);
+
+    let [ exit_status, stdout, stderr ] = Utils.execute(['gsettings', 'get', 'org.gnome.GPaste', 'track-changes' ]);
+    if (exit_status === 0) {
+      let active = stdout.trim() === 'true';
+      this.logger.debug('gsettings get org.gnome.GPaste track-changes => %s', stdout);
+      this._track_changes.set_active(active);
+    }
+    this._track_changes.connect('notify::active', (sw) => {
+      let active = sw.get_active();
+      this.logger.debug('track changes is %s', active);
+      let [ exit_status, stdout, stderr ] = Utils.execute(['gsettings', 'set', 'org.gnome.GPaste', 'track-changes', active ? 'true' :'false' ]);
+      if (exit_status === 0) {
+        this.logger.debug('gsettings set org.gnome.GPaste track-changes %s', active);
+      }
+    });
+
+    this._daemon_reexec.connect('clicked', (btn) => {
+      let [ exit_status, stdout, stderr ] = Utils.execute(['gpaste-client', 'daemon-reexec']);
+      if (exit_status === 0) {
+        this.logger.info(stdout.trim());
+      }
+    });
+
+    // gsettings get org.gnome.GPaste track-changes
+    // gsettings set org.gnome.GPaste track-changes false
+    // gpaste-client daemon-reexec
 
     this._bind();
 
@@ -94,6 +152,7 @@ class PreferencesBuilder {
 
   _bind() {
     //this._bo_ssb('accel_enable', 'active');
+    this._bo_ssb('debug', 'active');
   }
 }
 

@@ -25,10 +25,60 @@
   <!-- interface-description Clipboard interface to gpaste-client output -->
   <!-- interface-copyright 2021, Steeve McCauley -->
   <!-- interface-authors Steeve McCauley -->
-  <object class="GtkBox" id="clippie_prefs">
+  <object class="GtkBox" id="prefs_box">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
+    <property name="spacing">10</property>
     <property name="orientation">vertical</property>
+    <property name="margin-top">20</property>
+    <property name="margin-start">10</property>
+    <property name="margin-end">10</property>
+    <property name="hexpand">True</property>
+  </object>
+  <object class="GtkGrid" id="prefs_grid">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="column-spacing">2</property>
+    <property name="row-spacing">2</property>
+  </object>
+  <object class="GtkLabel" id="title">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="margin-top">5</property>
+    <property name="margin-start">5</property>
+    <property name="label" translatable="yes" context="prefs-title">Clippie Preferences</property>
+  </object>
+  <object class="GtkLabel" id="debug_text">
+    <property name="label" translatable="yes" context="debug-text">Debug</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="debug">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="debug-tooltip">Enable debugging output</property>
+  </object>
+  <object class="GtkLabel" id="track_changes_text">
+    <property name="label" translatable="yes" context="track-changes-text">GPaste track changes</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="track_changes">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="track-changes-tooltip">Enable debugging output</property>
+  </object>
+  <object class="GtkButton" id="daemon_reexec">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label" translatable="yes" context="daemon-reexec">GPaste daemon restart</property>
+    <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Restart the gpaste-client daemon</property>
   </object>
 </interface>
 
