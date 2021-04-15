@@ -172,7 +172,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
         if (mi.clip.select()) {
-          mi.clip.clippie.indicator.rebuild_menu();
+          let cm = mi.clip.clippie.indicator.clippie_menu.menu;
+          cm.moveMenuItem(mi, 1);
         }
       });
 
@@ -311,24 +312,30 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       can_focus: true,
       x_align: St.Align.END,
-      y_align: Clutter.ActorAlign.CENTER
+      y_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie_prefs'
     });
 
     this._icon = new St.Icon( {
       x_expand: false,
-      icon_name: 'open-menu-symbolic',
+      icon_name: 'preferences-system-symbolic',
+      icon_size: 20
     });
 
-    this._prefs.connect('button_press_event', (bin, event) => {
-      logger.debug("mouse button pressed in bin");
+    this._prefs.connect('button_press_event', (btn, event) => {
+      logger.debug("mouse button pressed");
+
+      this.clippie_menu.menu.close();
     });
 
     this._prefs.connect('enter_event', (btn, event) => {
-      btn.get_child().icon_name = 'preferences-system-symbolic';
+      //btn.get_child().icon_name = 'preferences-system-symbolic';
+      btn.get_child().icon_size = 28;
     })
 
     this._prefs.connect('leave_event', (btn, event) => {
-      btn.get_child().icon_name = 'open-menu-symbolic';
+      //btn.get_child().icon_name = 'open-menu-symbolic';
+      btn.get_child().icon_size = 20;
     })
 
     this._prefs.set_child(this._icon);
@@ -336,10 +343,11 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     this._search_icon = new St.Icon( {
       x_expand: false,
       y_expand: false,
-      icon_name: 'edit-find-symbolic'
+      icon_name: 'edit-find-symbolic',
+      icon_size: 20
     });
 
-    //layout.add_child(this._search_icon);
+    layout.add_child(this._search_icon);
     layout.add_child(this._entry);
     layout.add_child(this._prefs);
 

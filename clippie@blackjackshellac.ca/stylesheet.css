@@ -1,6 +1,8 @@
 /* Add your custom extension styling here */
 
 .clippie-search-entry {
+  border-right: 10px;
+  border-left: 10px;
   font-weight: normal;
   font-family: monospace;
   /* color: transparent;
@@ -10,8 +12,11 @@
 .clippie-search-menu {
   padding: 0px;
   border: 0px;
-  icon-size: 1em;
-  size: 1em;
+}
+
+.clippie-prefs {
+  border-right: 10px;
+  border-left: 20px;
 }
 
 .clippie-quick-layout {
