@@ -325,7 +325,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     this._prefs.connect('button_press_event', (btn, event) => {
       logger.debug("mouse button pressed");
       ExtensionUtils.openPrefs();
-      this.clippie_menu.menu.close();
+      //this.clippie_menu.menu.close();
     });
 
     this._prefs.connect('enter_event', (btn, event) => {

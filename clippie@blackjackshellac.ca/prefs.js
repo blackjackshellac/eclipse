@@ -43,7 +43,7 @@ class PreferencesBuilder {
   }
 
   show() {
-    this._widget.show_all();
+    if (shellVersion < 40) { this._widget.show_all(); }
   }
 
   build() {
@@ -54,9 +54,14 @@ class PreferencesBuilder {
     this._prefsBox = this._builder.get_object('clippie_prefs');
 
     this._viewport = new Gtk.Viewport();
-    this._viewport.add(this._prefsBox);
     this._widget = new Gtk.ScrolledWindow();
-    this._widget.add(this._viewport);
+    if (shellVersion < 40) {
+      this._viewport.add(this._prefsBox);
+      this._widget.add(this._viewport);
+    } else {
+      this._viewport.set_child(this._prefsBox);
+      this._widget.set_child(this._viewport);
+    }
 
     this._bind();
 
