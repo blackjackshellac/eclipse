@@ -4,7 +4,7 @@
   "gettext-domain": "clippie-blackjackshellac",
   "uuid": "clippie@blackjackshellac.ca",
   "shell-version": [
-    "3.38",
+    "3.36", "3.38",
     "40"
   ],
   "settings-schema": "org.gnome.shell.extensions.clippie-blackjackshellac",

@@ -35,6 +35,16 @@ const Config = imports.misc.config;
 const [major] = Config.PACKAGE_VERSION.split('.');
 const shellVersion = Number.parseInt(major);
 
+// gsettings get org.gnome.GPaste track-changes
+// gsettings set org.gnome.GPaste track-changes false
+// gpaste-client daemon-reexec
+const ARGV = {
+  get_track_changes: 'gsettings get org.gnome.GPaste track-changes'.split(/\s+/),
+  set_track_changes_true:  'gsettings set org.gnome.GPaste track-changes true'.split(/\s+/),
+  set_track_changes_false: 'gsettings set org.gnome.GPaste track-changes false'.split(/\s+/),
+  daemon_reexec: 'gpaste-client daemon-reexec'.split(/\s+/)
+}
+
 class PreferencesBuilder {
   constructor() {
       this._settings = new Settings();
@@ -63,30 +73,29 @@ class PreferencesBuilder {
       this._widget.set_child(this._viewport);
     }
 
-    let provider = new Gtk.CssProvider();
-
-    provider.load_from_path(Me.dir.get_path() + '/prefs.css');
-    Gtk.StyleContext.add_provider_for_display(
-      Gdk.Display.get_default(),
-      provider,
-      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     this._prefs_grid = this._bo('prefs_grid');
-    this._prefs_grid.set_margin_top(10);
-    this._prefs_grid.set_margin_start(10);
-    this._prefs_grid.set_margin_end(10);
-
     this._title = this._bo('title');
-
-    this._prefs_box.append(this._title);
-    this._prefs_box.append(this._prefs_grid);
-
-    if (shellVersion >= 40) {
-      this._title.add_css_class('prefs-title');
-    }
-
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
+
+    if (shellVersion >= 40) {
+      this._prefs_box.append(this._title);
+      this._prefs_box.append(this._prefs_grid);
+
+      let provider = new Gtk.CssProvider();
+
+      provider.load_from_path(Me.dir.get_path() + '/prefs.css');
+      Gtk.StyleContext.add_provider_for_display(
+        Gdk.Display.get_default(),
+        provider,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+      this._title.add_css_class('prefs-title');
+    } else {
+      // pack_start(child, expand, fill, padding)
+      this._prefs_box.pack_start(this._title, false, false, 10);
+      this._prefs_box.pack_start(this._prefs_grid, false, false, 10);
+    }
 
     // left, top, width, height
     this._prefs_grid.attach(this._bo('track_changes_text'), 0, 1, 1, 1);
@@ -95,7 +104,7 @@ class PreferencesBuilder {
     this._prefs_grid.attach(this._bo('debug'),      1, 2, 1, 1);
     this._prefs_grid.attach(this._daemon_reexec,    0, 3, 2, 1);
 
-    let [ exit_status, stdout, stderr ] = Utils.execute(['gsettings', 'get', 'org.gnome.GPaste', 'track-changes' ]);
+    let [ exit_status, stdout, stderr ] = Utils.execute(ARGV.get_track_changes);
     if (exit_status === 0) {
       let active = stdout.trim() === 'true';
       this.logger.debug('gsettings get org.gnome.GPaste track-changes => %s', stdout);
@@ -103,15 +112,16 @@ class PreferencesBuilder {
     }
     this._track_changes.connect('notify::active', (sw) => {
       let active = sw.get_active();
-      this.logger.debug('track changes is %s', active);
-      let [ exit_status, stdout, stderr ] = Utils.execute(['gsettings', 'set', 'org.gnome.GPaste', 'track-changes', active ? 'true' :'false' ]);
-      if (exit_status === 0) {
-        this.logger.debug('gsettings set org.gnome.GPaste track-changes %s', active);
+      let cmdargs = active ? ARGV.set_track_changes_true : ARGV.set_track_changes_false;
+      this.logger.debug(cmdargs.join(' '));
+      let [ exit_status, stdout, stderr ] = Utils.execute(cmdargs);
+      if (exit_status !== 0) {
+        this.logger.debug('set track-changes failed: %d - %s', exit_status, stderr);
       }
     });
 
     this._daemon_reexec.connect('clicked', (btn) => {
-      let [ exit_status, stdout, stderr ] = Utils.execute(['gpaste-client', 'daemon-reexec']);
+      let [ exit_status, stdout, stderr ] = Utils.execute(ARGV.daemon_reexec);
       if (exit_status === 0) {
         this.logger.info(stdout.trim());
       }

@@ -40,6 +40,9 @@
     <property name="can-focus">True</property>
     <property name="column-spacing">2</property>
     <property name="row-spacing">2</property>
+    <property name="margin-top">10</property>
+    <property name="margin-start">10</property>
+    <property name="margin-end">10</property>
   </object>
   <object class="GtkLabel" id="title">
     <property name="visible">True</property>
