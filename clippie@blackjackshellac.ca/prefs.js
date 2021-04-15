@@ -30,19 +30,10 @@ const Settings = Me.imports.settings.Settings;
 const Utils = Me.imports.utils;
 const Logger = Me.imports.logger.Logger;
 
+// https://gjs.guide/extensions/upgrading/gnome-shell-40.html
 const Config = imports.misc.config;
 const [major] = Config.PACKAGE_VERSION.split('.');
 const shellVersion = Number.parseInt(major);
-
-const Model = {
-  NAME: 0,
-  ID: 1,
-  DURATION: 2,
-  ENABLED: 3,
-  QUICK: 4,
-  HMS: 5,
-  TRASH: 6
-}
 
 class PreferencesBuilder {
   constructor() {
