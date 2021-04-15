@@ -51,9 +51,9 @@ class ClippieIndicator extends PanelMenu.Button {
     box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
 
-    this._clippieMenu = new ClippieMenu(this.menu, this.clippie);
+    this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
     // set the filter to an empty string to prevent refreshing on startup
-    this._clippieMenu.build("");
+    this._clippie_menu.build("");
   }
 
   get settings() {
@@ -64,11 +64,11 @@ class ClippieIndicator extends PanelMenu.Button {
     return this._clippie;
   }
 
-  get clippieMenu() {
-    return this._clippieMenu;
+  get clippie_menu() {
+    return this._clippie_menu;
   }
 
   rebuild_menu(filter=undefined) {
-    this.clippieMenu.build(filter);
+    this.clippie_menu.build(filter);
   }
 });

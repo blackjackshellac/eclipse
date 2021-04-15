@@ -47,17 +47,43 @@ var ClippieMenu = class ClippieMenu {
     this.menu.connect('open-state-changed', (self, open) => {
       logger.debug("menu open="+open);
       if (open) {
-        this.build();
-        global.stage.set_key_focus(this._searchItem.entry);
+        //this.build();
+        this.rebuild();
       } else {
-        // this.clippie.forEach( (clip) => {
-        //   logger.debug("clip=%s", clip.uuid);
-        // });
+        this.items = [];
       }
     });
 
     //logger.debug("menu style=%s", this.menu.box.style_class);
     //this.menu.box.style_class = 'clippie-menu-content';
+  }
+
+  add_item(clip) {
+    let menu = this.menu;
+
+    let len = this.items.length;
+    let max = this.clippie.settings.entries;
+    if (len === max) {
+      this.more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
+      menu.addMenuItem(this.more);
+      this.items.push(this.more);
+      menu = this.more.menu;
+    } else if (len > max) {
+      menu = this.more.menu;
+    } else {
+      this.more = undefined;
+    }
+    let item = new ClipMenuItem(clip, menu);
+    this.items.push(item);
+  }
+
+  rebuild() {
+    logger.debug('Refreshing all menu items');
+    this.menu.removeAll();
+    this._searchItem = new ClippieSearchItem(this);
+    global.stage.set_key_focus(this._searchItem.entry);
+    this.items = [];
+    this.clippie.refresh_async(this);
   }
 
   build(filter=undefined) {
@@ -66,31 +92,22 @@ var ClippieMenu = class ClippieMenu {
     let menu = this.menu;
 
     if (filter === undefined) {
-      logger.debug('Refreshing all menu items');
-      this.clippie.refresh();
-    } else {
-      logger.debug("items=%d", this.items.length);
+      this.rebuild();
+      //this.clippie.refresh();
+      return;
     }
+    logger.debug("items=%d", this.items.length);
     for (let i=0; i < this.items.length; i++) {
       this.items[i].destroy();
     }
+    this.items = [];
 
     let entries = this.clippie.search(filter);
     logger.debug("found %d entries with filter=%s", entries.length, filter);
 
     for (let i=0; i < entries.length; i++) {
       let clip=entries[i];
-      if (!clip) {
-        logger.error("clip is null for i=%d", i);
-      }
-      if (i === this.clippie.settings.entries) {
-        let more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
-        menu.addMenuItem(more);
-        this.items.push(more);
-        menu = more.menu;
-      }
-      let item = new ClipMenuItem(clip, menu);
-      this.items.push(item);
+      this.add_item(clip);
     }
   }
 
@@ -114,6 +131,13 @@ var ClippieMenu = class ClippieMenu {
   get clippie() {
     return this._clippie;
   }
+
+  trash(item) {
+    var index = this.items.indexOf(item);
+    if (index !== -1) {
+      this.items.splice(index, 1);
+    }
+  }
 }
 
 var ClipMenuItem = GObject.registerClass(
@@ -122,6 +146,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       super._init("", { reactive: true });
 
       this._clip = clip;
+      this._menu = menu;
 
       clip.menu_item = this;
 
@@ -133,15 +158,15 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.add(box);
 
-      var label = new St.Label({
+      this.label = new St.Label({
         style_class: 'clippie-menu-content',
         x_expand: true,
         x_align: St.Align.START
       });
-      label.set_text(clip.label_text());
+      this.label.set_text(clip.label_text());
 
       box.add_child(new ClipItemControlButton(clip, 'delete'));
-      box.add_child(label);
+      box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
 
       this.connect('activate', (mi) => {
@@ -176,15 +201,18 @@ class ClipItemControlButton extends St.Button {
 
         // 'media-playback-stop-symbolic'
         // 'edit-delete-symbolic'
-        var icon = new St.Icon({
-            icon_name: CICBTypes[type].icon,
-            style_class: CICBTypes[type].style
-        });
-        icon.set_icon_size(20);
-
-        this.child = icon;
+        this.child = this.get_icon(type);
 
         this.connect_type();
+    }
+
+    get_icon(type) {
+      var icon = new St.Icon({
+          icon_name: CICBTypes[type].icon,
+          style_class: CICBTypes[type].style
+      });
+      icon.set_icon_size(16);
+      return icon;
     }
 
     connect_type() {
@@ -193,13 +221,22 @@ class ClipItemControlButton extends St.Button {
         case "unlock":
           this.connect('clicked', (cb) => {
             this.clip.toggle_lock();
-            this.rebuild();
+            let type = this.clip.lock ? 'lock' : 'unlock';
+            this.child = this.get_icon(type);
+            this.clip.menu_item.label.set_text(this.clip.label_text());
+            this.clip.menu_item.queue_redraw();
+            //this.rebuild();
           });
           break;
         case "delete":
           this.connect('clicked', (cb) => {
+            let item = this.clip.menu_item;
+            item.destroy();
+            this.clip.clippie.indicator.clippie_menu.trash(item);
+            //this.clip.menu_item.destroy();
+            //this.clip.menu_item._menu.trash(this.clip.menu_item);
             this.clip.delete();
-            this.rebuild();
+            //this.rebuild();
           });
           break;
         }

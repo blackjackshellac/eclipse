@@ -152,23 +152,29 @@ var Clippie = class Clippie extends Array {
           clip.lock = this._state[clip.uuid].lock;
         }
         arr[i] = clip;
+        this.menu.add_item(clip);
       }
     }
-    for (let i=0; i < lines.length; i++) {
+    for (let i=0; i < arr.length; i++) {
       this[i]=arr[i];
     }
-    this.length = lines.length;
+    this.length = arr.length;
+  }
+
+  refresh_async(menu) {
+    this.menu = menu;
+
+    // TODO make this asynchronous
+    let cmdargs = [ "gpaste-client", "--oneline"];
+    Utils.execCommandAsync(cmdargs).then(stdout => {
+      this.refresh_result(stdout);
+    });
   }
 
   refresh() {
     let cmdargs = [ "gpaste-client", "--oneline"];
 
-    // TODO make this asynchronous
-    // Utils.execCommandAsync(cmdargs).then(stdout => {
-    //   this.refresh_result(stdout);
-    // });
-
-    let result = Utils.execute(cmdargs);
+   let result = Utils.execute(cmdargs);
     if (result[0] != 0) {
       this.logger.error("Failed to execute %s", cmdargs.join(" "));
       return;
