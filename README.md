@@ -28,3 +28,17 @@ $ gsettings set org.gnome.GPaste track-changes true
 $ gsettings get org.gnome.GPaste track-changes
 true
 ```
+
+### Installation
+
+Install from github using something like the following,
+
+```
+$ mkdir ~/github
+$ cd ~/github
+$ git clone https://github.com/blackjackshellac/clippie.git
+$ cd clippie
+$ ./install_local.sh
+```
+
+Restart the shell or logout and login.
