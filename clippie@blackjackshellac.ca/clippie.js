@@ -305,7 +305,11 @@ var Clip = class Clip {
   }
 
   label_text() {
-    var label = this.content.substring(0, 50);
+    //var label = this.content.substring(0, 50);
+    // TODO (Issue #7) not sure why this isn't replacing \n with the given character
+    var label = this.content.replaceAll(/\n/gm, '↲'); // ¶↲
+    label = label.replaceAll(/\s+/g, ' ');
+    label = label.substring(0, 50);
     label = this._lock ? label.replaceAll(/./g, '·') : label.trim();
     return label;
   }

@@ -318,6 +318,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
     this._icon = new St.Icon( {
       x_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'preferences-system-symbolic',
       icon_size: 20
     });
@@ -343,6 +344,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     this._search_icon = new St.Icon( {
       x_expand: false,
       y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-find-symbolic',
       icon_size: 20
     });

@@ -12,11 +12,13 @@
 .clippie-search-menu {
   padding: 0px;
   border: 0px;
+  vertical-align: middle;
 }
 
 .clippie-prefs {
   border-right: 10px;
   border-left: 20px;
+  vertical-align: middle;
 }
 
 .clippie-quick-layout {
