@@ -25,6 +25,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 
 const {GLib, St, Clutter, Gio } = imports.gi;
 const Main = imports.ui.main;
+const MessageTray = imports.ui.messageTray;
 const PopupMenu = imports.ui.popupMenu;
 
 const Utils = Me.imports.utils;
@@ -43,6 +44,29 @@ var Clippie = class Clippie extends Array {
     this._attached = false;
 
     this.logger = new Logger('cl_ippie', this.settings);
+
+    this.gpaste_client = Utils.exec_path('gpaste-client');
+    if (this.gpaste_client === null) {
+      this.notification('Error', this.logger.error('Failed to find gpaste-client program'),
+        MessageTray.Urgency.CRITICAL,
+        {gicon: Gio.icon_new_for_string('dialog-error')});
+      this.gpaste_client = 'gpaste-client';
+    } else {
+      // this.notification('Info', this.gpaste_client,
+      //   MessageTray.Urgency.NORMAL,
+      //   {gicon: Gio.icon_new_for_string('dialog-information')});
+    }
+    this.gpaste_client_oneline = [ this.gpaste_client, '--oneline' ];
+  }
+
+  notification(title, banner, urgency=MessageTray.Urgency.NORMAL, params={}) {
+    // notification
+    let source = new MessageTray.SystemNotificationSource();
+    Main.messageTray.add(source);
+
+    let notification = new MessageTray.Notification(source, title, banner, params);
+    notification.setUrgency(urgency);
+    source.showNotification(notification);
   }
 
   static attach(indicator) {
@@ -164,19 +188,15 @@ var Clippie = class Clippie extends Array {
   refresh_async(menu) {
     this.menu = menu;
 
-    // TODO make this asynchronous
-    let cmdargs = [ "gpaste-client", "--oneline"];
-    Utils.execCommandAsync(cmdargs).then(stdout => {
+    Utils.execCommandAsync(this.gpaste_client_oneline).then(stdout => {
       this.refresh_result(stdout);
     });
   }
 
   refresh() {
-    let cmdargs = [ "gpaste-client", "--oneline"];
-
-   let result = Utils.execute(cmdargs);
+   let result = Utils.execute(this.gpaste_client_oneline);
     if (result[0] != 0) {
-      this.logger.error("Failed to execute %s", cmdargs.join(" "));
+      this.logger.error("Failed to execute %s", this.gpaste_client_oneline.join(" "));
       return;
     }
 
@@ -255,6 +275,10 @@ var Clip = class Clip {
     return clippieInstance;
   }
 
+  get gpaste_client() {
+    return clippieInstance.gpaste_client;
+  }
+
   get uuid() {
     return this._uuid;
   }
@@ -294,7 +318,7 @@ var Clip = class Clip {
   refresh() {
     if (!this.content) {
       // gpaste-client get --oneline uuid
-      let cmdargs = [ "gpaste-client", "get", "--oneline", this.uuid ];
+      let cmdargs = [ this.gpaste_client, "get", "--oneline", this.uuid ];
       let result = Utils.execute(cmdargs);
       if (result[0] == 0) {
         this.content = result[1];
@@ -321,7 +345,7 @@ var Clip = class Clip {
 
   select() {
     // gpaste-client select <uuid>
-    let cmdargs = [ "gpaste-client", "select", this.uuid ];
+    let cmdargs = [ this.gpaste_client, "select", this.uuid ];
     let result = Utils.execute(cmdargs);
     if (result[0] == 0) {
       return true;
@@ -331,10 +355,10 @@ var Clip = class Clip {
   }
 
   delete() {
-    let cmdargs = [ "gpaste-client", "delete", this.uuid ];
+    let cmdargs = [ this.gpaste_client, "delete", this.uuid ];
     let result = Utils.execute(cmdargs);
     if (result[0] == 0) {
-      this.logger.debug('gpaste-client deleted uuid=%s', this.uuid);
+      this.logger.debug('%s deleted uuid=%s', this.gpaste_client, this.uuid);
       this.clippie.delete(this);
       return true;
     }

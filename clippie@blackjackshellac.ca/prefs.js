@@ -35,21 +35,41 @@ const Config = imports.misc.config;
 const [major] = Config.PACKAGE_VERSION.split('.');
 const shellVersion = Number.parseInt(major);
 
-// gsettings get org.gnome.GPaste track-changes
-// gsettings set org.gnome.GPaste track-changes false
-// gpaste-client daemon-reexec
-const ARGV = {
-  get_track_changes: 'gsettings get org.gnome.GPaste track-changes'.split(/\s+/),
-  set_track_changes_true:  'gsettings set org.gnome.GPaste track-changes true'.split(/\s+/),
-  set_track_changes_false: 'gsettings set org.gnome.GPaste track-changes false'.split(/\s+/),
-  daemon_reexec: 'gpaste-client daemon-reexec'.split(/\s+/)
-}
-
 class PreferencesBuilder {
   constructor() {
-      this._settings = new Settings();
-      this._builder = new Gtk.Builder();
-      this.logger = new Logger('cl_prefs', this._settings);
+    this._settings = new Settings();
+    this._builder = new Gtk.Builder();
+    this.logger = new Logger('cl_prefs', this._settings);
+
+    this._gsettings = Utils.exec_path('gsettings');
+    this._gpaste_client = Utils.exec_path('gpaste-client');
+
+    if (this._gsettings === null) {
+      this.logger.error('gsettings not found');
+      this._gsettings = 'gsettings';
+    }
+    if (this._gpaste_client === null) {
+      this.logger.error('gpaste_client not found');
+      throw 'clippie requires gpaste_client to work';
+    }
+
+    // gsettings get org.gnome.GPaste track-changes
+    // gsettings set org.gnome.GPaste track-changes false
+    // gpaste-client daemon-reexec
+    this.command_args = {
+      get_track_changes: (this.gsettings+' get org.gnome.GPaste track-changes').split(/\s+/),
+      set_track_changes_true:  (this.gsettings+' set org.gnome.GPaste track-changes true').split(/\s+/),
+      set_track_changes_false: (this.gsettings+' set org.gnome.GPaste track-changes false').split(/\s+/),
+      daemon_reexec:  [ this.gpaste_client, 'daemon-reexec' ]
+    };
+  }
+
+  get gsettings() {
+    return this._gsettings;
+  }
+
+  get gpaste_client() {
+    return this._gpaste_client;
   }
 
   show() {
@@ -104,7 +124,7 @@ class PreferencesBuilder {
     this._prefs_grid.attach(this._bo('debug'),      1, 2, 1, 1);
     this._prefs_grid.attach(this._daemon_reexec,    0, 3, 2, 1);
 
-    let [ exit_status, stdout, stderr ] = Utils.execute(ARGV.get_track_changes);
+    let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.get_track_changes);
     if (exit_status === 0) {
       let active = stdout.trim() === 'true';
       this.logger.debug('gsettings get org.gnome.GPaste track-changes => %s', stdout);
@@ -112,7 +132,7 @@ class PreferencesBuilder {
     }
     this._track_changes.connect('notify::active', (sw) => {
       let active = sw.get_active();
-      let cmdargs = active ? ARGV.set_track_changes_true : ARGV.set_track_changes_false;
+      let cmdargs = active ? this.command_args.set_track_changes_true : this.command_args.set_track_changes_false;
       this.logger.debug(cmdargs.join(' '));
       let [ exit_status, stdout, stderr ] = Utils.execute(cmdargs);
       if (exit_status !== 0) {
@@ -121,7 +141,8 @@ class PreferencesBuilder {
     });
 
     this._daemon_reexec.connect('clicked', (btn) => {
-      let [ exit_status, stdout, stderr ] = Utils.execute(ARGV.daemon_reexec);
+      this.logger.debug("running %s", this.command_args.daemon_reexec.join(' '));
+      let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.daemon_reexec);
       if (exit_status === 0) {
         this.logger.info(stdout.trim());
       }

@@ -169,4 +169,12 @@ async function execCommandAsync(argv, input = null, cancellable = null) {
     }
 }
 
-
+function exec_path(executable) {
+  let path = GLib.find_program_in_path(executable);
+  if (path) {
+    return path;
+  }
+  let err='executable path not found %s'.format(executable);
+  log(err);
+  return null;
+}
