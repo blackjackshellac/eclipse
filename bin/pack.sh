@@ -7,7 +7,7 @@ cd $ed
 #clippie-blackjackshellac
 extra_source=$(ls -1 *.js | grep -v prefs.js | grep -v extension.js)
 #extra_source="$extra_source $(ls *.ogg *.ui)"
-extra_source="$extra_source $(ls *.ui)"
+extra_source="$extra_source $(ls *.ui) $(ls *.css)"
 extra_source="$extra_source"
 echo $extra_source
 eso=""
