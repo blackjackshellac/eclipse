@@ -31,6 +31,7 @@ const PopupMenu = imports.ui.popupMenu;
 const Utils = Me.imports.utils;
 const Settings = Me.imports.settings.Settings;
 const Logger = Me.imports.logger.Logger;
+const DBusGPaste = Me.imports.dbus.DBusGPaste;
 
 var Clippie = class Clippie extends Array {
   constructor(...args) {
@@ -42,6 +43,8 @@ var Clippie = class Clippie extends Array {
 
     this._settings = new Settings();
     this._attached = false;
+
+    this._dbus_gpaste = new DBusGPaste(this.settings);
 
     this.logger = new Logger('cl_ippie', this.settings);
 
@@ -212,13 +215,13 @@ var Clippie = class Clippie extends Array {
         }
         let idx = this.find(clip);
         if (idx >= 0) {
-          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
+          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
           clip = this[idx];
           if (clip.lock) {
             this.logger.debug('Found lock entry %s', clip.toString());
           }
         }
-        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+        this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
         }
@@ -283,6 +286,18 @@ var Clip = class Clip {
     return this._uuid;
   }
 
+  refresh() {
+    // gpaste-client get --oneline uuid
+    let cmdargs = [ this.gpaste_client, "get", this.uuid ];
+    let result = Utils.execute(cmdargs);
+    this.logger.debug("%d %s", result[0], result[1]);
+    if (result[0] === 0) {
+      this._content = result[1];
+    } else {
+      this.logger.error("uuid not in gpaste: %s", this.uuid);
+    }
+  }
+
   get content() {
     if (!this._content) {
       this.logger.debug("Refreshing %s", this.uuid);
@@ -315,23 +330,12 @@ var Clip = class Clip {
     this._menu_item = m;
   }
 
-  refresh() {
-    if (!this.content) {
-      // gpaste-client get --oneline uuid
-      let cmdargs = [ this.gpaste_client, "get", "--oneline", this.uuid ];
-      let result = Utils.execute(cmdargs);
-      if (result[0] == 0) {
-        this.content = result[1];
-      } else {
-        this.logger.error("uuid not in gpaste: %s", this.uuid);
-      }
-    }
-  }
-
   label_text() {
     //var label = this.content.substring(0, 50);
     // TODO (Issue #7) not sure why this isn't replacing \n with the given character
-    var label = this.content.replaceAll(/\n/gm, '↲'); // ¶↲
+    //var label = clippieInstance._dbus_gpaste.getElement(this.uuid);
+    var label = this.content.trim().replaceAll(/\n/gm, '↲'); // ¶↲
+    var label = label.trim().replaceAll(/\n/gm, '↲'); // ¶↲
     label = label.replaceAll(/\s+/g, ' ');
     label = label.substring(0, 50);
     label = this._lock ? label.replaceAll(/./g, '·') : label.trim();
