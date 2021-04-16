@@ -21,7 +21,7 @@ of password protecting this info, or having a pin.
 Make sure gpaste-client is installed, and the daemon is running. For example, on Fedora,
 
 ```
-$ sudo dnf install gpaste-client
+$ sudo dnf install gpaste
 ...
 $ gpaste-client daemon-reexec
 $ gsettings set org.gnome.GPaste track-changes true
