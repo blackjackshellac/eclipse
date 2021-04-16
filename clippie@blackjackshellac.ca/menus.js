@@ -274,7 +274,8 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     logger.settings = this.clippie.settings;
 
     var layout = new St.BoxLayout({
-      //style_class: 'clippie-search-menu',
+      style_class: 'clippie-search-menu',
+      pack_start: false,
       x_expand: true,
       y_expand: false,
       vertical: false
@@ -294,10 +295,10 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      //x_align: St.Align.START,
-      //y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
-      hint_text: _("Search"),
-      style_class: 'search-entry'
+      style_class: 'clippie-search-entry',
+      x_align: St.Align.START,
+      y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
+      hint_text: _("Search")
     });
     //this._entry.set_hint_text();
 
@@ -307,20 +308,21 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     //entry_text.set_activatable(true);
     entry_text.set_editable(true);
 
+    this._icon = new St.Icon( {
+      x_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'preferences-system-symbolic',
+      icon_size: 20
+    });
+
     this._prefs = new St.Button( {
       x_expand: false,
       y_expand: false,
       can_focus: true,
       x_align: St.Align.END,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie_prefs'
-    });
-
-    this._icon = new St.Icon( {
-      x_expand: false,
-      y_align: Clutter.ActorAlign.CENTER,
-      icon_name: 'preferences-system-symbolic',
-      icon_size: 20
+      style_class: 'clippie_prefs',
+      child: this._icon
     });
 
     this._prefs.connect('button_press_event', (btn, event) => {
@@ -339,7 +341,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       btn.get_child().icon_size = 20;
     })
 
-    this._prefs.set_child(this._icon);
+    //this._prefs.set_child(this._icon);
 
     this._search_icon = new St.Icon( {
       x_expand: false,
