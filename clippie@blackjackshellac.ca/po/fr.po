@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14 06:28-0400\n"
+"POT-Creation-Date: 2021-04-16 14:10-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -29,14 +29,49 @@ msgstr ""
 msgid "Information to restore state after restart"
 msgstr ""
 
-#: ../menus.js:79
+#: ../indicator.js:38
+msgid "Clippie"
+msgstr ""
+
+#: ../prefs.ui:52
+msgctxt "prefs-title"
+msgid "Clippie Preferences"
+msgstr ""
+
+#: ../prefs.ui:55
+msgctxt "debug-text"
+msgid "Debug"
+msgstr ""
+
+#: ../prefs.ui:65
+msgctxt "debug-tooltip"
+msgid "Enable debugging output"
+msgstr ""
+
+#: ../prefs.ui:68
+msgctxt "track-changes-text"
+msgid "GPaste track changes"
+msgstr ""
+
+#: ../prefs.ui:78
+msgctxt "track-changes-tooltip"
+msgid "Enable debugging output"
+msgstr ""
+
+#: ../prefs.ui:83
+msgctxt "daemon-reexec"
+msgid "GPaste daemon restart"
+msgstr ""
+
+#: ../prefs.ui:84
+msgctxt "daemon-reexec-tooltip"
+msgid "Restart the gpaste-client daemon"
+msgstr ""
+
+#: ../menus.js:68
 msgid "More…"
 msgstr ""
 
-#: ../menus.js:243
+#: ../menus.js:304
 msgid "Search"
-msgstr ""
-
-#: ../indicator.js:38
-msgid "Clippie"
 msgstr ""
