@@ -153,7 +153,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       var box = new St.BoxLayout({
         x_expand: true,
         x_align: St.Align.START,
-        pack_start: true,
+        pack_start: false,
         style_class: 'clippie-menu-box'
       });
       this.add(box);
@@ -165,9 +165,9 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.label.set_text(clip.label_text());
 
-      box.add_child(new ClipItemControlButton(clip, 'delete'));
-      box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      box.add_child(this.label);
+      box.add_child(new ClipItemControlButton(clip, 'delete'));
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
@@ -278,6 +278,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       pack_start: false,
       x_expand: true,
       y_expand: false,
+      x_align: St.Align.START,
       vertical: false
     });
 
