@@ -42,3 +42,17 @@ $ ./install_local.sh
 ```
 
 Restart the shell or logout and login.
+
+The extension is installed in `~/.local/share/gnome-shell/extensions/clippie@blackjackshellac.ca`
+
+### Preferences
+
+There are some rudimentary controls for interacting with gpaste in the Preferences (top right menu button)
+
+![image](https://user-images.githubusercontent.com/825403/114990482-8af38500-9e66-11eb-9a7c-4ca5eccef603.png)
+
+and the dialog displayed when that button is clicked,
+
+![image](https://user-images.githubusercontent.com/825403/114990724-cf7f2080-9e66-11eb-80d7-8a2ada0c87c7.png)
+
+
