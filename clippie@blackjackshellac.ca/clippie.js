@@ -44,8 +44,6 @@ var Clippie = class Clippie extends Array {
     this._settings = new Settings();
     this._attached = false;
 
-    this._dbus_gpaste = new DBusGPaste(this.settings);
-
     this.logger = new Logger('cl_ippie', this.settings);
 
     this.gpaste_client = Utils.exec_path('gpaste-client');
@@ -95,6 +93,7 @@ var Clippie = class Clippie extends Array {
     clippieInstance.logger.info("Detaching indicator from Clippie");
     clippieInstance.attached = false;
     clippieInstance.indicator = undefined;
+    clippieInstance._dbus_gpaste = undefined;
   }
 
   get clippie() {
@@ -122,6 +121,9 @@ var Clippie = class Clippie extends Array {
   }
 
   get dbus_gpaste() {
+    if (!this._dbus_gpaste) {
+      this._dbus_gpaste = new DBusGPaste(this.settings);
+    }
     return this._dbus_gpaste;
   }
 
