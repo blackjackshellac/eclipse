@@ -44,8 +44,6 @@ var Clippie = class Clippie extends Array {
     this._settings = new Settings();
     this._attached = false;
 
-    this._dbus_gpaste = new DBusGPaste(this.settings);
-
     this.logger = new Logger('cl_ippie', this.settings);
 
     this.gpaste_client = Utils.exec_path('gpaste-client');
@@ -95,6 +93,7 @@ var Clippie = class Clippie extends Array {
     clippieInstance.logger.info("Detaching indicator from Clippie");
     clippieInstance.attached = false;
     clippieInstance.indicator = undefined;
+    clippieInstance._dbus_gpaste = undefined;
   }
 
   get clippie() {
@@ -119,6 +118,13 @@ var Clippie = class Clippie extends Array {
 
   restore_state() {
     this._state = JSON.parse(this.settings.state);
+  }
+
+  get dbus_gpaste() {
+    if (!this._dbus_gpaste) {
+      this._dbus_gpaste = new DBusGPaste(this.settings);
+    }
+    return this._dbus_gpaste;
   }
 
   save_state() {
@@ -196,8 +202,48 @@ var Clippie = class Clippie extends Array {
     });
   }
 
+  refresh_dbus(menu) {
+    this.menu = menu;
+    this.dbus_gpaste.getHistoryRemote( (history) => {
+      if (history.length === 0) {
+        return;
+      }
+      history = history[0];
+      this.logger.debug("history %d", history.length);
+      for (let i=0; i < history.length; i++) {
+        let entry=history[i];
+        //this.logger.debug("%03d>%s:%d", i, entry[0], entry[1].length);
+        let clip = new Clip(entry[0], entry[1]);
+        let idx = this.find(clip);
+        if (idx >= 0) {
+          clip = this[idx];
+          if (clip.lock) {
+            this.logger.debug('Found lock entry %s', clip.toString());
+          }
+          if (idx !== i) {
+            //this.logger.debug('moving clip from %d to %d: %s', idx, i, clip.uuid);
+            // remove it from its old location
+            this.splice(idx, 1);
+            // move it to the current location
+            this.splice(i, 0, clip);
+          }
+        } else {
+          //this.logger.debug("New clip uuid=%s", clip.uuid);
+          // add the new clip at this location
+          this.splice(i, 0, clip);
+        }
+        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+        if (this._state[clip.uuid]) {
+          clip.lock = this._state[clip.uuid].lock;
+        }
+        this.menu.add_item(clip);
+      }
+      this.length = history.length;
+    });
+  }
+
   refresh() {
-   let result = Utils.execute(this.gpaste_client_oneline);
+    let result = Utils.execute(this.gpaste_client_oneline);
     if (result[0] != 0) {
       this.logger.error("Failed to execute %s", this.gpaste_client_oneline.join(" "));
       return;
@@ -288,13 +334,16 @@ var Clip = class Clip {
 
   refresh() {
     // gpaste-client get --oneline uuid
-    let cmdargs = [ this.gpaste_client, "get", this.uuid ];
-    let result = Utils.execute(cmdargs);
-    this.logger.debug("%d %s", result[0], result[1]);
-    if (result[0] === 0) {
-      this._content = result[1];
-    } else {
-      this.logger.error("uuid not in gpaste: %s", this.uuid);
+    if (!this._content) {
+      //let cmdargs = [ this.gpaste_client, "get", this.uuid ];
+      this._content = clippieInstance.dbus_gpaste.getElement(this.uuid);
+      // let result = Utils.execute(cmdargs);
+      // this.logger.debug("%d %s", result[0], result[1]);
+      // if (result[0] === 0) {
+      //   this._content = result[1];
+      // } else {
+      //   this.logger.error("uuid not in gpaste: %s", this.uuid);
+      // }
     }
   }
 
@@ -331,11 +380,7 @@ var Clip = class Clip {
   }
 
   label_text() {
-    //var label = this.content.substring(0, 50);
-    // TODO (Issue #7) not sure why this isn't replacing \n with the given character
-    //var label = clippieInstance._dbus_gpaste.getElement(this.uuid);
     var label = this.content.trim().replaceAll(/\n/gm, '↲'); // ¶↲
-    var label = label.trim().replaceAll(/\n/gm, '↲'); // ¶↲
     label = label.replaceAll(/\s+/g, ' ');
     label = label.substring(0, 50);
     label = this._lock ? label.replaceAll(/./g, '·') : label.trim();

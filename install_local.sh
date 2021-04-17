@@ -55,6 +55,8 @@ run() {
 
 help() {
 cat << HELP
+Installer for $ED
+
 $ ./$ME [options]
 
   -i : install (default)
