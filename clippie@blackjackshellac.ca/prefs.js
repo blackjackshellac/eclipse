@@ -29,6 +29,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings.Settings;
 const Utils = Me.imports.utils;
 const Logger = Me.imports.logger.Logger;
+const DBusGPaste = Me.imports.dbus.DBusGPaste;
 
 // https://gjs.guide/extensions/upgrading/gnome-shell-40.html
 const Config = imports.misc.config;
@@ -42,15 +43,10 @@ class PreferencesBuilder {
     this.logger = new Logger('cl_prefs', this._settings);
 
     this._gsettings = Utils.exec_path('gsettings');
-    this._gpaste_client = Utils.exec_path('gpaste-client');
 
     if (this._gsettings === null) {
       this.logger.error('gsettings not found');
       this._gsettings = 'gsettings';
-    }
-    if (this._gpaste_client === null) {
-      this.logger.error('gpaste_client not found');
-      throw 'clippie requires gpaste_client to work';
     }
 
     // gsettings get org.gnome.GPaste track-changes
@@ -59,8 +55,7 @@ class PreferencesBuilder {
     this.command_args = {
       get_track_changes: (this.gsettings+' get org.gnome.GPaste track-changes').split(/\s+/),
       set_track_changes_true:  (this.gsettings+' set org.gnome.GPaste track-changes true').split(/\s+/),
-      set_track_changes_false: (this.gsettings+' set org.gnome.GPaste track-changes false').split(/\s+/),
-      daemon_reexec:  [ this.gpaste_client, 'daemon-reexec' ]
+      set_track_changes_false: (this.gsettings+' set org.gnome.GPaste track-changes false').split(/\s+/)
     };
   }
 
@@ -68,12 +63,10 @@ class PreferencesBuilder {
     return this._gsettings;
   }
 
-  get gpaste_client() {
-    return this._gpaste_client;
-  }
-
   show() {
-    if (shellVersion < 40) { this._widget.show_all(); }
+    if (shellVersion < 40) {
+      this._widget.show_all();
+    }
   }
 
   build() {
@@ -141,11 +134,8 @@ class PreferencesBuilder {
     });
 
     this._daemon_reexec.connect('clicked', (btn) => {
-      this.logger.debug("running %s", this.command_args.daemon_reexec.join(' '));
-      let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.daemon_reexec);
-      if (exit_status === 0) {
-        this.logger.info(stdout.trim());
-      }
+      this.logger.debug('Run dbus gpaste method Reexecute()');
+      this.dbus_gpaste.daemonReexec();
     });
 
     // gsettings get org.gnome.GPaste track-changes
@@ -155,6 +145,13 @@ class PreferencesBuilder {
     this._bind();
 
     return this._widget;
+  }
+
+  get dbus_gpaste() {
+    if (!this._dbus_gpaste) {
+      this._dbus_gpaste = new DBusGPaste(this.settings);
+    }
+    return this._dbus_gpaste;
   }
 
   /**

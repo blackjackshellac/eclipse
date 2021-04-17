@@ -28,7 +28,7 @@ const _ = Gettext.gettext;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const TestModalDialog = Me.imports.dialog.TestModalDialog;
+const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
 const Logger = Me.imports.logger.Logger;
 
 const logger = new Logger('cl_menus');
@@ -223,8 +223,10 @@ class ClipItemControlButton extends St.Button {
         case "lock":
         case "unlock":
           this.connect('clicked', (cb) => {
-            //let dialog = new TestModalDialog();
-            //dialog.open(global.get_current_time());
+
+            let dialog = new LockItemModalDialog(this.clip);
+            dialog.open(global.get_current_time());
+
             this.clip.toggle_lock();
             let type = this.clip.lock ? 'lock' : 'unlock';
             this.child = this.get_icon(type);

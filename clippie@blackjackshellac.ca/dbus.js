@@ -241,6 +241,14 @@ var DBusGPaste = class DBusGPaste {
     return this.gpaste_proxy.GetElementSync(uuid);
   }
 
+  daemonReexec() {
+    this.gpaste_proxy.ReexecuteSync();
+  }
+
+  setPassword(uuid, label) {
+    this.gpaste_proxy.SetPasswordSync(uuid, label);
+  }
+
   get settings() {
     return this._settings;
   }

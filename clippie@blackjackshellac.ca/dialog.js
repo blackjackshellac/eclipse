@@ -19,45 +19,69 @@
 const { GObject, St, Clutter, Gio } = imports.gi;
 
 const Lang = imports.lang;
-const Dialog = imports.ui.dialog;
 const ModalDialog = imports.ui.modalDialog;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-var TestDialog = GObject.registerClass({
-}, class TestDialog extends Dialog.Dialog {
-  _init(parent) {
-    super._init(parent);
+var LockItemModalDialog = GObject.registerClass({
+}, class LockItemModalDialog extends ModalDialog.ModalDialog {
+
+  _init(clip) {
+    super._init({ styleClass: 'extension-dialog' });
+
+    this._clip = clip;
+
+    this.setButtons([
+      { label: _("Ok"),
+        action: Lang.bind(this, this._onClose),
+        //key:    Clutter.Escape
+      },
+      {
+        label: _("Cancel"),
+        action: Lang.bind(this, this._onCancel)
+      }
+    ]);
+
+    let box = new St.BoxLayout({ vertical: true});
+    this.contentLayout.add(box);
+
+    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
+    let icon = new St.Icon({
+      gicon: gicon,
+      icon_size: 20
+    });
+    //box.add(icon);
+
+    this._entry = new St.Entry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      style_class: 'clippie-search-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: icon,
+      hint_text: _("Password label"),
+    });
+
+    box.add(new St.Label({
+      text: _("Enter a name for the password"),
+      x_align: Clutter.ActorAlign.CENTER
+    }))
+    box.add(this._entry);
+
+    // box.add(new St.Label({ text: "AboutDialogTest Version " + Me.metadata.version, x_align: Clutter.ActorAlign.CENTER, style_class: "title-label" }));
+    // box.add(new St.Label({ text: "GNOME Shell extension to display an About Dialog.", x_align: Clutter.ActorAlign.CENTER }));
+    // box.add(new St.Label({ text: "This program comes with absolutely no warranty.", x_align: Clutter.ActorAlign.CENTER, style_class: "warn-label" }));
+    // box.add(new St.Label({ text: "Copyright © 2017-2018 BlahBlahBlah", x_align: Clutter.ActorAlign.CENTER, style_class: "copyright-label" }));
   }
-});
 
-var TestModalDialog = GObject.registerClass({
-}, class TestModalDialog extends ModalDialog.ModalDialog {
+  _onClose(button, event) {
+    this.close(global.get_current_time());
+  }
 
-    _init() {
-        super._init({ styleClass: 'extension-dialog' });
-
-        this.setButtons([{ label: "OK",
-                           action: Lang.bind(this, this._onClose),
-                           key:    Clutter.Escape
-                         }]);
-
-        let box = new St.BoxLayout({ vertical: true});
-        this.contentLayout.add(box);
-
-        let gicon = Gio.icon_new_for_string('dialog-error');
-        let icon = new St.Icon({ gicon: gicon });
-        box.add(icon);
-
-        box.add(new St.Label({ text: "AboutDialogTest Version " + Me.metadata.version, x_align: Clutter.ActorAlign.CENTER, style_class: "title-label" }));
-        box.add(new St.Label({ text: "GNOME Shell extension to display an About Dialog.", x_align: Clutter.ActorAlign.CENTER }));
-        box.add(new St.Label({ text: "This program comes with absolutely no warranty.", x_align: Clutter.ActorAlign.CENTER, style_class: "warn-label" }));
-        box.add(new St.Label({ text: "Copyright © 2017-2018 BlahBlahBlah", x_align: Clutter.ActorAlign.CENTER, style_class: "copyright-label" }));
-    }
-
-    _onClose(button, event) {
-        this.close(global.get_current_time());
-    }
-
+  _onCancel(button, event) {
+    this.close(global.get_current_time());
+  }
 });
