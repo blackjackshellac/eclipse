@@ -13,8 +13,13 @@ there will be a preferences dialog accessible from the menu on
 the top right.
 
 There is a lock/unlock icon on the side of each item that can
-be used to hide sensitive information. I'm looking into the possiblity
-of password protecting this info, or having a pin.
+be used to hide sensitive information. ~~I'm looking into the possiblity
+of password protecting this info, or having a pin.~~ I'm working
+on integrating the gpaste setPassword dbus method to secure and
+label passwords.
+
+The extension now uses dbus to communicate with the gpaste daemon 
+rather than spawning gpaste-client.
 
 ### Requirements
 
