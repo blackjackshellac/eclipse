@@ -84,7 +84,8 @@ var ClippieMenu = class ClippieMenu {
     this._searchItem = new ClippieSearchItem(this);
     global.stage.set_key_focus(this._searchItem.entry);
     this.items = [];
-    this.clippie.refresh_async(this);
+    this.clippie.refresh_dbus(this);
+    this.menu.open();
   }
 
   build(filter=undefined) {

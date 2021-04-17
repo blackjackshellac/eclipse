@@ -37,29 +37,23 @@ var DBusGPaste = class DBusGPaste {
                                              '/org/gnome/GPaste');
   }
 
+  // https://wiki.gnome.org/Gjs/Examples/DBusClient
+  // get history synchronously
   getHistory() {
-    this._history = undefined;
-    this._gpaste_proxy.GetHistoryRemote( history => {
-      this.logger.debug("history=%s", typeof history);
-      // for (let i=0; i < history.length; i++) {
-      //   let entry = history[i];
-      //   this.logger.debug("entry[%d]=%s entry[1]=[%s]", i, entry[0][0], entry[0][1]);
-      // }
-      //history[0]=entry[0],history[1]
-      //history[1]=entry[0],history[2]
+    let history = this.gpaste_proxy.GetHistorySync();
+    if (history) {
+      return history[0];
+    }
+    return [];
+  }
 
-      this._history = history;
-    });
-    return this._history;
+  // get history asynchronously with callback
+  getHistoryRemote(callback) {
+    this.gpaste_proxy.GetHistoryRemote(callback);
   }
 
   getElement(uuid) {
-    this._gpaste_proxy.GetElementRemote(uuid, (element) => {
-      this._element=element;
-      this.logger.debug("in element[%s]=%s", uuid, this._element);
-    });
-    this.logger.debug("out element[%s]=%s", uuid, this._element);
-    return this._element;
+    return this.gpaste_proxy.GetElementSync(uuid);
   }
 
   get settings() {
@@ -70,4 +64,7 @@ var DBusGPaste = class DBusGPaste {
     this._settings = val;
   }
 
+  get gpaste_proxy() {
+    return this._gpaste_proxy;
+  }
 }
