@@ -88,6 +88,9 @@ var Clippie = class Clippie extends Array {
 
     //clippieInstance.refresh();
 
+    let h = clippieInstance._dbus_gpaste.getHistory();
+    clippieInstance.history_unwrap(h[0]);
+
     return clippieInstance;
   }
 
@@ -95,6 +98,15 @@ var Clippie = class Clippie extends Array {
     clippieInstance.logger.info("Detaching indicator from Clippie");
     clippieInstance.attached = false;
     clippieInstance.indicator = undefined;
+  }
+
+  static history_unwrap(hn) {
+    if (!hn) {
+      return;
+    }
+    let en = hn[0];
+    clippieInstance.logger.debug("%s:%s", en[0], en[1].substring(0,10));
+    clippieInstance.history_unwrap(hn[1]);
   }
 
   get clippie() {
@@ -197,7 +209,7 @@ var Clippie = class Clippie extends Array {
   }
 
   refresh() {
-   let result = Utils.execute(this.gpaste_client_oneline);
+    let result = Utils.execute(this.gpaste_client_oneline);
     if (result[0] != 0) {
       this.logger.error("Failed to execute %s", this.gpaste_client_oneline.join(" "));
       return;

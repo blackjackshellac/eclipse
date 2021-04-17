@@ -38,19 +38,28 @@ var DBusGPaste = class DBusGPaste {
   }
 
   getHistory() {
-    this._gpaste_proxy.GetHistoryRemote( result => {
-      this.logger.debug("result=%s", result);
-      return result;
+    this._history = undefined;
+    this._gpaste_proxy.GetHistoryRemote( history => {
+      this.logger.debug("history=%s", typeof history);
+      // for (let i=0; i < history.length; i++) {
+      //   let entry = history[i];
+      //   this.logger.debug("entry[%d]=%s entry[1]=[%s]", i, entry[0][0], entry[0][1]);
+      // }
+      //history[0]=entry[0],history[1]
+      //history[1]=entry[0],history[2]
+
+      this._history = history;
     });
+    return this._history;
   }
 
   getElement(uuid) {
-    this._elements = {};
     this._gpaste_proxy.GetElementRemote(uuid, (element) => {
-      this._elements[uuid]=element;
+      this._element=element;
+      this.logger.debug("in element[%s]=%s", uuid, this._element);
     });
-    this.logger.debug("element=%s", this._element);
-    return this._elements[uuid];
+    this.logger.debug("out element[%s]=%s", uuid, this._element);
+    return this._element;
   }
 
   get settings() {
