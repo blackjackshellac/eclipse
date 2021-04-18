@@ -1,6 +1,6 @@
 {
   "name": "clippie",
-  "description": "Clipboard interface to gpaste-client output",
+  "description": "Clipboard interface to gpaste-client output\n\nClippie now uses dbus to communicate with the gpaste daemon",
   "gettext-domain": "clippie-blackjackshellac",
   "uuid": "clippie@blackjackshellac.ca",
   "shell-version": [
