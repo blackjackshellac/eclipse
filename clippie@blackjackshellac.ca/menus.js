@@ -50,8 +50,10 @@ var ClippieMenu = class ClippieMenu {
       if (open) {
         //this.build();
         this.rebuild();
+        global.stage.set_key_focus(this._searchItem.entry);
       } else {
-        this.items = [];
+        this.items.length = 0;
+        global.stage.set_key_focus(null);
       }
     });
 
@@ -82,7 +84,6 @@ var ClippieMenu = class ClippieMenu {
     logger.debug('Refreshing all menu items');
     this.menu.removeAll();
     this._searchItem = new ClippieSearchItem(this);
-    global.stage.set_key_focus(this._searchItem.entry);
     this.items = [];
     this.clippie.refresh_dbus(this);
     this.menu.open();
@@ -134,6 +135,10 @@ var ClippieMenu = class ClippieMenu {
     return this._clippie;
   }
 
+  get searchItem() {
+    return this._searchItem;
+  }
+
   trash(item) {
     var index = this.items.indexOf(item);
     if (index !== -1) {
@@ -163,6 +168,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.label = new St.Label({
         style_class: 'clippie-menu-content',
         x_expand: true,
+        track_hover: false,
         x_align: St.Align.START
       });
       this.label.set_text(clip.label_text());

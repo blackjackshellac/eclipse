@@ -30,18 +30,20 @@ var LockItemModalDialog = GObject.registerClass({
 }, class LockItemModalDialog extends ModalDialog.ModalDialog {
 
   _init(clip) {
-    super._init({ styleClass: 'extension-dialog' });
+    super._init({
+      styleClass: 'extension-dialog'
+    });
 
     this._clip = clip;
 
     this.setButtons([
       { label: _("Ok"),
-        action: Lang.bind(this, this._onOk),
-        //key:    Clutter.Escape
+        action: Lang.bind(this, this._onOk)
       },
       {
         label: _("Cancel"),
-        action: Lang.bind(this, this._onCancel)
+        action: Lang.bind(this, this._onCancel),
+        key:    Clutter.Escape // doesn't work
       }
     ]);
 
@@ -70,7 +72,15 @@ var LockItemModalDialog = GObject.registerClass({
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: icon,
       hint_text: _("Password label"),
+      reactive: true
     });
+
+    this._entry.set_hover(true);
+
+    let etext = this._entry.get_clutter_text();
+
+    etext.set_activatable(true);
+    etext.set_editable(true);
 
     let label_text=_("Enter name for the password entry");
     if (clip.isPassword()) {
@@ -85,14 +95,33 @@ var LockItemModalDialog = GObject.registerClass({
       style_class: 'clippie-password-text'
     }))
     box.add(this._entry);
+
+    this.connect('opened', (dialog) => {
+      global.stage.set_key_focus(this._entry);
+    });
+
+    this.connect('closed', (dialog) => {
+      global.stage.set_key_focus(null);
+    });
+
+    etext.connect('activate', (etext) => {
+      this.submit();
+    });
+
+    // etext.connect('text-changed', (etext) => {
+    //   log('text='+etext+getText());
+    // });
   }
 
-  _onOk(button, event) {
+  submit() {
     let label = this._entry.get_text();
     let ok = this.clip.set_password(label);
     if (ok) {
       this.close(global.get_current_time());
     }
+  }
+  _onOk(button, event) {
+    this.submit();
   }
 
   _onCancel(button, event) {

@@ -455,7 +455,10 @@ var Clip = class Clip {
     if (this.lock) {
       // already locked, rename password
 
-      // TODO Issue #
+      if (this.password_name === label) {
+        return true;
+      }
+
       let cmdargs = [ this.gpaste_client, 'rename-password', this.password_name, label ];
       let [ exit_status , stdout, stderr ] = Utils.execute(cmdargs);
       if (exit_status === 0) {
