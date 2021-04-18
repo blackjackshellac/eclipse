@@ -50,6 +50,17 @@ Restart the shell or logout and login.
 
 The extension is installed in `~/.local/share/gnome-shell/extensions/clippie@blackjackshellac.ca`
 
+### Clipboard Menu
+
+Clicking the indicator icon brings down the main menu.  If there are more than 20 entries a More...
+menu is created for the remainder.  You can search by content or password name in the search box.
+The lock icon indicates a `[Password]` entry so it is hidden until selected and pasted.  Click on 
+any unlock icon to open a dialog box to name, or rename, a password entry.  Click on the 'X' icon
+on the far right to delete the clipboard item.
+
+![Screenshot from 2021-04-18 14-10-31](https://user-images.githubusercontent.com/825403/115156642-36f9c380-a053-11eb-841f-0683c4143d52.png)
+
+
 ### Preferences
 
 There are some rudimentary controls for interacting with gpaste in the Preferences (top right menu button)
