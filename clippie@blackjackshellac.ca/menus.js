@@ -186,6 +186,11 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
   get clip() {
     return this._clip;
   }
+
+  trash_self() {
+    this.clip.clippie.indicator.clippie_menu.trash(this);
+    this.destroy();
+  }
 });
 
 var CICBTypes = {
@@ -224,21 +229,22 @@ class ClipItemControlButton extends St.Button {
         case "unlock":
           this.connect('clicked', (cb) => {
 
-            // let dialog = new LockItemModalDialog(this.clip);
-            // dialog.open(global.get_current_time());
+            let dialog = new LockItemModalDialog(this.clip);
+            dialog.open(global.get_current_time());
 
-            this.clip.toggle_lock();
-            let type = this.clip.lock ? 'lock' : 'unlock';
-            this.child = this.get_icon(type);
-            this.clip.menu_item.label.set_text(this.clip.label_text());
-            this.clip.menu_item.queue_redraw();
+            // this.clip.toggle_lock();
+            // let type = this.clip.lock ? 'lock' : 'unlock';
+            // this.child = this.get_icon(type);
+            // this.clip.menu_item.label.set_text(this.clip.label_text());
+            // this.clip.menu_item.queue_redraw();
           });
           break;
         case "delete":
           this.connect('clicked', (cb) => {
             let item = this.clip.menu_item;
-            item.destroy();
-            this.clip.clippie.indicator.clippie_menu.trash(item);
+            item.trash_self();
+            // item.destroy();
+            // this.clip.clippie.indicator.clippie_menu.trash(item);
             //this.clip.menu_item.destroy();
             //this.clip.menu_item._menu.trash(this.clip.menu_item);
             this.clip.delete();

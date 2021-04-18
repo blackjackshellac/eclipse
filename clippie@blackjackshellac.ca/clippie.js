@@ -129,12 +129,12 @@ var Clippie = class Clippie extends Array {
 
   save_state() {
     this._state={};
-    for (let i=0; i < this.length; i++) {
-      let clip = this[i];
-      if (clip.lock) {
-        this._state[clip.uuid] = { lock: true }
-      }
-    }
+    // for (let i=0; i < this.length; i++) {
+    //   let clip = this[i];
+    //   if (clip.lock) {
+    //     this._state[clip.uuid] = { lock: true }
+    //   }
+    // }
     this.settings.state = JSON.stringify(this._state);
   }
 
@@ -194,6 +194,7 @@ var Clippie = class Clippie extends Array {
     this.length = arr.length;
   }
 
+  // Obsolete: Asynchronous refresh replaced by refresh_dbus()
   refresh_async(menu) {
     this.menu = menu;
 
@@ -202,6 +203,7 @@ var Clippie = class Clippie extends Array {
     });
   }
 
+  // Asynchronous gpaste dbus GetHistory refresh
   refresh_dbus(menu) {
     this.menu = menu;
     this.dbus_gpaste.getHistoryRemote( (history) => {
@@ -217,9 +219,6 @@ var Clippie = class Clippie extends Array {
         let idx = this.find(clip);
         if (idx >= 0) {
           clip = this[idx];
-          if (clip.lock) {
-            this.logger.debug('Found lock entry %s', clip.toString());
-          }
           if (idx !== i) {
             //this.logger.debug('moving clip from %d to %d: %s', idx, i, clip.uuid);
             // remove it from its old location
@@ -236,12 +235,20 @@ var Clippie = class Clippie extends Array {
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
         }
+        if (clip.lock) {
+          this.logger.debug('Found lock entry %s', clip.toString());
+          if (!clip.isPassword()) {
+            this.logger.warn('Found locked entry %s that it not saved as a password, unlocking', clip.uuid)
+            clip.lock = false;
+          }
+        }
         this.menu.add_item(clip);
       }
       this.length = history.length;
     });
   }
 
+  // Obsolete: Synchronous refresh replaced by refresh_async() and then refresh_dbus()
   refresh() {
     let result = Utils.execute(this.gpaste_client_oneline);
     if (result[0] != 0) {
@@ -270,6 +277,7 @@ var Clippie = class Clippie extends Array {
         this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
+          delete this._state[clip.uuid];
         }
         arr[i] = clip;
       }
@@ -301,15 +309,21 @@ var Clippie = class Clippie extends Array {
 var clippieInstance = new Clippie();
 
 const GPASTE_LINE_RE=/^([-0-9a-f]+):\s(.*$)/;
+const PASSWORD_NAME_RE=/\[.*?\](.*)$/
 
 var Clip = class Clip {
 
   constructor(uuid, content=undefined) {
     this._uuid = uuid;
     this._content = content;
-    this._lock = false;
     this._menu_item = undefined; // clippie menu
     this.logger = clippieInstance.logger;
+    this._kind = this.dbus_gpaste.getElementKind(this.uuid);
+    this._lock = this.isPassword();
+    if (this._lock) {
+      this._password_name = this.get_password_name(content);
+      this._content = "▷▷▷ "+content;
+    }
   }
 
   static parse(line) {
@@ -324,26 +338,51 @@ var Clip = class Clip {
     return clippieInstance;
   }
 
+  get settings() {
+    return clippieInstance.settings;
+  }
+
+  // Obsolite
   get gpaste_client() {
     return clippieInstance.gpaste_client;
+  }
+
+  get dbus_gpaste() {
+    return clippieInstance.dbus_gpaste;
   }
 
   get uuid() {
     return this._uuid;
   }
 
+  get password_name() {
+    return this._password_name;
+  }
+
+  get_password_name(content) {
+    let m = content.match(PASSWORD_NAME_RE)
+    if (m) {
+      return m[1].trim();
+    }
+    return content;
+  }
+
+  isPassword() {
+    if (this._kind === 'Password') {
+      this.logger.debug('%s is a password: %s', this.uuid, this.content);
+      return true;
+    }
+    return false;
+  }
+
   refresh() {
-    // gpaste-client get --oneline uuid
     if (!this._content) {
-      //let cmdargs = [ this.gpaste_client, "get", this.uuid ];
-      this._content = clippieInstance.dbus_gpaste.getElement(this.uuid);
-      // let result = Utils.execute(cmdargs);
-      // this.logger.debug("%d %s", result[0], result[1]);
-      // if (result[0] === 0) {
-      //   this._content = result[1];
-      // } else {
-      //   this.logger.error("uuid not in gpaste: %s", this.uuid);
-      // }
+      let content = this.dbus_gpaste.getElement(this.uuid);
+      if (content) {
+        this.content = content;
+      } else {
+        this.logger.error('Failed to refresh content for uuid %s', this.uuid);
+      }
     }
   }
 
@@ -357,10 +396,6 @@ var Clip = class Clip {
 
   set content(val) {
     this._content = val;
-  }
-
-  get settings() {
-    return clippieInstance.settings;
   }
 
   get lock() {
@@ -383,36 +418,24 @@ var Clip = class Clip {
     var label = this.content.trim().replaceAll(/\n/gm, '↲'); // ¶↲
     label = label.replaceAll(/\s+/g, ' ');
     label = label.substring(0, 50);
-    label = this._lock ? label.replaceAll(/./g, '·') : label.trim();
+    label = this.lock ? label.trim() : label.trim();
     return label;
   }
 
-  toggle_lock() {
-    this._lock = !this._lock;
-    clippieInstance.save_state();
-  }
+  // can't toggle lock any more
+  // toggle_lock() {
+  //   this._lock = !this._lock;
+  //   clippieInstance.save_state();
+  // }
 
   select() {
-    // gpaste-client select <uuid>
-    let cmdargs = [ this.gpaste_client, "select", this.uuid ];
-    let result = Utils.execute(cmdargs);
-    if (result[0] == 0) {
-      return true;
-    }
-    this.logger.error("uuid not in gpaste: %s", this.uuid);
-    return false;
+    this.dbus_gpaste.select(this.uuid);
+    return true;
   }
 
   delete() {
-    let cmdargs = [ this.gpaste_client, "delete", this.uuid ];
-    let result = Utils.execute(cmdargs);
-    if (result[0] == 0) {
-      this.logger.debug('%s deleted uuid=%s', this.gpaste_client, this.uuid);
-      this.clippie.delete(this);
-      return true;
-    }
-    this.logger.error("uuid not in gpaste: %s", this.uuid);
-    return false;
+    this.dbus_gpaste.delete(this.uuid);
+    return true;
   }
 
   toString() {
@@ -422,6 +445,52 @@ var Clip = class Clip {
   search(filter_re) {
     let m = this.content.match(filter_re);
     return (m) ? true : false;
+  }
+
+  set_password(label) {
+    label = label.trim();
+    if (label.length === 0) {
+      return false;
+    }
+    if (this.lock) {
+      // already locked, rename password
+
+      // TODO Issue #
+      let cmdargs = [ this.gpaste_client, 'rename-password', this.password_name, label ];
+      let [ exit_status , stdout, stderr ] = Utils.execute(cmdargs);
+      if (exit_status === 0) {
+        this.logger.debug("Renamed password [%s] to [%s]", this.password_name, label);
+        clippieInstance.length = 0;
+      } else {
+        this.logger.error("Failed to rename password %s to %s", this.password_name, label)
+      }
+      // if (clippieInstance.dbus_gpaste.renamePassword(this.password_name, label)) {
+      //   this._password_name = label;
+      //   clippieInstance.length = 0;
+      // }
+
+    } else {
+      // unlocked, convert clipboard entry to password
+
+      // get the index of the clip before setting as password
+      let idx = clippieInstance.indexOf(this);
+
+      clippieInstance.dbus_gpaste.setPassword(this.uuid, label);
+      this.menu_item.trash_self();
+      this.lock = true;
+
+      // seems to replace the item at the same index with a new uuid
+      if (idx >= 0) {
+        let [uuid, content] = clippieInstance.dbus_gpaste.getElementAtIndex(idx);
+        if (uuid) {
+          let clip=new Clip(uuid, content);
+          clippieInstance.push(clip);
+          clippieInstance.dbus_gpaste.select(uuid);
+        }
+      }
+
+    }
+    return true;
   }
 }
 

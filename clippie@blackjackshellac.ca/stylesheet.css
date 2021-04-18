@@ -1,5 +1,30 @@
 /* Add your custom extension styling here */
 
+.clippie-password-box {
+  /*
+  width: 25%;
+  height: 25%;
+  margin: 10px;
+  padding: 10px;
+  background: black;
+  */
+
+}
+
+.clippie-password-entry {
+  /*
+  width: 320px;
+  padding: 7px 9px;
+   */
+  width: 20em;
+  border-radius: 18px;
+  border: 10px;
+}
+
+.clippie-password-text {
+  margin-bottom: 20px;
+}
+
 .clippie-search-entry {
   /* width: 320px; */
   padding: 7px 9px;

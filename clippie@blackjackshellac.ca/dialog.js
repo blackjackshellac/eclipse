@@ -24,6 +24,8 @@ const ModalDialog = imports.ui.modalDialog;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
+const Clip = Me.imports.clippie.Clip;
+
 var LockItemModalDialog = GObject.registerClass({
 }, class LockItemModalDialog extends ModalDialog.ModalDialog {
 
@@ -43,7 +45,12 @@ var LockItemModalDialog = GObject.registerClass({
       }
     ]);
 
-    let box = new St.BoxLayout({ vertical: true});
+    let box = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      vertical: true,
+      style_class: 'clippie-password-box'
+    });
     this.contentLayout.add(box);
 
     let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
@@ -58,30 +65,41 @@ var LockItemModalDialog = GObject.registerClass({
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-search-entry',
+      style_class: 'clippie-password-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: icon,
       hint_text: _("Password label"),
     });
 
+    let label_text=_("Enter name for the password entry");
+    if (clip.isPassword()) {
+      let label = clip.password_name;
+      this._entry.set_text(label);
+      label_text =_("Enter new name for the password entry");
+    }
+
     box.add(new St.Label({
-      text: _("Enter a name for the password"),
-      x_align: Clutter.ActorAlign.CENTER
+      text: label_text,
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-password-text'
     }))
     box.add(this._entry);
-
-    // box.add(new St.Label({ text: "AboutDialogTest Version " + Me.metadata.version, x_align: Clutter.ActorAlign.CENTER, style_class: "title-label" }));
-    // box.add(new St.Label({ text: "GNOME Shell extension to display an About Dialog.", x_align: Clutter.ActorAlign.CENTER }));
-    // box.add(new St.Label({ text: "This program comes with absolutely no warranty.", x_align: Clutter.ActorAlign.CENTER, style_class: "warn-label" }));
-    // box.add(new St.Label({ text: "Copyright © 2017-2018 BlahBlahBlah", x_align: Clutter.ActorAlign.CENTER, style_class: "copyright-label" }));
   }
 
   _onOk(button, event) {
-    this.close(global.get_current_time());
+    let label = this._entry.get_text();
+    let ok = this.clip.set_password(label);
+    if (ok) {
+      this.close(global.get_current_time());
+    }
   }
 
   _onCancel(button, event) {
     this.close(global.get_current_time());
+  }
+
+  get clip() {
+    return this._clip;
   }
 });

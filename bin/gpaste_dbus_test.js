@@ -14,6 +14,12 @@ const DBusGPasteIface = `
     <method name="GetHistory">
         <arg type="a(ss)" direction="out" />
     </method>
+    <method name="GetElementKind">
+      <arg type="s" name="uuid" direction="in">
+      </arg>
+      <arg type="s" name="kind" direction="out">
+      </arg>
+    </method>
   </interface>
 </node>
 `.trim();
@@ -34,3 +40,14 @@ print("elements "+elements.length);
 for (let element of elements) {
   print("%s>>%d".format(element[0], element[1].length));
 }
+
+function logObjectPretty(obj) {
+  print(JSON.stringify(obj, null, 2));
+}
+
+let uuid='08325bb7-ab21-488e-86fb-1cb7d1d4266b';
+let kind=_gpaste_proxy.GetElementKindSync(uuid);
+print('kind=%s type=%s'.format(kind[0]), typeof (kind[0]));
+
+logObjectPretty(kind);
+

@@ -178,3 +178,7 @@ function exec_path(executable) {
   log(err);
   return null;
 }
+
+function isObjectEmpty(obj) {
+  return (obj && obj.constructor === Object && Object.keys(obj).length === 0);
+}
