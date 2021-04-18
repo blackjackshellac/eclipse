@@ -34,7 +34,7 @@ var LockItemModalDialog = GObject.registerClass({
 
     this.setButtons([
       { label: _("Ok"),
-        action: Lang.bind(this, this._onClose),
+        action: Lang.bind(this, this._onOk),
         //key:    Clutter.Escape
       },
       {
@@ -77,7 +77,7 @@ var LockItemModalDialog = GObject.registerClass({
     // box.add(new St.Label({ text: "Copyright © 2017-2018 BlahBlahBlah", x_align: Clutter.ActorAlign.CENTER, style_class: "copyright-label" }));
   }
 
-  _onClose(button, event) {
+  _onOk(button, event) {
     this.close(global.get_current_time());
   }
 

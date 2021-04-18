@@ -224,8 +224,8 @@ class ClipItemControlButton extends St.Button {
         case "unlock":
           this.connect('clicked', (cb) => {
 
-            let dialog = new LockItemModalDialog(this.clip);
-            dialog.open(global.get_current_time());
+            // let dialog = new LockItemModalDialog(this.clip);
+            // dialog.open(global.get_current_time());
 
             this.clip.toggle_lock();
             let type = this.clip.lock ? 'lock' : 'unlock';
