@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-16 14:10-0400\n"
+"POT-Creation-Date: 2021-04-18 09:57-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -27,10 +27,6 @@ msgstr ""
 
 #: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:34
 msgid "Information to restore state after restart"
-msgstr ""
-
-#: ../indicator.js:38
-msgid "Clippie"
 msgstr ""
 
 #: ../prefs.ui:52
@@ -68,10 +64,34 @@ msgctxt "daemon-reexec-tooltip"
 msgid "Restart the gpaste-client daemon"
 msgstr ""
 
+#: ../indicator.js:38
+msgid "Clippie"
+msgstr ""
+
 #: ../menus.js:68
 msgid "More…"
 msgstr ""
 
-#: ../menus.js:304
+#: ../menus.js:313
 msgid "Search"
+msgstr ""
+
+#: ../dialog.js:38
+msgid "Ok"
+msgstr ""
+
+#: ../dialog.js:43
+msgid "Cancel"
+msgstr ""
+
+#: ../dialog.js:72
+msgid "Password label"
+msgstr ""
+
+#: ../dialog.js:75
+msgid "Enter name for the password entry"
+msgstr ""
+
+#: ../dialog.js:79
+msgid "Enter new name for the password entry"
 msgstr ""
