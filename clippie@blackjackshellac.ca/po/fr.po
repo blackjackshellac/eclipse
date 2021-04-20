@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-18 09:57-0400\n"
+"POT-Creation-Date: 2021-04-20 16:59-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -29,6 +29,34 @@ msgstr ""
 msgid "Information to restore state after restart"
 msgstr ""
 
+#: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:38
+msgid "Support gpaste histories"
+msgstr ""
+
+#: ../indicator.js:38
+msgid "Clippie"
+msgstr ""
+
+#: ../dialog.js:40
+msgid "Ok"
+msgstr ""
+
+#: ../dialog.js:44
+msgid "Cancel"
+msgstr ""
+
+#: ../dialog.js:74
+msgid "Password label"
+msgstr ""
+
+#: ../dialog.js:85
+msgid "Enter name for the password entry"
+msgstr ""
+
+#: ../dialog.js:89
+msgid "Enter new name for the password entry"
+msgstr ""
+
 #: ../prefs.ui:52
 msgctxt "prefs-title"
 msgid "Clippie Preferences"
@@ -45,53 +73,55 @@ msgid "Enable debugging output"
 msgstr ""
 
 #: ../prefs.ui:68
+msgctxt "show-histories-text"
+msgid "Show history menu"
+msgstr ""
+
+#: ../prefs.ui:77
+msgctxt "show-histories-tooltip"
+msgid "Show history menu"
+msgstr ""
+
+#: ../prefs.ui:80
 msgctxt "track-changes-text"
 msgid "GPaste track changes"
 msgstr ""
 
-#: ../prefs.ui:78
+#: ../prefs.ui:90
 msgctxt "track-changes-tooltip"
 msgid "Enable debugging output"
 msgstr ""
 
-#: ../prefs.ui:83
+#: ../prefs.ui:95
 msgctxt "daemon-reexec"
 msgid "GPaste daemon restart"
 msgstr ""
 
-#: ../prefs.ui:84
+#: ../prefs.ui:96
 msgctxt "daemon-reexec-tooltip"
 msgid "Restart the gpaste-client daemon"
 msgstr ""
 
-#: ../indicator.js:38
-msgid "Clippie"
-msgstr ""
-
-#: ../menus.js:68
+#: ../menus.js:75
 msgid "More…"
 msgstr ""
 
-#: ../menus.js:313
+#: ../menus.js:334
 msgid "Search"
 msgstr ""
 
-#: ../dialog.js:38
-msgid "Ok"
+#: ../menus.js:432
+msgid "History ["
 msgstr ""
 
-#: ../dialog.js:43
-msgid "Cancel"
+#: ../menus.js:507
+msgid "Create history"
 msgstr ""
 
-#: ../dialog.js:72
-msgid "Password label"
+#: ../menus.js:624
+msgid "Clear"
 msgstr ""
 
-#: ../dialog.js:75
-msgid "Enter name for the password entry"
-msgstr ""
-
-#: ../dialog.js:79
-msgid "Enter new name for the password entry"
+#: ../menus.js:665
+msgid "Delete"
 msgstr ""

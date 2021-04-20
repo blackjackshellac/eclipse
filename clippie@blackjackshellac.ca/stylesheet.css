@@ -32,7 +32,7 @@
 }
 
 .clippie-search-menu {
-  padding: 10px;
+  /* padding: 10px; */
   border: 0px;
   vertical-align: middle;
 }
@@ -64,6 +64,31 @@
   font-size: smaller;
   border-top: 1px;
   border-bottom: 1px;
+}
+
+.clippie-create-history-entry {
+  vertical-align: middle
+}
+
+.clippie-history-menu-item {
+  padding: 0px;
+  margin: 0px;
+}
+
+.clippie-history-size {
+  width: 3em;
+  border-right: 5px;
+  font-weight: normal;
+  font-size: smaller;
+  font-family: monospace;
+}
+
+.clippie-history-clear-icon {
+  border-left: 5px;
+}
+
+.clippie-history-delete-icon {
+  border-left: 10px;
 }
 
 .clippie-menu-delete-icon {

@@ -75,6 +75,63 @@ var DBusGPaste = class DBusGPaste {
 
   }
 
+  listHistories() {
+    try {
+      let list = this.gpaste_proxy.ListHistoriesSync();
+      return list[0];
+    } catch (e) {
+      this.logger.error('failed to load histories: %s', e.toString());
+    }
+    return [];
+  }
+
+  getHistoryName() {
+    try {
+      let name = this.gpaste_proxy.GetHistoryNameSync();
+      return name[0];
+    } catch (e) {
+      this.logger.error('failed to get current history name: %s', e.toString());
+    }
+    return undefined;
+  }
+
+  getHistorySize(name) {
+    try {
+      let size = this.gpaste_proxy.GetHistorySizeSync(name);
+      return size;
+    } catch (e) {
+      this.logger.error('failed to get history %s size: %s', name, e.toString());
+    }
+    return undefined;
+  }
+
+  deleteHistory(name) {
+    try {
+      this.gpaste_proxy.DeleteHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
+  emptyHistory(name) {
+    try {
+      this.gpaste_proxy.EmptyHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
+  switchHistory(name) {
+    try {
+      this.gpaste_proxy.SwitchHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
   daemonReexec() {
     this.gpaste_proxy.ReexecuteSync();
   }

@@ -110,12 +110,14 @@ class PreferencesBuilder {
       this._prefs_box.pack_start(this._prefs_grid, false, false, 10);
     }
 
-    // left, top, width, height
+    // col, row, col_span, row_span
     this._prefs_grid.attach(this._bo('track_changes_text'), 0, 1, 1, 1);
     this._prefs_grid.attach(this._track_changes, 1, 1, 1, 1);
-    this._prefs_grid.attach(this._bo('debug_text'), 0, 2, 1, 1);
-    this._prefs_grid.attach(this._bo('debug'),      1, 2, 1, 1);
-    this._prefs_grid.attach(this._daemon_reexec,    0, 3, 2, 1);
+    this._prefs_grid.attach(this._bo('show_histories_text'), 0, 2, 1, 1);
+    this._prefs_grid.attach(this._bo('show_histories'), 1, 2, 1, 1)
+    this._prefs_grid.attach(this._bo('debug_text'), 0, 3, 1, 1);
+    this._prefs_grid.attach(this._bo('debug'),      1, 3, 1, 1);
+    this._prefs_grid.attach(this._daemon_reexec,    0, 4, 2, 1);
 
     let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.get_track_changes);
     if (exit_status === 0) {
@@ -181,6 +183,7 @@ class PreferencesBuilder {
   _bind() {
     //this._bo_ssb('accel_enable', 'active');
     this._bo_ssb('debug', 'active');
+    this._bo_ssb('show_histories', 'active');
   }
 }
 

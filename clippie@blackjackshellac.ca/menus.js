@@ -30,6 +30,7 @@ const PopupMenu = imports.ui.popupMenu;
 
 const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
 const Logger = Me.imports.logger.Logger;
+const Utils = Me.imports.utils;
 
 const logger = new Logger('cl_menus');
 
@@ -43,7 +44,11 @@ var ClippieMenu = class ClippieMenu {
 
     logger.settings = clippie.settings;
 
-    this._searchItem = new ClippieSearchItem(this);
+    this.rebuild(false);
+    // this._searchItem = new ClippieSearchItem(this);
+    // this._historyMenu = new PopupMenu.PopupSubMenuMenuItem(_("Histories"), { reactive: false, can_focus: true } );
+    // this.menu.addMenuItem(this._historyMenu);
+    // this._createHistory = new ClippieCreateHistoryItem(this);
 
     this.menu.connect('open-state-changed', (self, open) => {
       logger.debug("menu open="+open);
@@ -80,13 +85,20 @@ var ClippieMenu = class ClippieMenu {
     this.items.push(item);
   }
 
-  rebuild() {
-    logger.debug('Refreshing all menu items');
+  rebuild(load=true) {
+    logger.debug('Refreshing all menu items. history=%s', this.clippie.settings.show_histories);
     this.menu.removeAll();
+
+    if (this.clippie.settings.show_histories) {
+      this._historyMenu = new ClippieHistoryMenu(this);
+    }
     this._searchItem = new ClippieSearchItem(this);
+
     this.items = [];
-    this.clippie.refresh_dbus(this);
-    this.menu.open();
+    if (load) {
+      this.clippie.refresh_dbus(this);
+      this.menu.open();
+    }
   }
 
   build(filter=undefined) {
@@ -96,7 +108,6 @@ var ClippieMenu = class ClippieMenu {
 
     if (filter === undefined) {
       this.rebuild();
-      //this.clippie.refresh();
       return;
     }
     logger.debug("items=%d", this.items.length);
@@ -137,6 +148,10 @@ var ClippieMenu = class ClippieMenu {
 
   get searchItem() {
     return this._searchItem;
+  }
+
+  get historyMenu() {
+    return this._historyMenu;
   }
 
   trash(item) {
@@ -280,10 +295,10 @@ class ClipItemControlButton extends St.Button {
 var ClippieSearchItem = GObject.registerClass(
 class ClippieSearchItem extends PopupMenu.PopupMenuItem {
   _init(clippie_menu) {
-    super._init("", { reactive: false, can_focus: false });
+    super._init("", { reactive: false, can_focus: true });
 
-    this._clippie_menu = clippie_menu;
     this._menu = clippie_menu.menu;
+    this._clippie_menu = clippie_menu;
     this._clippie = clippie_menu.clippie;
 
     this._menu.addMenuItem(this);
@@ -343,10 +358,11 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       child: this._icon
     });
 
-    this._prefs.connect('button_press_event', (btn, event) => {
-      logger.debug("mouse button pressed");
+    this._prefs.connect('clicked', (btn, clicked_button) => {
+      logger.debug("mouse button pressed %d", clicked_button);
       ExtensionUtils.openPrefs();
-      //this.clippie_menu.menu.close();
+      this.clippie_menu.menu.close();
+      global.stage.set_key_focus(null);
     });
 
     this._prefs.connect('enter_event', (btn, event) => {
@@ -409,3 +425,287 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
   }
 
 });
+
+var ClippieHistoryMenu = GObject.registerClass(
+class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
+  _init(clippie_menu) {
+    super._init(_("History [")+clippie_menu.clippie.dbus_gpaste.getHistoryName()+"]");
+
+    logger.debug("Creating History SubMenu popup");
+
+    // default
+    //this.add_style_class_name('popup-submenu-menu-item');
+
+    this._clippie_menu = clippie_menu;
+    this._clippie = this.clippie_menu.clippie;
+
+    clippie_menu.menu.addMenuItem(this);
+
+    new ClippieCreateHistoryItem(this);
+
+    this.menu.connect('open-state-changed', (self, open) => {
+      logger.debug("history menu open="+open);
+      if (open) {
+        this.rebuild();
+        //global.stage.set_key_focus(this._entry);
+      } else {
+        //global.stage.set_key_focus(null);
+        this.menu.removeAll();
+        new ClippieCreateHistoryItem(this);
+      }
+    });
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get clippie() {
+    return this._clippie;
+  }
+
+  rebuild() {
+    let list = this.clippie.dbus_gpaste.listHistories().sort();
+    let current = this.clippie.dbus_gpaste.getHistoryName();
+    //Utils.logObjectPretty(list);
+    for (let i=0; i < list.length; i++) {
+      let item = new ClippieHistoryItem(list[i], this.menu, this, current === list[i]);
+      this.clippie_menu._historyMenu.menu.addMenuItem(item);
+    }
+  }
+
+});
+
+var ClippieCreateHistoryItem = GObject.registerClass(
+class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
+  _init(history_menu) {
+    super._init("", { reactive: false, can_focus: false });
+
+    this._clippie_menu = history_menu.clippie_menu;
+    this._menu = history_menu.menu;
+    this._clippie = this.clippie_menu.clippie;
+
+    var layout = new St.BoxLayout({
+      style_class: 'clippie-history-menu-item',
+      pack_start: false,
+      x_expand: true,
+      y_expand: false,
+      x_align: St.Align.START,
+      vertical: false
+    });
+
+    this.add(layout);
+
+    this._entry = new St.Entry( {
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      style_class: 'clippie-create-history-entry',
+      x_align: St.Align.START,
+      y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
+      hint_text: _("Create history")
+    });
+
+    let etext = this._entry.get_clutter_text();
+
+    etext.set_activatable(true);
+    etext.set_editable(true);
+    etext.connect('activate', (etext) => {
+      let name=etext.get_text();
+      if (this.clippie.dbus_gpaste.switchHistory(name)) {
+        logger.debug("Created new history %s", name);
+        this.clippie_menu.rebuild(true);
+        this.menu.close();
+      }
+    });
+
+    layout.add_child(this._entry);
+    this.add_child(this._entry);
+
+    this.menu.addMenuItem(this);
+
+    // this.menu.connect('open-state-changed', (self, open) => {
+    //   logger.debug("menu open="+open);
+    //   if (open) {
+        //this.build();
+    //     this.rebuild();
+    //     global.stage.set_key_focus(this._entry);
+    //   } else {
+    //     global.stage.set_key_focus(null);
+    //     this._menu.removeAll();
+    //   }
+    // });
+
+  }
+
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get menu() {
+    return this._menu;
+  }
+
+  get clippie() {
+    return this._clippie;
+  }
+
+  get entry() {
+    return this._entry;
+  }
+
+});
+
+var ClippieHistoryItem = GObject.registerClass(
+class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
+  _init(name, menu, clippie_menu, current) {
+    super._init("", { reactive: true, can_focus: true });
+
+    this._menu = menu;
+    this._clippie_menu = clippie_menu;
+    this._clippie = clippie_menu.clippie;
+
+    var layout = new St.BoxLayout({
+      style_class: 'clippie-search-menu',
+      pack_start: false,
+      x_expand: true,
+      y_expand: false,
+      x_align: St.Align.START,
+      vertical: false
+    });
+
+    this.add(layout);
+
+    let size=this.clippie.dbus_gpaste.getHistorySize(name);
+    if (size === undefined) {
+      size=0;
+    }
+    this._size = new St.Label({
+      style_class: 'clippie-history-size',
+      x_expand: false,
+      y_expand: false,
+      track_hover: false,
+      can_focus: false,
+      x_align: St.Align.START,
+      text: ""+size
+    });
+    this._size.set_text("%03d".format(size));
+
+    this._name = new St.Label({
+      style_class: 'clippie-menu-content',
+      x_expand: true,
+      y_expand: false,
+      track_hover: false,
+      x_align: St.Align.START,
+      text: name
+    });
+
+    this._clear_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'edit-clear-symbolic',
+      icon_size: 20
+    });
+
+    this._clear = new St.Button( {
+      x_expand: false,
+      y_expand: false,
+      can_focus: true,
+      x_align: St.Align.END,
+      y_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-history-clear-icon',
+      child: this._clear_icon
+    });
+
+    this._clear.connect('enter_event', (btn, event) => {
+      btn.set_label(_("Clear"));
+    });
+
+    this._clear.connect('leave_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._clear_icon);
+    });
+
+    this._clear.connect('button_press_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._clear_icon);
+    });
+
+    this._clear.connect('clicked', (btn) => {
+      let name = this._name.get_text();
+      if (this.clippie.dbus_gpaste.emptyHistory(name)) {
+        logger.debug("cleared %s", name);
+      }
+    });
+
+    this._delete_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'edit-delete-symbolic',
+      icon_size: 20
+    });
+
+    this._delete = new St.Button( {
+      x_expand: false,
+      y_expand: false,
+      can_focus: true,
+      x_align: St.Align.END,
+      y_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-history-delete-icon',
+      child: this._delete_icon
+    });
+
+    this._delete.connect('enter_event', (btn, event) => {
+      btn.set_label(_('Delete'));
+    });
+
+    this._delete.connect('leave_event', (btn, event) => {
+      btn.set_label('');
+      btn.set_child(this._delete_icon);
+    });
+
+    this._delete.connect('button_press_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._delete_icon);
+    });
+
+    this._delete.connect('clicked', (btn) => {
+      let name = this._name.get_text();
+      if (this.clippie.dbus_gpaste.deleteHistory(name)) {
+        logger.debug("deleted %s", name);
+        this.destroy();
+      }
+    });
+
+    layout.add_child(this._size);
+    layout.add_child(this._name);
+    layout.add_child(this._clear);
+    layout.add_child(this._delete);
+
+    this._menu.addMenuItem(this);
+
+    this.connect('activate', (self) => {
+      let name = this._name.get_text();
+      logger.debug("clicked item=%s", name);
+      this.clippie.dbus_gpaste.switchHistory(name);
+      this.clippie_menu.menu.open();
+    });
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get clippie() {
+    return this._clippie;
+  }
+});
+
+
