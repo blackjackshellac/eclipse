@@ -140,4 +140,11 @@ var Settings = class Settings {
     this.settings.set_boolean('debug', bool);
   }
 
+  get show_histories() {
+    return this.settings.get_boolean('show-histories');
+  }
+
+  set show_histories(bool) {
+    this.settings.set_boolean('show-histories', bool);
+  }
 };

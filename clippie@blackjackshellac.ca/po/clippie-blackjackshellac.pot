@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-18 09:57-0400\n"
-"PO-Revision-Date: 2021-04-18 09:57-0400\n"
+"POT-Creation-Date: 2021-04-20 10:03-0400\n"
+"PO-Revision-Date: 2021-04-20 10:03-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,23 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: dialog.js:38
+#: dialog.js:38 dialog.js:40
 msgid "Ok"
 msgstr ""
 
-#: dialog.js:43
+#: dialog.js:43 dialog.js:44
 msgid "Cancel"
 msgstr ""
 
-#: dialog.js:72
+#: dialog.js:72 dialog.js:74
 msgid "Password label"
 msgstr ""
 
-#: dialog.js:75
+#: dialog.js:75 dialog.js:85
 msgid "Enter name for the password entry"
 msgstr ""
 
-#: dialog.js:79
+#: dialog.js:79 dialog.js:89
 msgid "Enter new name for the password entry"
 msgstr ""
 
@@ -41,13 +41,21 @@ msgstr ""
 msgid "Clippie"
 msgstr ""
 
-#: menus.js:67 menus.js:68 menus.js:73 menus.js:91 menus.js:96
+#: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:91 menus.js:96
 msgid "More…"
 msgstr ""
 
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
-#: menus.js:313
+#: menus.js:313 menus.js:333 menus.js:334 menus.js:335
 msgid "Search"
+msgstr ""
+
+#: menus.js:430 menus.js:431 menus.js:432
+msgid "Histories"
+msgstr ""
+
+#: menus.js:509 menus.js:510 menus.js:511
+msgid "Create history"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26
@@ -60,4 +68,8 @@ msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:34
 msgid "Information to restore state after restart"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:38
+msgid "Support gpaste histories"
 msgstr ""

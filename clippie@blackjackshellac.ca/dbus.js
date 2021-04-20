@@ -75,6 +75,26 @@ var DBusGPaste = class DBusGPaste {
 
   }
 
+  listHistories() {
+    try {
+      let list = this.gpaste_proxy.ListHistoriesSync();
+      return list[0];
+    } catch (e) {
+      this.logger.error('failed to load histories: %s', e.toString());
+    }
+    return [];
+  }
+
+  getHistoryName() {
+    try {
+      let name = this.gpaste_proxy.GetHistoryNameSync();
+      return name[0];
+    } catch (e) {
+      this.logger.error('failed to get current history name: %s', e.toString());
+    }
+    return undefined;
+  }
+
   daemonReexec() {
     this.gpaste_proxy.ReexecuteSync();
   }

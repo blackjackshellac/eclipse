@@ -33,5 +33,9 @@
       <default>'{}'</default>
       <summary>Information to restore state after restart</summary>
     </key>
+    <key name="show-histories" type="b">
+      <default>false</default>
+      <summary>Support gpaste histories</summary>
+    </key>
   </schema>
 </schemalist>

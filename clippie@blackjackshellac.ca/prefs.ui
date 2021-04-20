@@ -64,6 +64,18 @@
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="debug-tooltip">Enable debugging output</property>
   </object>
+  <object class="GtkLabel" id="show_histories_text">
+    <property name="label" translatable="yes" context="show-histories-text">Show history menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="show_histories">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
+  </object>
   <object class="GtkLabel" id="track_changes_text">
     <property name="label" translatable="yes" context="track-changes-text">GPaste track changes</property>
     <property name="visible">True</property>
