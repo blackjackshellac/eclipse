@@ -66,6 +66,14 @@
   border-bottom: 1px;
 }
 
+.clippie-history-clear-icon {
+  border-left: 5px;
+}
+
+.clippie-history-delete-icon {
+  border-left: 10px;
+}
+
 .clippie-menu-delete-icon {
   border-left: 10px;
   icon-size: 1em;

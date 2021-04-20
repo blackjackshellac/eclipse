@@ -358,10 +358,11 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       child: this._icon
     });
 
-    this._prefs.connect('button_press_event', (btn, event) => {
-      logger.debug("mouse button pressed");
+    this._prefs.connect('clicked', (btn, clicked_button) => {
+      logger.debug("mouse button pressed %d", clicked_button);
       ExtensionUtils.openPrefs();
       this.clippie_menu.menu.close();
+      global.stage.set_key_focus(null);
     });
 
     this._prefs.connect('enter_event', (btn, event) => {
@@ -428,7 +429,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 var ClippieHistoryMenu = GObject.registerClass(
 class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
   _init(clippie_menu) {
-    super._init(_("Histories"));
+    super._init(_("History [")+clippie_menu.clippie.dbus_gpaste.getHistoryName()+"]");
 
     logger.debug("Creating History SubMenu popup");
 
@@ -461,18 +462,11 @@ class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
   }
 
   rebuild() {
-    let list = this.clippie.dbus_gpaste.listHistories();
+    let list = this.clippie.dbus_gpaste.listHistories().sort();
     let current = this.clippie.dbus_gpaste.getHistoryName();
-    if (current) {
-      let item = new ClippieHistoryItem(current, this.menu);
-    }
-    Utils.logObjectPretty(list);
+    //Utils.logObjectPretty(list);
     for (let i=0; i < list.length; i++) {
-      if (current === list[i]) {
-        continue;
-      }
-      logger.debug(list[i]);
-      let item = new ClippieHistoryItem(list[i], this.menu);
+      let item = new ClippieHistoryItem(list[i], this.menu, this, current === list[i]);
       this.clippie_menu._historyMenu.menu.addMenuItem(item);
     }
   }
@@ -515,7 +509,12 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
     etext.set_activatable(true);
     etext.set_editable(true);
     etext.connect('activate', (etext) => {
-      logger.debug("New history %s", etext.get_text());
+      let name=etext.get_text();
+      if (this.clippie.dbus_gpaste.switchHistory(name)) {
+        logger.debug("Created new history %s", name);
+        this.clippie_menu.rebuild(true);
+        this.menu.close();
+      }
     });
 
     layout.add_child(this._entry);
@@ -558,20 +557,135 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
 
 var ClippieHistoryItem = GObject.registerClass(
 class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
-  _init(name, menu) {
-    super._init(name, { reactive: true, can_focus: true });
+  _init(name, menu, clippie_menu, current) {
+    super._init("", { reactive: true, can_focus: true });
 
     this._menu = menu;
+    this._clippie_menu = clippie_menu;
+    this._clippie = clippie_menu.clippie;
+
+    var layout = new St.BoxLayout({
+      style_class: 'clippie-search-menu',
+      pack_start: false,
+      x_expand: true,
+      y_expand: false,
+      x_align: St.Align.START,
+      vertical: false
+    });
+
+    this.add(layout);
+
+    this._name = new St.Label({
+      style_class: 'clippie-menu-content',
+      x_expand: true,
+      y_expand: false,
+      track_hover: false,
+      x_align: St.Align.START,
+      text: name
+    });
+
+    this._clear_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'edit-clear-symbolic',
+      icon_size: 20
+    });
+
+    this._clear = new St.Button( {
+      x_expand: false,
+      y_expand: false,
+      can_focus: true,
+      x_align: St.Align.END,
+      y_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-history-clear-icon',
+      child: this._clear_icon
+    });
+
+    this._clear.connect('enter_event', (btn, event) => {
+      btn.set_label(_("Clear"));
+    });
+
+    this._clear.connect('leave_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._clear_icon);
+    });
+
+    this._clear.connect('button_press_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._clear_icon);
+    });
+
+    this._clear.connect('clicked', (btn) => {
+      let name = this._name.get_text();
+      if (this.clippie.dbus_gpaste.emptyHistory(name)) {
+        logger.debug("cleared %s", name);
+      }
+    });
+
+    this._delete_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'edit-delete-symbolic',
+      icon_size: 20
+    });
+
+    this._delete = new St.Button( {
+      x_expand: false,
+      y_expand: false,
+      can_focus: true,
+      x_align: St.Align.END,
+      y_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-history-delete-icon',
+      child: this._delete_icon
+    });
+
+    this._delete.connect('enter_event', (btn, event) => {
+      btn.set_label(_('Delete'));
+    });
+
+    this._delete.connect('leave_event', (btn, event) => {
+      btn.set_label('');
+      btn.set_child(this._delete_icon);
+    });
+
+    this._delete.connect('button_press_event', (btn, event) => {
+      //btn.set_label(undefined);
+      btn.set_label('');
+      btn.set_child(this._delete_icon);
+    });
+
+    this._delete.connect('clicked', (btn) => {
+      let name = this._name.get_text();
+      if (this.clippie.dbus_gpaste.deleteHistory(name)) {
+        logger.debug("deleted %s", name);
+        this.destroy();
+      }
+    });
+
+    layout.add_child(this._name);
+    layout.add_child(this._clear);
+    layout.add_child(this._delete);
 
     this._menu.addMenuItem(this);
 
-    this._menu.connect('open-state-changed', (self, open) => {
-      logger.debug("menu open="+open);
-      if (open) {
-      } else {
-
-      }
+    this.connect('activate', (self) => {
+      let name = this._name.get_text();
+      logger.debug("clicked item=%s", name);
+      this.clippie.dbus_gpaste.switchHistory(name);
+      this.clippie_menu.menu.open();
     });
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get clippie() {
+    return this._clippie;
   }
 });
 

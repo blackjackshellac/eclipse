@@ -95,6 +95,33 @@ var DBusGPaste = class DBusGPaste {
     return undefined;
   }
 
+  deleteHistory(name) {
+    try {
+      this.gpaste_proxy.DeleteHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
+  emptyHistory(name) {
+    try {
+      this.gpaste_proxy.EmptyHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
+  switchHistory(name) {
+    try {
+      this.gpaste_proxy.SwitchHistorySync(name);
+      return true;
+    } catch (e) {
+    }
+    return false;
+  }
+
   daemonReexec() {
     this.gpaste_proxy.ReexecuteSync();
   }
