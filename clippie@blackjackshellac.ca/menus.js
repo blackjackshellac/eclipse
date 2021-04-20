@@ -433,6 +433,9 @@ class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
 
     logger.debug("Creating History SubMenu popup");
 
+    // default
+    //this.add_style_class_name('popup-submenu-menu-item');
+
     this._clippie_menu = clippie_menu;
     this._clippie = this.clippie_menu.clippie;
 
@@ -483,7 +486,7 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
     this._clippie = this.clippie_menu.clippie;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-search-menu',
+      style_class: 'clippie-history-menu-item',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -498,7 +501,7 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-search-entry',
+      style_class: 'clippie-create-history-entry',
       x_align: St.Align.START,
       y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
       hint_text: _("Create history")
@@ -574,6 +577,21 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
     });
 
     this.add(layout);
+
+    let size=this.clippie.dbus_gpaste.getHistorySize(name);
+    if (size === undefined) {
+      size=0;
+    }
+    this._size = new St.Label({
+      style_class: 'clippie-history-size',
+      x_expand: false,
+      y_expand: false,
+      track_hover: false,
+      can_focus: false,
+      x_align: St.Align.START,
+      text: ""+size
+    });
+    this._size.set_text("%03d".format(size));
 
     this._name = new St.Label({
       style_class: 'clippie-menu-content',
@@ -666,6 +684,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       }
     });
 
+    layout.add_child(this._size);
     layout.add_child(this._name);
     layout.add_child(this._clear);
     layout.add_child(this._delete);

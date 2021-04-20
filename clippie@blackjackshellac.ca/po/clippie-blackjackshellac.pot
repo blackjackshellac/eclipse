@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 10:03-0400\n"
-"PO-Revision-Date: 2021-04-20 10:03-0400\n"
+"POT-Creation-Date: 2021-04-20 16:59-0400\n"
+"PO-Revision-Date: 2021-04-20 16:59-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -54,8 +54,20 @@ msgstr ""
 msgid "Histories"
 msgstr ""
 
-#: menus.js:509 menus.js:510 menus.js:511
+#: menus.js:432
+msgid "History ["
+msgstr ""
+
+#: menus.js:504 menus.js:507 menus.js:509 menus.js:510 menus.js:511
 msgid "Create history"
+msgstr ""
+
+#: menus.js:606 menus.js:624
+msgid "Clear"
+msgstr ""
+
+#: menus.js:647 menus.js:665
+msgid "Delete"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26

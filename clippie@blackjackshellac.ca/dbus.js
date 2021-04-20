@@ -95,6 +95,16 @@ var DBusGPaste = class DBusGPaste {
     return undefined;
   }
 
+  getHistorySize(name) {
+    try {
+      let size = this.gpaste_proxy.GetHistorySizeSync(name);
+      return size;
+    } catch (e) {
+      this.logger.error('failed to get history %s size: %s', name, e.toString());
+    }
+    return undefined;
+  }
+
   deleteHistory(name) {
     try {
       this.gpaste_proxy.DeleteHistorySync(name);
