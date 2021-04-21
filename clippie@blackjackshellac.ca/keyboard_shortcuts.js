@@ -69,7 +69,7 @@ var KeyboardShortcuts = class KeyboardShortcuts {
   }
 
   lookupGrabber(accelerator) {
-    Utils.logObjectPretty(this._grabbers);
+    //Utils.logObjectPretty(this._grabbers);
     for (const [action, grabber] of Object.entries(this._grabbers)) {
       if (grabber.accelerator === accelerator) {
         return [ action, grabber ];
