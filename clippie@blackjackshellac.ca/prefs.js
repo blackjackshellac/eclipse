@@ -95,6 +95,8 @@ class PreferencesBuilder {
     this._daemon_reexec = this._bo('daemon_reexec');
     this._gpaste_ui = this._bo('gpaste_ui');
 
+    this._msg_text = this._bo('msg_text');
+
     if (shellVersion >= 40) {
       // this._prefs_box.append(this._title);
       // grids are inside of frames now in prefs.ui
@@ -147,11 +149,13 @@ class PreferencesBuilder {
     this._daemon_reexec.connect('clicked', (btn) => {
       this.logger.debug('Run dbus gpaste method Reexecute()');
       this.dbus_gpaste.daemonReexec();
+      this._msg_text.set_label(_("GPaste deamon restarted"));
     });
 
     this._gpaste_ui.connect('clicked', (btn) => {
       this.logger.debug('Launch the GPaste preferences UI');
       Utils.spawn(this._gpaste_client+" ui");
+      this._msg_text.set_label(_("Launched gpaste-client ui"));
     });
 
     // gsettings get org.gnome.GPaste track-changes
