@@ -115,8 +115,22 @@
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
   </object>
+  <object class="GtkLabel" id="accel_enable_text">
+    <property name="label" translatable="yes" context="accel-enable-text">Enable keyboard shortcuts</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="accel_enable">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="accel-enable">Enable keyboard shortcuts</property>
+  </object>
 
-  <!-- gpaste option controls -->
+
+    <!-- gpaste option controls -->
   <object class="GtkLabel" id="track_changes_text">
     <property name="label" translatable="yes" context="track-changes-text">GPaste track changes</property>
     <property name="visible">True</property>

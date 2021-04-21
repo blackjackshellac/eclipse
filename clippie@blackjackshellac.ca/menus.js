@@ -160,6 +160,18 @@ var ClippieMenu = class ClippieMenu {
       this.items.splice(index, 1);
     }
   }
+
+  open() {
+    this.menu.open();
+  }
+
+  history_menu_open(open=true) {
+    this.menu.open();
+    if (!this.historyMenu) {
+      this._historyMenu = new ClippieHistoryMenu(this);
+    }
+    this.historyMenu.setSubmenuShown(open);
+  }
 }
 
 var ClipMenuItem = GObject.registerClass(
@@ -515,7 +527,6 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
       if (this.clippie.dbus_gpaste.switchHistory(name)) {
         logger.debug("Created new history %s", name);
         this.clippie_menu.rebuild(true);
-        this.menu.close();
       }
     });
 
@@ -523,19 +534,6 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
     this.add(layout);
 
     history_menu.menu.addMenuItem(this);
-
-    // this.menu.connect('open-state-changed', (self, open) => {
-    //   logger.debug("menu open="+open);
-    //   if (open) {
-        //this.build();
-    //     this.rebuild();
-    //     global.stage.set_key_focus(this._entry);
-    //   } else {
-    //     global.stage.set_key_focus(null);
-    //     this._menu.removeAll();
-    //   }
-    // });
-
   }
 
 
@@ -696,7 +694,9 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       if (name !== current) {
         logger.debug("clicked item=%s", name);
         this.clippie.dbus_gpaste.switchHistory(name);
-        this.clippie_menu.menu.open();
+        this.clippie.indicator.clippie_menu.history_menu_open(false);
+        this.clippie.indicator.clippie_menu.rebuild();
+        //this.clippie_menu.history_menu_open(false);
       } else {
         // don't switch histories if there is no change
         // mostly to avoid deleting password

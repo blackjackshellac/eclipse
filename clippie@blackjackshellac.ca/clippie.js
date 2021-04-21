@@ -78,7 +78,7 @@ var Clippie = class Clippie extends Array {
 
     clippieInstance.logger.info("Attaching indicator, size=%d items", clippieInstance.length);
 
-    clippieInstance.indicator = indicator;
+    clippieInstance._indicator = indicator;
 
     clippieInstance.attached = true;
 
@@ -92,7 +92,7 @@ var Clippie = class Clippie extends Array {
   static detach() {
     clippieInstance.logger.info("Detaching indicator from Clippie");
     clippieInstance.attached = false;
-    clippieInstance.indicator = undefined;
+    clippieInstance._indicator = undefined;
     clippieInstance._dbus_gpaste = undefined;
   }
 
@@ -114,6 +114,10 @@ var Clippie = class Clippie extends Array {
 
   set settings(v) {
     this._settings = v;
+  }
+
+  get indicator() {
+    return this._indicator;
   }
 
   restore_state() {

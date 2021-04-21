@@ -147,4 +147,28 @@ var Settings = class Settings {
   set show_histories(bool) {
     this.settings.set_boolean('show-histories', bool);
   }
+
+  get accel_enable() {
+    return this.settings.get_boolean('accel-enable');
+  }
+
+  set accel_enable(bool) {
+    this.settings.set_boolean('accel-enable', bool);
+  }
+
+  get accel_show_menu() {
+    return this.settings.get_string('accel-show-menu');
+  }
+
+  set accel_show_menu(accel) {
+    this.settings.set_string('accel-show-menu', accel);
+  }
+
+  get accel_show_history() {
+    return this.settings.get_string('accel-show-history');
+  }
+
+  set accel_show_history(accel) {
+    this.settings.set_string('accel-show-history', accel);
+  }
 };

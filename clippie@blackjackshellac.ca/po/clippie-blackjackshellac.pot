@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 06:44-0400\n"
-"PO-Revision-Date: 2021-04-21 06:44-0400\n"
+"POT-Creation-Date: 2021-04-21 12:07-0400\n"
+"PO-Revision-Date: 2021-04-21 12:07-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "Enter new name for the password entry"
 msgstr ""
 
-#: indicator.js:38
+#: indicator.js:38 indicator.js:39
 msgid "Clippie"
 msgstr ""
 
@@ -71,6 +71,14 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+#: prefs.js:154
+msgid "GPaste deamon restarted"
+msgstr ""
+
+#: prefs.js:160
+msgid "Launched gpaste-client ui"
+msgstr ""
+
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26
 msgid "Turn on debugging"
 msgstr ""
@@ -85,4 +93,16 @@ msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:38
 msgid "Support gpaste histories"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:42
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:46
+msgid "Keyboard shortcut for showing menu"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:50
+msgid "Keyboard shortcut for showing history menu"
 msgstr ""

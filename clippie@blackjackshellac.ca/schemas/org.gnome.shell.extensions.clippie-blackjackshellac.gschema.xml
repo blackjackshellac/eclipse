@@ -37,5 +37,17 @@
       <default>false</default>
       <summary>Support gpaste histories</summary>
     </key>
+    <key name="accel-enable" type="b">
+      <default>false</default>
+      <summary>Enable keyboard shortcuts</summary>
+    </key>
+    <key name="accel-show-menu" type="s">
+      <default><![CDATA['<ctrl><super>M']]></default>
+      <summary>Keyboard shortcut for showing menu</summary>
+    </key>
+    <key name="accel-show-history" type="s">
+      <default><![CDATA['<ctrl><super>H']]></default>
+      <summary>Keyboard shortcut for showing history menu</summary>
+    </key>
   </schema>
 </schemalist>

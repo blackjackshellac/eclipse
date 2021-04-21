@@ -90,11 +90,6 @@ class PreferencesBuilder {
 
     this._clippie_grid = this._bo('clippie_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
-
-    this._track_changes = this._bo('track_changes');
-    this._daemon_reexec = this._bo('daemon_reexec');
-    this._gpaste_ui = this._bo('gpaste_ui');
-
     this._msg_text = this._bo('msg_text');
 
     if (shellVersion >= 40) {
@@ -112,18 +107,21 @@ class PreferencesBuilder {
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
       this._title.add_css_class('prefs-title');
-    } else {
-      // pack_start(child, expand, fill, padding)
-      // this._prefs_box.pack_start(this._title, false, false, 10);
-      // this._prefs_box.pack_start(this._clippie_grid, false, false, 10);
-      // this._prefs_box.pack_start(this._gpaste_grid, false, false, 10);
     }
+
+    this._accel_enable = this._bo('accel_enable');
 
     // col, row, col_span, row_span
     this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1);
     this._clippie_grid.attach(this._bo('show_histories'), 1, 0, 1, 1)
     this._clippie_grid.attach(this._bo('debug_text'), 0, 1, 1, 1);
     this._clippie_grid.attach(this._bo('debug'),      1, 1, 1, 1);
+    this._clippie_grid.attach(this._bo('accel_enable_text'), 0, 2, 1, 1);
+    this._clippie_grid.attach(this._accel_enable, 1, 2, 1, 1);
+
+    this._track_changes = this._bo('track_changes');
+    this._daemon_reexec = this._bo('daemon_reexec');
+    this._gpaste_ui = this._bo('gpaste_ui');
 
     this._gpaste_grid.attach(this._bo('track_changes_text'), 0, 0, 1, 1);
     this._gpaste_grid.attach(this._track_changes, 1, 0, 1, 1);
@@ -156,6 +154,11 @@ class PreferencesBuilder {
       this.logger.debug('Launch the GPaste preferences UI');
       Utils.execCommandAsync([this._gpaste_client, "ui"]);
       this._msg_text.set_label(_("Launched gpaste-client ui"));
+    });
+
+    this._accel_enable.connect('notify::active', (sw) => {
+      this.logger.debug('accel_enable=%s', sw.get_active());
+      return true;
     });
 
     // gsettings get org.gnome.GPaste track-changes
@@ -202,6 +205,7 @@ class PreferencesBuilder {
     //this._bo_ssb('accel_enable', 'active');
     this._bo_ssb('debug', 'active');
     this._bo_ssb('show_histories', 'active');
+    this._bo_ssb('accel_enable', 'active');
   }
 }
 
