@@ -79,14 +79,12 @@ class ClippieIndicator extends PanelMenu.Button {
   enable_keyboard_shortcuts() {
     this.accel.listenFor(this.settings.accel_show_menu, () => {
       this.logger.debug("Show clippie menu");
-      // TODO
       this.clippie_menu.open();
     });
 
     this.accel.listenFor(this.settings.accel_show_history, () => {
       this.logger.debug("Show clippie history");
-      // TODO
-      this.clippie_menu.history_menu_open();
+      this.clippie_menu.open({history:true});
     });
   }
 

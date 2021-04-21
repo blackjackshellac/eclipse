@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 06:44-0400\n"
+"POT-Creation-Date: 2021-04-21 15:19-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -33,8 +33,16 @@ msgstr ""
 msgid "Support gpaste histories"
 msgstr ""
 
-#: ../indicator.js:38
-msgid "Clippie"
+#: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:42
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:46
+msgid "Keyboard shortcut for showing menu"
+msgstr ""
+
+#: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:50
+msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
 #: ../dialog.js:40
@@ -57,71 +65,113 @@ msgstr ""
 msgid "Enter new name for the password entry"
 msgstr ""
 
-#: ../prefs.ui:52
+#: ../prefs.ui:43
 msgctxt "prefs-title"
-msgid "Clippie Preferences"
+msgid "Preferences"
 msgstr ""
 
-#: ../prefs.ui:55
+#: ../prefs.ui:48
+msgctxt "clippie-frame"
+msgid "Clippie options"
+msgstr ""
+
+#: ../prefs.ui:65
+msgctxt "clippie-frame"
+msgid "GPaste options"
+msgstr ""
+
+#: ../prefs.ui:93
 msgctxt "debug-text"
 msgid "Debug"
 msgstr ""
 
-#: ../prefs.ui:65
+#: ../prefs.ui:103
 msgctxt "debug-tooltip"
 msgid "Enable debugging output"
 msgstr ""
 
-#: ../prefs.ui:68
+#: ../prefs.ui:106
 msgctxt "show-histories-text"
 msgid "Show history menu"
 msgstr ""
 
-#: ../prefs.ui:77
+#: ../prefs.ui:116
 msgctxt "show-histories-tooltip"
 msgid "Show history menu"
 msgstr ""
 
-#: ../prefs.ui:80
+#: ../prefs.ui:119
+msgctxt "accel-enable-text"
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: ../prefs.ui:129
+msgctxt "accel-enable"
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: ../prefs.ui:135
 msgctxt "track-changes-text"
 msgid "GPaste track changes"
 msgstr ""
 
-#: ../prefs.ui:90
+#: ../prefs.ui:145
 msgctxt "track-changes-tooltip"
 msgid "Enable debugging output"
 msgstr ""
 
-#: ../prefs.ui:95
+#: ../prefs.ui:150
 msgctxt "daemon-reexec"
 msgid "GPaste daemon restart"
 msgstr ""
 
-#: ../prefs.ui:96
+#: ../prefs.ui:151
 msgctxt "daemon-reexec-tooltip"
 msgid "Restart the gpaste-client daemon"
+msgstr ""
+
+#: ../prefs.ui:156
+msgctxt "daemon-reexec"
+msgid "GPaste Settings"
+msgstr ""
+
+#: ../prefs.ui:157
+msgctxt "daemon-reexec-tooltip"
+msgid "Open the GPaste settings UI"
+msgstr ""
+
+#: ../prefs.js:150
+msgid "GPaste deamon restarted"
+msgstr ""
+
+#: ../prefs.js:156
+msgid "Launched gpaste-client ui"
+msgstr ""
+
+#: ../indicator.js:39
+msgid "Clippie"
 msgstr ""
 
 #: ../menus.js:75
 msgid "More…"
 msgstr ""
 
-#: ../menus.js:334
+#: ../menus.js:352
 msgid "Search"
 msgstr ""
 
-#: ../menus.js:433
+#: ../menus.js:451
 msgid "History ["
 msgstr ""
 
-#: ../menus.js:506
+#: ../menus.js:524
 msgid "Create history"
 msgstr ""
 
-#: ../menus.js:623
+#: ../menus.js:627
 msgid "Clear"
 msgstr ""
 
-#: ../menus.js:664
+#: ../menus.js:668
 msgid "Delete"
 msgstr ""

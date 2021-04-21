@@ -85,11 +85,11 @@ var ClippieMenu = class ClippieMenu {
     this.items.push(item);
   }
 
-  rebuild(load=true) {
+  rebuild(load=true, history=false) {
     logger.debug('Refreshing all menu items. history=%s', this.clippie.settings.show_histories);
     this.menu.removeAll();
 
-    if (this.clippie.settings.show_histories) {
+    if (history || this.clippie.settings.show_histories) {
       this._historyMenu = new ClippieHistoryMenu(this);
     }
     this._searchItem = new ClippieSearchItem(this);
@@ -161,8 +161,14 @@ var ClippieMenu = class ClippieMenu {
     }
   }
 
-  open() {
-    this.menu.open();
+  open(params={history:false}) {
+    if (params.history) {
+      this.rebuild(false, true);
+      this.menu.open();
+      this.history_menu_open(true);
+    } else {
+      this.menu.open();
+    }
   }
 
   history_menu_open(open=true) {
