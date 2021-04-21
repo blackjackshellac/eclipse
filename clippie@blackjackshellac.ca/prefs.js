@@ -154,7 +154,7 @@ class PreferencesBuilder {
 
     this._gpaste_ui.connect('clicked', (btn) => {
       this.logger.debug('Launch the GPaste preferences UI');
-      Utils.spawn(this._gpaste_client+" ui");
+      Utils.execCommandAsync([this._gpaste_client, "ui"]);
       this._msg_text.set_label(_("Launched gpaste-client ui"));
     });
 
