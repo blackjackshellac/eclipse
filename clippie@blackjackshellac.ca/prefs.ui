@@ -19,38 +19,67 @@
 */
 -->
 <interface domain="clippie-blackjackshellac">
-  <!--<requires lib="gtk+" version="3.24"/>-->
   <!-- interface-license-type gplv3 -->
-  <!-- interface-name Clippie -->
+  <!-- interface-name Cippie -->
   <!-- interface-description Clipboard interface to gpaste-client output -->
   <!-- interface-copyright 2021, Steeve McCauley -->
   <!-- interface-authors Steeve McCauley -->
   <object class="GtkBox" id="prefs_box">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
-    <property name="spacing">10</property>
+    <property name="spacing">15</property>
     <property name="orientation">vertical</property>
-    <property name="margin-top">20</property>
-    <property name="margin-start">10</property>
-    <property name="margin-end">10</property>
-    <property name="hexpand">True</property>
-  </object>
-  <object class="GtkGrid" id="prefs_grid">
-    <property name="visible">True</property>
-    <property name="can-focus">True</property>
-    <property name="column-spacing">2</property>
-    <property name="row-spacing">2</property>
     <property name="margin-top">10</property>
     <property name="margin-start">10</property>
     <property name="margin-end">10</property>
+    <property name="margin-bottom">10</property>
+    <property name="hexpand">True</property>
+    <child>
+      <object class="GtkLabel" id="title">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="margin-top">5</property>
+        <property name="margin-start">5</property>
+        <property name="label" translatable="yes" context="prefs-title">Preferences</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkFrame" id="clippie frame">
+        <property name="label" translatable="yes" context="clippie-frame">Clippie options</property>
+        <child>
+          <object class="GtkGrid" id="clippie_grid">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="column-spacing">10</property>
+            <property name="row-spacing">5</property>
+            <property name="margin-top">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-bottom">10</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkFrame" id="gpaste frame">
+        <property name="label" translatable="yes" context="clippie-frame">GPaste options</property>
+        <child>
+          <object class="GtkGrid" id="gpaste_grid">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="column-spacing">10</property>
+            <property name="row-spacing">5</property>
+            <property name="margin-top">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-bottom">10</property>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
-  <object class="GtkLabel" id="title">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="margin-top">5</property>
-    <property name="margin-start">5</property>
-    <property name="label" translatable="yes" context="prefs-title">Clippie Preferences</property>
-  </object>
+
+  <!-- clippie option controls -->
   <object class="GtkLabel" id="debug_text">
     <property name="label" translatable="yes" context="debug-text">Debug</property>
     <property name="visible">True</property>
@@ -74,8 +103,11 @@
   <object class="GtkSwitch" id="show_histories">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
+    <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
   </object>
+
+  <!-- gpaste option controls -->
   <object class="GtkLabel" id="track_changes_text">
     <property name="label" translatable="yes" context="track-changes-text">GPaste track changes</property>
     <property name="visible">True</property>
@@ -95,5 +127,12 @@
     <property name="label" translatable="yes" context="daemon-reexec">GPaste daemon restart</property>
     <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Restart the gpaste-client daemon</property>
   </object>
+  <object class="GtkButton" id="gpaste_ui">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label" translatable="yes" context="daemon-reexec">GPaste Settings</property>
+    <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Open the GPaste settings UI</property>
+  </object>
+
 </interface>
 

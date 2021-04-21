@@ -43,6 +43,7 @@ class PreferencesBuilder {
     this.logger = new Logger('cl_prefs', this._settings);
 
     this._gsettings = Utils.exec_path('gsettings');
+    this._gpaste_client = Utils.exec_path('gpaste-client');
 
     if (this._gsettings === null) {
       this.logger.error('gsettings not found');
@@ -70,7 +71,6 @@ class PreferencesBuilder {
   }
 
   build() {
-
     this.logger.info("Create preferences widget shell version %s", shellVersion < 40 ? "3.38 or less" : ""+shellVersion);
 
     this._builder.add_from_file(Me.path + '/prefs.ui');
@@ -86,14 +86,20 @@ class PreferencesBuilder {
       this._widget.set_child(this._viewport);
     }
 
-    this._prefs_grid = this._bo('prefs_grid');
     this._title = this._bo('title');
+
+    this._clippie_grid = this._bo('clippie_grid');
+    this._gpaste_grid = this._bo('gpaste_grid');
+
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
+    this._gpaste_ui = this._bo('gpaste_ui');
 
     if (shellVersion >= 40) {
-      this._prefs_box.append(this._title);
-      this._prefs_box.append(this._prefs_grid);
+      // this._prefs_box.append(this._title);
+      // grids are inside of frames now in prefs.ui
+      // this._prefs_box.append(this._clippie_grid);
+      // this._prefs_box.append(this._gpaste_grid);
 
       let provider = new Gtk.CssProvider();
 
@@ -106,18 +112,21 @@ class PreferencesBuilder {
       this._title.add_css_class('prefs-title');
     } else {
       // pack_start(child, expand, fill, padding)
-      this._prefs_box.pack_start(this._title, false, false, 10);
-      this._prefs_box.pack_start(this._prefs_grid, false, false, 10);
+      // this._prefs_box.pack_start(this._title, false, false, 10);
+      // this._prefs_box.pack_start(this._clippie_grid, false, false, 10);
+      // this._prefs_box.pack_start(this._gpaste_grid, false, false, 10);
     }
 
     // col, row, col_span, row_span
-    this._prefs_grid.attach(this._bo('track_changes_text'), 0, 1, 1, 1);
-    this._prefs_grid.attach(this._track_changes, 1, 1, 1, 1);
-    this._prefs_grid.attach(this._bo('show_histories_text'), 0, 2, 1, 1);
-    this._prefs_grid.attach(this._bo('show_histories'), 1, 2, 1, 1)
-    this._prefs_grid.attach(this._bo('debug_text'), 0, 3, 1, 1);
-    this._prefs_grid.attach(this._bo('debug'),      1, 3, 1, 1);
-    this._prefs_grid.attach(this._daemon_reexec,    0, 4, 2, 1);
+    this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1);
+    this._clippie_grid.attach(this._bo('show_histories'), 1, 0, 1, 1)
+    this._clippie_grid.attach(this._bo('debug_text'), 0, 1, 1, 1);
+    this._clippie_grid.attach(this._bo('debug'),      1, 1, 1, 1);
+
+    this._gpaste_grid.attach(this._bo('track_changes_text'), 0, 0, 1, 1);
+    this._gpaste_grid.attach(this._track_changes, 1, 0, 1, 1);
+    this._gpaste_grid.attach(this._daemon_reexec,    0, 1, 2, 1);
+    this._gpaste_grid.attach(this._gpaste_ui, 0, 2, 2, 1);
 
     let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.get_track_changes);
     if (exit_status === 0) {
@@ -138,6 +147,11 @@ class PreferencesBuilder {
     this._daemon_reexec.connect('clicked', (btn) => {
       this.logger.debug('Run dbus gpaste method Reexecute()');
       this.dbus_gpaste.daemonReexec();
+    });
+
+    this._gpaste_ui.connect('clicked', (btn) => {
+      this.logger.debug('Launch the GPaste preferences UI');
+      Utils.spawn(this._gpaste_client+" ui");
     });
 
     // gsettings get org.gnome.GPaste track-changes
