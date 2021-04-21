@@ -31,7 +31,6 @@ const PopupMenu = imports.ui.popupMenu;
 const Clippie = Me.imports.clippie.Clippie;
 const ClippieMenu = Me.imports.menus.ClippieMenu;
 const Logger = Me.imports.logger.Logger;
-const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 
 var ClippieIndicator = GObject.registerClass(
 class ClippieIndicator extends PanelMenu.Button {
@@ -44,17 +43,6 @@ class ClippieIndicator extends PanelMenu.Button {
     this.logger = new Logger('cl_indicator', this.settings);
     this.logger.debug('Initializing extension');
 
-    this.accel = new KeyboardShortcuts(this.settings);
-
-    this.settings.settings.connect('changed::accel-enable', () => {
-      this.logger.debug('accel-enable has changed');
-      this.toggle_keyboard_shortcuts();
-    });
-
-    if (this.settings.accel_enable) {
-      this.enable_keyboard_shortcuts();
-    }
-
     let box = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
     box.add_child(new St.Icon({
         icon_name: 'view-paged-symbolic',
@@ -66,31 +54,6 @@ class ClippieIndicator extends PanelMenu.Button {
     this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
     // set the filter to an empty string to prevent refreshing on startup
     this._clippie_menu.build("");
-  }
-
-  toggle_keyboard_shortcuts() {
-    if (this.settings.accel_enable) {
-      this.enable_keyboard_shortcuts();
-    } else {
-      this.disable_keyboard_shortcuts();
-    }
-  }
-
-  enable_keyboard_shortcuts() {
-    this.accel.listenFor(this.settings.accel_show_menu, () => {
-      this.logger.debug("Show clippie menu");
-      this.clippie_menu.open();
-    });
-
-    this.accel.listenFor(this.settings.accel_show_history, () => {
-      this.logger.debug("Show clippie history");
-      this.clippie_menu.open({history:true});
-    });
-  }
-
-  disable_keyboard_shortcuts() {
-    this.accel.remove(this.settings.accel_show_menu);
-    this.accel.remove(this.settings.accel_show_history);
   }
 
   get settings() {

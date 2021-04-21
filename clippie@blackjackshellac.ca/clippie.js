@@ -32,6 +32,7 @@ const Utils = Me.imports.utils;
 const Settings = Me.imports.settings.Settings;
 const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
+const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 
 var Clippie = class Clippie extends Array {
   constructor(...args) {
@@ -43,6 +44,7 @@ var Clippie = class Clippie extends Array {
 
     this._settings = new Settings();
     this._attached = false;
+    this._accel = new KeyboardShortcuts(this.settings);
 
     this.logger = new Logger('cl_ippie', this.settings);
 
@@ -86,6 +88,15 @@ var Clippie = class Clippie extends Array {
 
     //clippieInstance.refresh();
 
+    clippieInstance.settings.settings.connect('changed::accel-enable', () => {
+      clippieInstance.logger.debug('accel-enable has changed');
+      clippieInstance.toggle_keyboard_shortcuts();
+    });
+
+    if (clippieInstance.settings.accel_enable) {
+      clippieInstance.enable_keyboard_shortcuts();
+    }
+
     return clippieInstance;
   }
 
@@ -94,6 +105,32 @@ var Clippie = class Clippie extends Array {
     clippieInstance.attached = false;
     clippieInstance._indicator = undefined;
     clippieInstance._dbus_gpaste = undefined;
+    clippieInstance.disable_keyboard_shortcuts();
+  }
+
+  toggle_keyboard_shortcuts() {
+    if (this.settings.accel_enable) {
+      this.enable_keyboard_shortcuts();
+    } else {
+      this.disable_keyboard_shortcuts();
+    }
+  }
+
+  enable_keyboard_shortcuts() {
+    this._accel.listenFor(this.settings.accel_show_menu, () => {
+      this.logger.debug("Show clippie menu");
+      this.indicator.clippie_menu.open();
+    });
+
+    this._accel.listenFor(this.settings.accel_show_history, () => {
+      this.logger.debug("Show clippie history");
+      this.indicator.clippie_menu.open({history:true});
+    });
+  }
+
+  disable_keyboard_shortcuts() {
+    this._accel.remove(this.settings.accel_show_menu);
+    this._accel.remove(this.settings.accel_show_history);
   }
 
   get clippie() {
