@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 16:59-0400\n"
+"POT-Creation-Date: 2021-04-21 06:44-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -110,18 +110,18 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: ../menus.js:432
+#: ../menus.js:433
 msgid "History ["
 msgstr ""
 
-#: ../menus.js:507
+#: ../menus.js:506
 msgid "Create history"
 msgstr ""
 
-#: ../menus.js:624
+#: ../menus.js:623
 msgid "Clear"
 msgstr ""
 
-#: ../menus.js:665
+#: ../menus.js:664
 msgid "Delete"
 msgstr ""

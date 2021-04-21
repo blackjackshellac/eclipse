@@ -176,7 +176,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         x_expand: true,
         x_align: St.Align.START,
         pack_start: false,
-        style_class: 'clippie-menu-box'
+        style_class: 'clippie-menu-layout'
       });
       this.add(box);
 
@@ -306,7 +306,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     logger.settings = this.clippie.settings;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-search-menu',
+      style_class: 'clippie-item-layout',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -330,7 +330,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       track_hover: true,
       style_class: 'clippie-search-entry',
       x_align: St.Align.START,
-      y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
       hint_text: _("Search")
     });
     //this._entry.set_hint_text();
@@ -345,7 +345,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       x_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'preferences-system-symbolic',
-      icon_size: 20
+      icon_size: 20,
     });
 
     this._prefs = new St.Button( {
@@ -354,7 +354,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       can_focus: true,
       x_align: St.Align.END,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie_prefs',
+      style_class: 'clippie-prefs-button',
       child: this._icon
     });
 
@@ -382,7 +382,8 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-find-symbolic',
-      icon_size: 20
+      icon_size: 20,
+      style_class: 'clippie-search-icon'
     });
 
     layout.add_child(this._search_icon);
@@ -470,7 +471,7 @@ class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
     //Utils.logObjectPretty(list);
     for (let i=0; i < list.length; i++) {
       let item = new ClippieHistoryItem(list[i], this.menu, this, current === list[i]);
-      this.clippie_menu._historyMenu.menu.addMenuItem(item);
+      this.menu.addMenuItem(item);
     }
   }
 
@@ -493,8 +494,6 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
       x_align: St.Align.START,
       vertical: false
     });
-
-    this.add(layout);
 
     this._entry = new St.Entry( {
       x_expand: true,
@@ -521,9 +520,9 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
     });
 
     layout.add_child(this._entry);
-    this.add_child(this._entry);
+    this.add(layout);
 
-    this.menu.addMenuItem(this);
+    history_menu.menu.addMenuItem(this);
 
     // this.menu.connect('open-state-changed', (self, open) => {
     //   logger.debug("menu open="+open);
@@ -568,7 +567,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
     this._clippie = clippie_menu.clippie;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-search-menu',
+      style_class: 'clippie-item-layout',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -693,9 +692,15 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
 
     this.connect('activate', (self) => {
       let name = this._name.get_text();
-      logger.debug("clicked item=%s", name);
-      this.clippie.dbus_gpaste.switchHistory(name);
-      this.clippie_menu.menu.open();
+      let current = this.clippie.dbus_gpaste.getHistoryName();
+      if (name !== current) {
+        logger.debug("clicked item=%s", name);
+        this.clippie.dbus_gpaste.switchHistory(name);
+        this.clippie_menu.menu.open();
+      } else {
+        // don't switch histories if there is no change
+        // mostly to avoid deleting password
+      }
     });
   }
 

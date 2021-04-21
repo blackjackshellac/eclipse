@@ -27,20 +27,28 @@
 
 .clippie-search-entry {
   /* width: 320px; */
-  padding: 7px 9px;
-  border-radius: 18px;
+  /* padding: 7px 9px; */
+  /* border-radius: 18px; */
+  /* border-right: 10px; */
+  /* border-left: 10px; */
+  vertical-align: middle;
 }
 
-.clippie-search-menu {
+.clippie-item-layout {
   /* padding: 10px; */
   border: 0px;
   vertical-align: middle;
+  width: 20em;
 }
 
-.clippie-prefs {
+.clippie-prefs-button {
   border-right: 0px;
-  border-left: 20px;
+  border-left: 10px;
   vertical-align: middle;
+}
+
+.clippie-search-icon {
+  border-right: 10px;
 }
 
 .clippie-quick-layout {
@@ -48,9 +56,10 @@
   spacing: 5px;
 }
 
-.clippie-menu-box {
+.clippie-menu-layout {
   padding: 0px;
   /*spacing: 10px;*/
+  width: 30em;
 }
 
 .clippie-menu-icon {
@@ -60,14 +69,14 @@
 
 .clippie-menu-label {
   border-right: 10px;
-  font-family: monospace;
+  font-family: sans-serif;
   font-size: smaller;
   border-top: 1px;
   border-bottom: 1px;
 }
 
 .clippie-create-history-entry {
-  vertical-align: middle
+  vertical-align: middle;
 }
 
 .clippie-history-menu-item {
@@ -80,7 +89,7 @@
   border-right: 5px;
   font-weight: normal;
   font-size: smaller;
-  font-family: monospace;
+  font-family: sans-serif;
 }
 
 .clippie-history-clear-icon {
@@ -105,7 +114,7 @@
 .clippie-menu-content {
   font-weight: normal;
   font-size: smaller;
-  font-family: monospace;
+  font-family: sans-serif;
   border-right: 0px;
 }
 
@@ -116,7 +125,7 @@
 .clippie-panel-label {
   font-weight: normal;
   font-stretch: normal;
-  font-family: monospace;
+  font-family: sans-serif;
   font-size: smaller;
 }
 
