@@ -78,7 +78,7 @@ var KeyboardShortcutDialog = class KeyboardShortcutDialog {
 
       this._callback(binding, mask, keycode, keyval);
 
-      this.widget.close();
+      //this.widget.close();
       return Gdk.EVENT_STOP;
     });
 

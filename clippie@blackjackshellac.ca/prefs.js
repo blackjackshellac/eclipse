@@ -120,6 +120,7 @@ class PreferencesBuilder {
     }
 
     this._accel_enable = this._bo('accel_enable');
+    this._test = this._bo('kbsc_test');
 
     // col, row, col_span, row_span
     this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1); // row 0
@@ -130,6 +131,16 @@ class PreferencesBuilder {
 
     this._clippie_grid.attach(this._bo('accel_enable_text'),   0, 2, 1, 1); // row 2
     this._clippie_grid.attach(this._accel_enable,              1, 2, 1, 1);
+    this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
+
+    this._test.connect('clicked', (btn) => {
+      let dialog = new KeyboardShortcutDialog((binding, mask, keycode, keyval) => {
+        this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
+      });
+
+      dialog.set_transient_for(this._widget.get_toplevel());
+      dialog.present();
+    });
 
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
