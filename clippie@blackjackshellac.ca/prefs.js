@@ -30,11 +30,7 @@ const Settings = Me.imports.settings.Settings;
 const Utils = Me.imports.utils;
 const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
-
-// https://gjs.guide/extensions/upgrading/gnome-shell-40.html
-const Config = imports.misc.config;
-const [major] = Config.PACKAGE_VERSION.split('.');
-const shellVersion = Number.parseInt(major);
+const KeyboardShortcutDialog = Me.imports.kb_shortcuts3x.KeyboardShortcutDialog;
 
 class PreferencesBuilder {
   constructor() {
@@ -65,20 +61,21 @@ class PreferencesBuilder {
   }
 
   show() {
-    if (shellVersion < 40) {
+    if (Utils.isGnome3x()) {
       this._widget.show_all();
     }
   }
 
   build() {
-    this.logger.info("Create preferences widget shell version %s", shellVersion < 40 ? "3.38 or less" : ""+shellVersion);
+    this.logger.info("Create preferences widget gnome shell version %s: %s",
+      Utils.gnomeShellVersion, Utils.isGnome3x() ? "less than 40" : "40 or more");
 
     this._builder.add_from_file(Me.path + '/prefs.ui');
     this._prefs_box = this._builder.get_object('prefs_box');
 
     this._viewport = new Gtk.Viewport();
     this._widget = new Gtk.ScrolledWindow();
-    if (shellVersion < 40) {
+    if (Utils.isGnome3x()) {
       this._viewport.add(this._prefs_box);
       this._widget.add(this._viewport);
     } else {
@@ -86,13 +83,26 @@ class PreferencesBuilder {
       this._widget.set_child(this._viewport);
     }
 
+    // https://gjs-docs.gnome.org/gtk30~3.24.26/gtk.widget#signal-key-press-event
+    // https://gjs-docs.gnome.org/gdk30/gdk.eventkey
+    // this._widget.connect('key-press-event', (w, event) => {
+    //   this.logger.debug("key-press-event, w=%s event=%s", Utils.logObjectPretty(w), Utils.logObjectPretty(event));
+      // propogate if false
+
+    //   let dialog = new KeyboardShortcutDialog(this._settings);
+    //   dialog.set_transient_for(this._widget.get_toplevel());
+    //   dialog.present();
+
+    //   return false;
+    // });
+
     this._title = this._bo('title');
 
     this._clippie_grid = this._bo('clippie_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
     this._msg_text = this._bo('msg_text');
 
-    if (shellVersion >= 40) {
+    if (Utils.isGnome40()) {
       // this._prefs_box.append(this._title);
       // grids are inside of frames now in prefs.ui
       // this._prefs_box.append(this._clippie_grid);
@@ -112,21 +122,23 @@ class PreferencesBuilder {
     this._accel_enable = this._bo('accel_enable');
 
     // col, row, col_span, row_span
-    this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1);
-    this._clippie_grid.attach(this._bo('show_histories'), 1, 0, 1, 1)
-    this._clippie_grid.attach(this._bo('debug_text'), 0, 1, 1, 1);
-    this._clippie_grid.attach(this._bo('debug'),      1, 1, 1, 1);
-    this._clippie_grid.attach(this._bo('accel_enable_text'), 0, 2, 1, 1);
-    this._clippie_grid.attach(this._accel_enable, 1, 2, 1, 1);
+    this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1); // row 0
+    this._clippie_grid.attach(this._bo('show_histories'),      1, 0, 1, 1);
+
+    this._clippie_grid.attach(this._bo('debug_text'),          0, 1, 1, 1); // row 1
+    this._clippie_grid.attach(this._bo('debug'),               1, 1, 1, 1);
+
+    this._clippie_grid.attach(this._bo('accel_enable_text'),   0, 2, 1, 1); // row 2
+    this._clippie_grid.attach(this._accel_enable,              1, 2, 1, 1);
 
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
     this._gpaste_ui = this._bo('gpaste_ui');
 
-    this._gpaste_grid.attach(this._bo('track_changes_text'), 0, 0, 1, 1);
-    this._gpaste_grid.attach(this._track_changes, 1, 0, 1, 1);
-    this._gpaste_grid.attach(this._daemon_reexec,    0, 1, 2, 1);
-    this._gpaste_grid.attach(this._gpaste_ui, 0, 2, 2, 1);
+    this._gpaste_grid.attach(this._bo('track_changes_text'),  0, 0, 1, 1);
+    this._gpaste_grid.attach(this._track_changes,             1, 0, 1, 1);
+    this._gpaste_grid.attach(this._daemon_reexec,             0, 1, 2, 1);
+    this._gpaste_grid.attach(this._gpaste_ui,                 0, 2, 2, 1);
 
     let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.get_track_changes);
     if (exit_status === 0) {
@@ -167,6 +179,9 @@ class PreferencesBuilder {
 
     this._bind();
 
+    if (this._bo('show_histories').grab_focus()) {
+      this.logger.debug('set focus to history switch');
+    }
     return this._widget;
   }
 
@@ -213,12 +228,49 @@ function init() {
 
 }
 
+function getTopLevelWindow(w) {
+  while(true) {
+    let t=w.get_parent();
+    if (t) {
+      w=t;
+      continue;
+    }
+    return w;
+  }
+}
+
 function buildPrefsWidget() {
   ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
 
   var preferencesBuilder = new PreferencesBuilder();
   var widget = preferencesBuilder.build();
   preferencesBuilder.show();
+
+  // gtk_widget_get_ancestor(w, GTK_TYPE_WINDOW);
+  // TODO find out where widget types are documented
+  // let window = widget.get_parent();
+  // if (window) {
+  //   window.set_icon_name('view-paged-symbolic');
+  // } else {
+  //   preferencesBuilder.logger.debug("Prefrences widget has no parent");
+  // }
+
+  // widget.connect('state-flags-changed', (w, flags) => {
+    //preferencesBuilder.logger.debug('state flags change %s, %s', w, flags);
+  //   if (flags & Gtk.StateFlags.BACKDROP) {
+  //     w = getTopLevelWindow(w)
+  //     let event_mask = w.get_events();
+  //     preferencesBuilder.logger.debug('In backdrop window %s %s', w, ""+event_mask);
+  //     w.set_events(event_mask & Gdk.EventMask.KEY_PRESS_MASK);
+  //   }
+
+  //   let dialog = new KeyboardShortcutDialog((binding, mask, keycode, keyval) => {
+  //     preferencesBuilder.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
+  //   });
+
+  //   dialog.set_transient_for(widget.get_toplevel());
+  //   dialog.present();
+  // });
 
   return widget;
 }

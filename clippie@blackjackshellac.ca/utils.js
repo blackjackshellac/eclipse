@@ -25,12 +25,26 @@ String.prototype.format = imports.format.format;
 const { Gio, GLib} = imports.gi;
 const ByteArray = imports.byteArray;
 
-var clearTimeout, clearInterval;
-clearTimeout = clearInterval = GLib.Source.remove;
+// https://gjs.guide/extensions/upgrading/gnome-shell-40.html
+const Config = imports.misc.config;
+var gnomeShellVersion = Config.PACKAGE_VERSION; // eg 3.38.4
+//const [major] = gnomeVersion.split('.');
+var shellVersion = Number.parseInt(gnomeShellVersion.split('.')[0]);
+
+function isGnome3x() {
+  return (shellVersion < 40);
+}
+
+function isGnome40() {
+  return (shellVersion >= 40);
+}
 
 function logObjectPretty(obj) {
   log(JSON.stringify(obj, null, 2));
 }
+
+var clearTimeout, clearInterval;
+clearTimeout = clearInterval = GLib.Source.remove;
 
 function setTimeout(func, delay, ...args) {
   const wrappedFunc = () => {

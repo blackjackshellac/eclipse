@@ -45,6 +45,7 @@
     </child>
     <child>
       <object class="GtkFrame" id="clippie frame">
+        <property name="can-focus">True</property>
         <property name="label" translatable="yes" context="clippie-frame">Clippie options</property>
         <child>
           <object class="GtkGrid" id="clippie_grid">
@@ -62,6 +63,7 @@
     </child>
     <child>
       <object class="GtkFrame" id="gpaste frame">
+        <property name="can-focus">True</property>
         <property name="label" translatable="yes" context="clippie-frame">GPaste options</property>
         <child>
           <object class="GtkGrid" id="gpaste_grid">
@@ -128,7 +130,6 @@
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-enable">Enable keyboard shortcuts</property>
   </object>
-
 
     <!-- gpaste option controls -->
   <object class="GtkLabel" id="track_changes_text">
