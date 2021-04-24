@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  /*
+ * Clippie: Gnome Shell gaste-client extension
+ * Copyright (C) 2021 Steeve McCauley
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+-->
+<interface domain="clippie-blackjackshellac">
+  <requires lib="gtk+" version="4.0"/>
+  <object class="GtkDialog" id="dialog">
+    <property name="modal">True</property>
+    <property name="default_width">440</property>
+    <property name="default_height">200</property>
+    <child internal-child="content_area">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="vexpand">True</property>
+            <property name="label" translatable="yes">Press your keyboard shortcut...</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="title-widget">
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">Keyboard shortcut</property>
+            <property name="single-line-mode">1</property>
+            <property name="ellipsize">end</property>
+            <property name="width-chars">5</property>
+            <style>
+              <class name="title"/>
+            </style>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkEventControllerKey" id="event-controller"/>
+    </child>
+  </object>
+</interface>
+
