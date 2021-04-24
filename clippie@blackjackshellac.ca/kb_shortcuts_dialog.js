@@ -36,7 +36,7 @@ const Utils = Me.imports.utils;
 var KeyboardShortcutDialog = class KeyboardShortcutDialog {
   constructor(callback) {
     this._builder = new Gtk.Builder();
-    this._builder.add_from_file(GLib.build_filenamev([Me.path, 'kb_shortcuts_dialog3x.ui']));
+    this._builder.add_from_file(GLib.build_filenamev([Me.path, 'ui', 'kb_shortcuts_dialog3x.ui']));
 
     this.widget = this._builder.get_object('dialog');
 

@@ -30,7 +30,7 @@ const Settings = Me.imports.settings.Settings;
 const Utils = Me.imports.utils;
 const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
-const KeyboardShortcutDialog = Me.imports.kb_shortcuts3x.KeyboardShortcutDialog;
+const KeyboardShortcutDialog = Me.imports.kb_shortcuts_dialog.KeyboardShortcutDialog;
 
 class PreferencesBuilder {
   constructor() {
