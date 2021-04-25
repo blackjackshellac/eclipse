@@ -36,32 +36,50 @@ const Utils = Me.imports.utils;
 var KeyboardShortcutDialog = class KeyboardShortcutDialog {
   constructor(callback) {
     this._builder = new Gtk.Builder();
-    this._builder.add_from_file(GLib.build_filenamev([Me.path, 'ui', 'kb_shortcuts_dialog3x.ui']));
+    let kb_shortcuts_dialog_ui = Utils.isGnome3x() ? 'kb_shortcuts_dialog3x.ui' : 'kb_shortcuts_dialog40.ui';
+    this._builder.add_from_file(GLib.build_filenamev([Me.path, 'ui', kb_shortcuts_dialog_ui]));
 
     this.widget = this._builder.get_object('dialog');
 
-    this.setup(callback);
+    this._callback = callback;
+    if (Utils.isGnome3x()) {
+      this.setup_keyPressEvent();
+      let cancelButton = this._builder.get_object('cancel_button');
+      cancelButton.connect('clicked', () => {
+        this._callback({});
+        this.widget.close();
+      });
+    } else {
+      this.setup_eventController();
+    }
 
-    let cancelButton = this._builder.get_object('cancel_button');
-    cancelButton.connect('clicked', () => {
-      this._callback(undefined);
-      this.widget.close();
-    });
     return this.widget;
   }
 
-  setup(callback) {
-    this._callback = callback;
-
-    this.widget.connect('key-press-event', (_widget, event) => {
-      const state = event.get_state()[1];
+  setup_eventController() {
+    const eventController = this._builder.get_object('event-controller');
+    eventController.connect('key-pressed', (_widget, keyval, keycode, state) => {
       let mask = state & Gtk.accelerator_get_default_mod_mask();
       mask &= ~Gdk.ModifierType.LOCK_MASK;
 
-      const keycode = event.get_keycode()[1];
+      if (mask === 0 && keyval === Gdk.KEY_Escape) {
+          this.widget.visible = false;
+          return Gdk.EVENT_STOP;
+      }
 
+      return this.process_event({mask, keycode, keyval});
+    });
+  }
+
+  setup_keyPressEvent() {
+    this.widget.connect('key-press-event', (_widget, event) => {
+      const state = event.get_state()[1];
+      const keycode = event.get_keycode()[1];
       const eventKeyval = event.get_keyval()[1];
       let keyval = Gdk.keyval_to_lower(eventKeyval);
+
+      let mask = state & Gtk.accelerator_get_default_mod_mask();
+      mask &= ~Gdk.ModifierType.LOCK_MASK;
 
       if (mask === 0 && keyval === Gdk.KEY_Escape) {
         this.widget.visible = false;
@@ -80,22 +98,26 @@ var KeyboardShortcutDialog = class KeyboardShortcutDialog {
         keyval = Gdk.KEY_Print;
       }
 
-      if (!this.isBindingValid({ mask, keycode, keyval }) ||
-        !this.isAccelValid({ mask, keyval })) {
-        return Gdk.EVENT_STOP;
-      }
-
-      let binding = Gtk.accelerator_name_with_keycode(
-        null,
-        keyval,
-        keycode,
-        mask
-      );
-
-      this._callback(binding, mask, keycode, keyval);
-      this.widget.close();
-      return Gdk.EVENT_STOP;
+      return this.process_event({mask, keycode, keyval});
     });
+  }
+
+  process_event( {mask, keycode, keyval}) {
+    if (!this.isBindingValid({ mask, keycode, keyval }) ||
+      !this.isAccelValid({ mask, keyval })) {
+      return Gdk.EVENT_STOP;
+    }
+
+    let binding = Gtk.accelerator_name_with_keycode(
+      null,
+      keyval,
+      keycode,
+      mask
+    );
+
+    this._callback({binding, mask, keycode, keyval});
+    this.widget.close();
+    return Gdk.EVENT_STOP;
   }
 
   /**

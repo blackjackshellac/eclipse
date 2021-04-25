@@ -129,18 +129,17 @@ class PreferencesBuilder {
     this._clippie_grid.attach(this._accel_enable,              1, 2, 1, 1);
     this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
 
-    if (Utils.isGnome3x()) {
-      this._test.connect('clicked', (btn) => {
-        let dialog = new KeyboardShortcutDialog((binding, mask, keycode, keyval) => {
-          this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
-          this._test.set_label(binding ? binding : _("No shortcut chosen"));
-        });
-
-        dialog.set_transient_for(this._widget.get_toplevel());
-        dialog.present();
-        this.logger.debug('top level=%s', this._widget.get_toplevel());
+    this._test.connect('clicked', (btn) => {
+      let dialog = new KeyboardShortcutDialog(( {binding, mask, keycode, keyval } ) => {
+        this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
+        this._test.set_label(binding ? binding : _("No shortcut chosen"));
       });
-    }
+
+      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+      dialog.set_transient_for(toplevel);
+      dialog.present();
+      this.logger.debug('top level=%s', toplevel);
+    });
 
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
