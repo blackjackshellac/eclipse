@@ -49,5 +49,9 @@
       <default><![CDATA['<ctrl><super>H']]></default>
       <summary>Keyboard shortcut for showing history menu</summary>
     </key>
+    <key name="accel-next" type="s">
+      <default><![CDATA['<ctrl><super>N']]></default>
+      <summary>Keyboard shortcut next item</summary>
+    </key>
   </schema>
 </schemalist>

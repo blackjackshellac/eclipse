@@ -97,6 +97,7 @@ class PreferencesBuilder {
     //this._title = this._bo('title');
 
     this._clippie_grid = this._bo('clippie_grid');
+    this._shortcuts_grid = this._bo('shortcuts_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
     this._msg_text = this._bo('msg_text');
 
@@ -117,9 +118,6 @@ class PreferencesBuilder {
       //this._title.add_css_class('prefs-title');
     }
 
-    this._accel_enable = this._bo('accel_enable');
-    this._test = this._bo('kbsc_test');
-
     // col, row, col_span, row_span
     this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1); // row 0
     this._clippie_grid.attach(this._bo('show_histories'),      1, 0, 1, 1);
@@ -127,14 +125,29 @@ class PreferencesBuilder {
     this._clippie_grid.attach(this._bo('debug_text'),          0, 1, 1, 1); // row 1
     this._clippie_grid.attach(this._bo('debug'),               1, 1, 1, 1);
 
-    this._clippie_grid.attach(this._bo('accel_enable_text'),   0, 2, 1, 1); // row 2
-    this._clippie_grid.attach(this._accel_enable,              1, 2, 1, 1);
-    this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
+    //this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
 
-    this._test.connect('clicked', (btn) => {
-      let dialog = new KeyboardShortcutDialog(( {binding, mask, keycode, keyval } ) => {
-        this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
-        this._test.set_label(binding ? binding : _("No shortcut chosen"));
+    // this._test.connect('clicked', (btn) => {
+    //   let dialog = new KeyboardShortcutDialog(( {binding, mask, keycode, keyval } ) => {
+    //     this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
+    //     this._test.set_label(binding ? binding : _("No shortcut chosen"));
+    //   });
+
+    //   let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+    //   dialog.set_transient_for(toplevel);
+    //   dialog.present();
+    //   this.logger.debug('top level=%s', toplevel);
+    // });
+
+    this._accel_enable = this._bo('accel_enable');
+    // keyboard shortcut buttons
+    this._accel_menu = this._bo('accel_menu');
+    this._accel_history = this._bo('accel_history');
+    this._accel_next = this._bo('accel_next');
+
+    this._accel_menu.connect('clicked', (btn) => {
+      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+        btn.set_label(binding ? binding : _("<None>") );
       });
 
       let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
@@ -142,6 +155,20 @@ class PreferencesBuilder {
       dialog.present();
       this.logger.debug('top level=%s', toplevel);
     });
+
+    this._accel_menu.set_label(this.settings.accel_show_menu);
+    this._accel_history.set_label(this.settings.accel_show_history);
+    this._accel_next.set_label(this.settings.accel_next);
+
+    // col, row, col_span, row_span
+    this._shortcuts_grid.attach(this._bo('accel_enable_text'),   0, 0, 1, 1); // row 0
+    this._shortcuts_grid.attach(this._accel_enable,              1, 0, 1, 1);
+    this._shortcuts_grid.attach(this._bo('accel_menu_text'),     0, 1, 1, 1);
+    this._shortcuts_grid.attach(this._accel_menu,                1, 1, 1, 1);
+    this._shortcuts_grid.attach(this._bo('accel_history_text'),  0, 2, 1, 1);
+    this._shortcuts_grid.attach(this._accel_history,             1, 2, 1, 1);
+    this._shortcuts_grid.attach(this._bo('accel_next_text'),     0, 3, 1, 1);
+    this._shortcuts_grid.attach(this._accel_next,                1, 3, 1, 1);
 
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');
@@ -233,6 +260,10 @@ class PreferencesBuilder {
     this._bo_ssb('debug', 'active');
     this._bo_ssb('show_histories', 'active');
     this._bo_ssb('accel_enable', 'active');
+  }
+
+  get settings() {
+    return this._settings;
   }
 }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 15:19-0400\n"
+"POT-Creation-Date: 2021-04-26 13:09-0400\n"
 "PO-Revision-Date: 2021-04-12 17:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -16,6 +16,30 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: ../dialog.js:40
+msgid "Ok"
+msgstr ""
+
+#: ../dialog.js:44 ../ui/kb_shortcuts_dialog3x.ui:72
+msgid "Cancel"
+msgstr ""
+
+#: ../dialog.js:74
+msgid "Password label"
+msgstr ""
+
+#: ../dialog.js:85
+msgid "Enter name for the password entry"
+msgstr ""
+
+#: ../dialog.js:89
+msgid "Enter new name for the password entry"
+msgstr ""
+
+#: ../indicator.js:38
+msgid "Clippie"
+msgstr ""
 
 #: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26
 msgid "Turn on debugging"
@@ -45,24 +69,103 @@ msgstr ""
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
-#: ../dialog.js:40
-msgid "Ok"
+#: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:54
+msgid "Keyboard shortcut next item"
 msgstr ""
 
-#: ../dialog.js:44
-msgid "Cancel"
+#: ../ui/kb_shortcuts_dialog3x.ui:55 ../ui/kb_shortcuts_dialog40.ui:34
+msgid "Press your keyboard shortcut..."
 msgstr ""
 
-#: ../dialog.js:74
-msgid "Password label"
+#: ../ui/kb_shortcuts_dialog3x.ui:69 ../ui/kb_shortcuts_dialog40.ui:43
+msgid "Keyboard shortcut"
 msgstr ""
 
-#: ../dialog.js:85
-msgid "Enter name for the password entry"
+#: ../ui/prefs40.ui:73 ../ui/prefs3x.ui:88
+msgid "Options"
 msgstr ""
 
-#: ../dialog.js:89
-msgid "Enter new name for the password entry"
+#: ../ui/prefs40.ui:92 ../ui/prefs3x.ui:105
+msgid "Shortcuts"
+msgstr ""
+
+#: ../ui/prefs40.ui:130
+msgid "About"
+msgstr ""
+
+#: ../ui/prefs40.ui:161 ../ui/prefs3x.ui:157 ../prefs.ui:95
+msgctxt "debug-text"
+msgid "Debug"
+msgstr ""
+
+#: ../ui/prefs40.ui:171 ../ui/prefs3x.ui:167 ../prefs.ui:105
+msgctxt "debug-tooltip"
+msgid "Enable debugging output"
+msgstr ""
+
+#: ../ui/prefs40.ui:174 ../ui/prefs3x.ui:170 ../prefs.ui:108
+msgctxt "show-histories-text"
+msgid "Show history menu"
+msgstr ""
+
+#: ../ui/prefs40.ui:184 ../ui/prefs3x.ui:180 ../prefs.ui:118
+msgctxt "show-histories-tooltip"
+msgid "Show history menu"
+msgstr ""
+
+#: ../ui/prefs40.ui:189 ../ui/prefs3x.ui:185 ../prefs.ui:121
+msgctxt "accel-enable-text"
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: ../ui/prefs40.ui:199 ../ui/prefs3x.ui:195 ../prefs.ui:131
+msgctxt "accel-enable"
+msgid "Enable keyboard shortcuts"
+msgstr ""
+
+#: ../ui/prefs40.ui:205 ../ui/prefs3x.ui:201
+msgctxt "accel-menu-text"
+msgid "Show clippie menu"
+msgstr ""
+
+#: ../ui/prefs40.ui:218 ../ui/prefs3x.ui:214
+msgctxt "accel-history-text"
+msgid "Show history menu"
+msgstr ""
+
+#: ../ui/prefs40.ui:231 ../ui/prefs3x.ui:227
+msgctxt "accel-history-text"
+msgid "Select next clipboard item"
+msgstr ""
+
+#: ../ui/prefs40.ui:245 ../ui/prefs3x.ui:241 ../prefs.ui:141
+msgctxt "track-changes-text"
+msgid "GPaste track changes"
+msgstr ""
+
+#: ../ui/prefs40.ui:255 ../ui/prefs3x.ui:251 ../prefs.ui:151
+msgctxt "track-changes-tooltip"
+msgid "Enable debugging output"
+msgstr ""
+
+#: ../ui/prefs40.ui:260 ../ui/prefs3x.ui:256 ../prefs.ui:156
+msgctxt "daemon-reexec"
+msgid "GPaste daemon restart"
+msgstr ""
+
+#: ../ui/prefs40.ui:261 ../ui/prefs3x.ui:257 ../prefs.ui:157
+msgctxt "daemon-reexec-tooltip"
+msgid "Restart the gpaste-client daemon"
+msgstr ""
+
+#: ../ui/prefs40.ui:266 ../ui/prefs3x.ui:262 ../prefs.ui:162
+msgctxt "daemon-reexec"
+msgid "GPaste Settings"
+msgstr ""
+
+#: ../ui/prefs40.ui:267 ../ui/prefs3x.ui:263 ../prefs.ui:163
+msgctxt "daemon-reexec-tooltip"
+msgid "Open the GPaste settings UI"
 msgstr ""
 
 #: ../prefs.ui:43
@@ -70,108 +173,53 @@ msgctxt "prefs-title"
 msgid "Preferences"
 msgstr ""
 
-#: ../prefs.ui:48
+#: ../prefs.ui:49
 msgctxt "clippie-frame"
 msgid "Clippie options"
 msgstr ""
 
-#: ../prefs.ui:65
+#: ../prefs.ui:67
 msgctxt "clippie-frame"
 msgid "GPaste options"
 msgstr ""
 
-#: ../prefs.ui:93
-msgctxt "debug-text"
-msgid "Debug"
-msgstr ""
-
-#: ../prefs.ui:103
-msgctxt "debug-tooltip"
-msgid "Enable debugging output"
-msgstr ""
-
-#: ../prefs.ui:106
-msgctxt "show-histories-text"
-msgid "Show history menu"
-msgstr ""
-
-#: ../prefs.ui:116
-msgctxt "show-histories-tooltip"
-msgid "Show history menu"
-msgstr ""
-
-#: ../prefs.ui:119
-msgctxt "accel-enable-text"
-msgid "Enable keyboard shortcuts"
-msgstr ""
-
-#: ../prefs.ui:129
-msgctxt "accel-enable"
-msgid "Enable keyboard shortcuts"
-msgstr ""
-
-#: ../prefs.ui:135
-msgctxt "track-changes-text"
-msgid "GPaste track changes"
-msgstr ""
-
-#: ../prefs.ui:145
-msgctxt "track-changes-tooltip"
-msgid "Enable debugging output"
-msgstr ""
-
-#: ../prefs.ui:150
+#: ../prefs.ui:136
 msgctxt "daemon-reexec"
-msgid "GPaste daemon restart"
-msgstr ""
-
-#: ../prefs.ui:151
-msgctxt "daemon-reexec-tooltip"
-msgid "Restart the gpaste-client daemon"
-msgstr ""
-
-#: ../prefs.ui:156
-msgctxt "daemon-reexec"
-msgid "GPaste Settings"
-msgstr ""
-
-#: ../prefs.ui:157
-msgctxt "daemon-reexec-tooltip"
-msgid "Open the GPaste settings UI"
-msgstr ""
-
-#: ../prefs.js:150
-msgid "GPaste deamon restarted"
-msgstr ""
-
-#: ../prefs.js:156
-msgid "Launched gpaste-client ui"
-msgstr ""
-
-#: ../indicator.js:39
-msgid "Clippie"
+msgid "Test Keyboard shortcut"
 msgstr ""
 
 #: ../menus.js:75
 msgid "More…"
 msgstr ""
 
-#: ../menus.js:352
+#: ../menus.js:357
 msgid "Search"
 msgstr ""
 
-#: ../menus.js:451
+#: ../menus.js:456
 msgid "History ["
 msgstr ""
 
-#: ../menus.js:524
+#: ../menus.js:529
 msgid "Create history"
 msgstr ""
 
-#: ../menus.js:627
+#: ../menus.js:632
 msgid "Clear"
 msgstr ""
 
-#: ../menus.js:668
+#: ../menus.js:673
 msgid "Delete"
+msgstr ""
+
+#: ../prefs.js:150
+msgid "<None>"
+msgstr ""
+
+#: ../prefs.js:201
+msgid "GPaste deamon restarted"
+msgstr ""
+
+#: ../prefs.js:207
+msgid "Launched gpaste-client ui"
 msgstr ""

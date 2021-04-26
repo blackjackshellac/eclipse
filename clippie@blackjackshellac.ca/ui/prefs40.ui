@@ -85,12 +85,13 @@
             </property>
           </object>
         </child> <!-- stack page: clippie_grid -->
-        <child> <!-- stack page: clippie_shortcuts -->
+
+        <child> <!-- stack page: shortcuts_grid -->
           <object class="GtkStackPage"><!-- shortcuts -->
             <property name="name">shortcuts</property>
             <property name="title" translatable="yes">Shortcuts</property>
             <property name="child">
-              <object class="GtkGrid" id="clippie_shortcuts">
+              <object class="GtkGrid" id="shortcuts_grid">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="column-spacing">10</property>
@@ -102,7 +103,8 @@
               </object>
             </property>
           </object>
-        </child> <!-- stack page: clippie_shortcuts -->
+        </child> <!-- stack page: shortcuts_grid -->
+
         <child> <!-- stack page: gpaste_grid -->
           <object class="GtkStackPage"><!-- gpaste -->
             <property name="name">gpaste</property>
@@ -121,6 +123,7 @@
             </property>
           </object>
         </child> <!-- stack page: gpaste_grid -->
+
         <child> <!-- stack page: about_grid -->
           <object class="GtkStackPage"><!-- about -->
             <property name="name">about</property>
@@ -180,6 +183,8 @@
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
   </object>
+
+  <!-- keyboard shortcut controls -->
   <object class="GtkLabel" id="accel_enable_text">
     <property name="label" translatable="yes" context="accel-enable-text">Enable keyboard shortcuts</property>
     <property name="visible">True</property>
@@ -192,11 +197,47 @@
     <property name="can-focus">True</property>
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-enable">Enable keyboard shortcuts</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
   </object>
-  <object class="GtkButton" id="kbsc_test">
+
+  <object class="GtkLabel" id="accel_menu_text">
+    <property name="label" translatable="yes" context="accel-menu-text">Show clippie menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkButton" id="accel_menu">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
-    <property name="label" translatable="yes" context="daemon-reexec">Test Keyboard shortcut</property>
+    <property name="label"></property>
+  </object>
+
+  <object class="GtkLabel" id="accel_history_text">
+    <property name="label" translatable="yes" context="accel-history-text">Show history menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkButton" id="accel_history">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label"></property>
+  </object>
+
+  <object class="GtkLabel" id="accel_next_text">
+    <property name="label" translatable="yes" context="accel-history-text">Select next clipboard item</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkButton" id="accel_next">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label"></property>
   </object>
 
     <!-- gpaste option controls -->

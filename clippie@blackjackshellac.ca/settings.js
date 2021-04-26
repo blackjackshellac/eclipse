@@ -171,4 +171,13 @@ var Settings = class Settings {
   set accel_show_history(accel) {
     this.settings.set_string('accel-show-history', accel);
   }
+
+  get accel_next() {
+    return this.settings.get_string('accel-next');
+  }
+
+  set accel_next(accel) {
+    return this.settings.set_string('accel-next', accel);
+  }
+
 };
