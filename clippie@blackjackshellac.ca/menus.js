@@ -207,6 +207,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.label.set_text(clip.label_text());
 
       box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      //box.add_child(new ClipItemControlButton(clip, 'edit'));
       box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, 'delete'));
 
@@ -235,7 +236,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 var CICBTypes = {
   'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
   'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
-  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' }
+  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
+  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -264,6 +266,9 @@ class ClipItemControlButton extends St.Button {
 
     connect_type() {
         switch(this.type) {
+        case 'edit':
+          // TODO
+          break;
         case "lock":
         case "unlock":
           this.connect('clicked', (cb) => {

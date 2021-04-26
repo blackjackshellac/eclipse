@@ -111,6 +111,12 @@
   icon-size: 1em;
 }
 
+.clippie-menu-edit-icon {
+  border-left: 0px;
+  border-right: 5px;
+  icon-size: 1em;
+}
+
 .clippie-menu-content {
   font-weight: normal;
   font-size: smaller;
