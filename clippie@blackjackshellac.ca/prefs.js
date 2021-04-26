@@ -70,7 +70,9 @@ class PreferencesBuilder {
     this.logger.info("Create preferences widget gnome shell version %s: %s",
       Utils.gnomeShellVersion, Utils.isGnome3x() ? "less than 40" : "40 or more");
 
-    this._builder.add_from_file(Me.path + '/prefs.ui');
+    let ui = Utils.isGnome3x() ? 'prefs3x.ui' : 'prefs40.ui';
+
+    this._builder.add_from_file(GLib.build_filenamev( [Me.path, 'ui', ui] ));
     this._prefs_box = this._builder.get_object('prefs_box');
 
     this._viewport = new Gtk.Viewport();
