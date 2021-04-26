@@ -94,7 +94,7 @@ class PreferencesBuilder {
     //   return false;
     // });
 
-    this._title = this._bo('title');
+    //this._title = this._bo('title');
 
     this._clippie_grid = this._bo('clippie_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
@@ -114,7 +114,7 @@ class PreferencesBuilder {
         provider,
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-      this._title.add_css_class('prefs-title');
+      //this._title.add_css_class('prefs-title');
     }
 
     this._accel_enable = this._bo('accel_enable');

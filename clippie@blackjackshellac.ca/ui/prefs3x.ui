@@ -52,7 +52,7 @@
       <object class="GtkStackSwitcher" id="stack_switcher">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="homogeneous">True</property>
+        <!--<property name="homogeneous">True</property>-->
         <property name="stack">stack</property>
       </object>
       <packing>
@@ -85,6 +85,22 @@
           <packing>
             <property name="name">options</property>
             <property name="title" translatable="yes">Options</property>
+          </packing>
+        </child>
+        <child> <!-- stack page: clippie_shortcuts -->
+          <object class="GtkGrid" id="clippie_shortcuts">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="column-spacing">10</property>
+            <property name="row-spacing">5</property>
+            <property name="margin-top">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-bottom">10</property>
+          </object>
+          <packing>
+            <property name="name">shortcuts</property>
+            <property name="title" translatable="yes">Shortcuts</property>
           </packing>
         </child>
         <child> <!-- stack page: gpaste_grid -->

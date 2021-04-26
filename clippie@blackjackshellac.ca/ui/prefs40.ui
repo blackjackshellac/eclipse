@@ -51,15 +51,11 @@
     <child> <!-- stack_switcher -->
       <object class="GtkStackSwitcher" id="stack_switcher">
         <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="homogeneous">True</property>
+        <property name="can-focus">True</property>
+        <!--<property name="homogeneous">True</property>-->
         <property name="stack">stack</property>
+        <property name="hexpand">True</property>
       </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">0</property>
-      </packing>
     </child> <!-- stack_switcher -->
 
     <child> <!-- stack -->
@@ -88,7 +84,25 @@
               </object>
             </property>
           </object>
-        </child>
+        </child> <!-- stack page: clippie_grid -->
+        <child> <!-- stack page: clippie_shortcuts -->
+          <object class="GtkStackPage"><!-- shortcuts -->
+            <property name="name">shortcuts</property>
+            <property name="title" translatable="yes">Shortcuts</property>
+            <property name="child">
+              <object class="GtkGrid" id="clippie_shortcuts">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: clippie_shortcuts -->
         <child> <!-- stack page: gpaste_grid -->
           <object class="GtkStackPage"><!-- gpaste -->
             <property name="name">gpaste</property>
@@ -106,9 +120,9 @@
               </object>
             </property>
           </object>
-        </child>
+        </child> <!-- stack page: gpaste_grid -->
         <child> <!-- stack page: about_grid -->
-          <object class="GtkStackPage"><!-- gpaste -->
+          <object class="GtkStackPage"><!-- about -->
             <property name="name">about</property>
             <property name="title" translatable="yes">About</property>
             <property name="child">
@@ -124,7 +138,7 @@
               </object>
             </property>
           </object>
-        </child>
+        </child> <!-- stack page: about_grid -->
       </object>
     </child>  <!-- stack -->
 
