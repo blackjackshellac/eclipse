@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-26 13:09-0400\n"
-"PO-Revision-Date: 2021-04-26 13:09-0400\n"
+"POT-Creation-Date: 2021-04-26 16:58-0400\n"
+"PO-Revision-Date: 2021-04-26 16:58-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -74,15 +74,17 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: prefs.js:150
+#: prefs.js:150 prefs.js:152 prefs.js:166 prefs.js:180
 msgid "<None>"
 msgstr ""
 
 #: prefs.js:150 prefs.js:154 prefs.js:162 prefs.js:189 prefs.js:201
+#: prefs.js:232
 msgid "GPaste deamon restarted"
 msgstr ""
 
 #: prefs.js:156 prefs.js:160 prefs.js:168 prefs.js:195 prefs.js:207
+#: prefs.js:238
 msgid "Launched gpaste-client ui"
 msgstr ""
 

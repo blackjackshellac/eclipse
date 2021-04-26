@@ -30,6 +30,14 @@ const Utils = Me.imports.utils;
 var KeyboardShortcuts = class KeyboardShortcuts {
   constructor(settings) {
     this._settings = settings;
+    /*
+      this._grabbers[action] = {
+        accel_id: <accel_id>,
+        name: <name>,
+        accelerator: <accelerator>,
+        callback: <callback>
+      }
+    */
     this._grabbers = {};
 
     this.logger = new Logger('cl_kbshortcuts', settings);
@@ -41,10 +49,15 @@ var KeyboardShortcuts = class KeyboardShortcuts {
     });
   }
 
-  listenFor(accelerator, callback) {
-    let [ action, grabber ] = this.lookupGrabber(accelerator);
+  listenFor(accel_id, accelerator, callback) {
+    let [ action, grabber ] = this.lookupGrabber(accel_id);
     if (grabber) {
-      this.remove(grabber.accelerator);
+      this.remove(grabber.accel_id);
+    }
+
+    if (accelerator.length === 0) {
+      // just removing accel_id, not updating
+      return;
     }
 
     this.logger.debug('Trying to listen for hot key [accelerator=%s]', accelerator);
@@ -62,29 +75,30 @@ var KeyboardShortcuts = class KeyboardShortcuts {
     Main.wm.allowKeybinding(name, Shell.ActionMode.ALL);
 
     this._grabbers[action]={
+      accel_id: accel_id,
       name: name,
       accelerator: accelerator,
       callback: callback
     };
   }
 
-  lookupGrabber(accelerator) {
-    //Utils.logObjectPretty(this._grabbers);
+  lookupGrabber(accel_id) {
+    Utils.logObjectPretty(this._grabbers);
     for (const [action, grabber] of Object.entries(this._grabbers)) {
-      if (grabber.accelerator === accelerator) {
+      if (grabber.accel_id === accel_id) {
         return [ action, grabber ];
       }
     }
     return [ undefined, undefined ];
   }
 
-  remove(accelerator) {
-    let [ action, grabber ] = this.lookupGrabber(accelerator);
+  remove(accel_id) {
+    let [ action, grabber ] = this.lookupGrabber(accel_id);
 
     if (grabber) {
       let name=grabber.name;
       if (name) {
-        this.logger.debug('Requesting WM to remove binding [name=%s] accelerator=%s', name, accelerator);
+        this.logger.debug('Requesting WM to remove binding [name=%s] accelerator=%s', name, grabber.accelerator);
         global.display.ungrab_accelerator(action);
         Main.wm.allowKeybinding(name, Shell.ActionMode.NONE);
         delete this._grabbers[action];

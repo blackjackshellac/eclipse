@@ -42,15 +42,15 @@
       <summary>Enable keyboard shortcuts</summary>
     </key>
     <key name="accel-show-menu" type="s">
-      <default><![CDATA['<ctrl><super>M']]></default>
+      <default><![CDATA['<Control><Super>M']]></default>
       <summary>Keyboard shortcut for showing menu</summary>
     </key>
     <key name="accel-show-history" type="s">
-      <default><![CDATA['<ctrl><super>H']]></default>
+      <default><![CDATA['<Control><Super>H']]></default>
       <summary>Keyboard shortcut for showing history menu</summary>
     </key>
     <key name="accel-next" type="s">
-      <default><![CDATA['<ctrl><super>N']]></default>
+      <default><![CDATA['<Control><Super>N']]></default>
       <summary>Keyboard shortcut next item</summary>
     </key>
   </schema>

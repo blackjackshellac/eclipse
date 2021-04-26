@@ -88,10 +88,7 @@ var Clippie = class Clippie extends Array {
 
     //clippieInstance.refresh();
 
-    clippieInstance.settings.settings.connect('changed::accel-enable', () => {
-      clippieInstance.logger.debug('accel-enable has changed');
-      clippieInstance.toggle_keyboard_shortcuts();
-    });
+    clippieInstance.settings_changed_signals();
 
     if (clippieInstance.settings.accel_enable) {
       clippieInstance.enable_keyboard_shortcuts();
@@ -108,6 +105,21 @@ var Clippie = class Clippie extends Array {
     clippieInstance.disable_keyboard_shortcuts();
   }
 
+  settings_changed_signals() {
+    this.settings.settings.connect('changed::accel-enable', () => {
+      this.toggle_keyboard_shortcuts();
+    });
+    this.settings.settings.connect('changed::accel-show-menu', () => {
+      this.enable_keyboard_shortcuts(['accel-show-menu']);
+    });
+    this.settings.settings.connect('changed::accel-show-history', () => {
+      this.enable_keyboard_shortcuts(['accel-show-history']);
+    });
+    this.settings.settings.connect('changed::accel-next', () => {
+      this.enable_keyboard_shortcuts(['accel-next']);
+    });
+  }
+
   toggle_keyboard_shortcuts() {
     if (this.settings.accel_enable) {
       this.enable_keyboard_shortcuts();
@@ -116,21 +128,33 @@ var Clippie = class Clippie extends Array {
     }
   }
 
-  enable_keyboard_shortcuts() {
-    this._accel.listenFor(this.settings.accel_show_menu, () => {
-      this.logger.debug("Show clippie menu");
-      this.indicator.clippie_menu.open();
-    });
+  enable_keyboard_shortcuts(accel_ids=['accel-show-menu', 'accel-show-history', 'accel-next']) {
+    if (accel_ids.includes('accel-show-menu')) {
+      this._accel.listenFor('accel-show-menu', this.settings.accel_show_menu, () => {
+        //this.logger.debug("Show clippie menu");
+        this.indicator.clippie_menu.open();
+      });
+    }
 
-    this._accel.listenFor(this.settings.accel_show_history, () => {
-      this.logger.debug("Show clippie history");
-      this.indicator.clippie_menu.open({history:true});
-    });
+    if (accel_ids.includes('accel-show-history')) {
+      this._accel.listenFor('accel-show-history', this.settings.accel_show_history, () => {
+        //this.logger.debug("Show clippie history");
+        this.indicator.clippie_menu.open({history:true});
+      });
+    }
+
+    if (accel_ids.includes('accel-next')) {
+      this._accel.listenFor('accel-next', this.settings.accel_next, () => {
+        // TODO select clip this[1]
+        this.logger.debug("Select next in history");
+      });
+    }
   }
 
   disable_keyboard_shortcuts() {
-    this._accel.remove(this.settings.accel_show_menu);
-    this._accel.remove(this.settings.accel_show_history);
+    this._accel.remove('accel-show-menu');
+    this._accel.remove('accel-show-history');
+    this._accel.remove('accel-next');
   }
 
   get clippie() {

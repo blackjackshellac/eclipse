@@ -147,7 +147,38 @@ class PreferencesBuilder {
 
     this._accel_menu.connect('clicked', (btn) => {
       let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
-        btn.set_label(binding ? binding : _("<None>") );
+        if (binding) {
+          this.settings.accel_show_menu = binding;
+          btn.set_label(binding.length > 0 ? binding : _("<None>") );
+        }
+      });
+
+      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+      dialog.set_transient_for(toplevel);
+      dialog.present();
+      this.logger.debug('top level=%s', toplevel);
+    });
+
+    this._accel_history.connect('clicked', (btn) => {
+      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+        if (binding) {
+          this.settings.accel_show_history = binding;
+          btn.set_label(binding.length > 0 ? binding : _("<None>") );
+        }
+      });
+
+      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+      dialog.set_transient_for(toplevel);
+      dialog.present();
+      this.logger.debug('top level=%s', toplevel);
+    });
+
+    this._accel_next.connect('clicked', (btn) => {
+      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+        if (binding) {
+          this.settings.accel_next = binding;
+          btn.set_label(binding.length > 0 ? binding : _("<None>") );
+        }
       });
 
       let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
