@@ -82,7 +82,7 @@ var KeyboardShortcuts = class KeyboardShortcuts {
       accelerator: accelerator,
       callback: callback
     };
-    Utils.logObjectPretty(this._grabbers);
+    //Utils.logObjectPretty(this._grabbers);
   }
 
   lookupGrabber(accel_id) {
@@ -117,7 +117,7 @@ var KeyboardShortcuts = class KeyboardShortcuts {
       grabber.callback();
     } else {
       this.logger.debug('No listeners [action=%s]', action);
-      Utils.logObjectPretty(this._grabbers);
+      //Utils.logObjectPretty(this._grabbers);
     }
   }
 }

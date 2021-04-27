@@ -55,8 +55,10 @@ var ClippieMenu = class ClippieMenu {
       if (open) {
         this.rebuild();
         global.stage.set_key_focus(this._searchItem.entry);
+        //this._searchItem.entry.get_clutter_text().grab_key_focus();
       } else {
         this.items.length = 0;
+        this.clippie.cur_clip = 0;
         global.stage.set_key_focus(null);
       }
     });
@@ -73,7 +75,6 @@ var ClippieMenu = class ClippieMenu {
     if (len === max) {
       this.more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
       menu.addMenuItem(this.more);
-      //this.items.push(this.more);
       menu = this.more.menu;
     } else if (len > max) {
       menu = this.more.menu;
@@ -116,6 +117,7 @@ var ClippieMenu = class ClippieMenu {
       let item = this.items[i];
       item.destroy();
     }
+    // destroy more after the items
     if (this.more) {
       this.more.destroy();
       this.more = undefined;
@@ -185,6 +187,12 @@ var ClippieMenu = class ClippieMenu {
     }
     this.historyMenu.setSubmenuShown(open);
   }
+
+  select(item) {
+    if (this.items.includes(item)) {
+      this.menu.moveMenuItem(item, 2);
+    }
+  }
 }
 
 var ClipMenuItem = GObject.registerClass(
@@ -237,6 +245,11 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
   trash_self() {
     this.clip.clippie.indicator.clippie_menu.trash(this);
     this.destroy();
+  }
+
+  select() {
+    this.clip.select();
+    this.clip.clippie.indicator.clippie_menu.select(this);
   }
 });
 
@@ -368,7 +381,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     this._entry.set_track_hover(true);
 
     let entry_text = this._entry.get_clutter_text();
-    //entry_text.set_activatable(true);
+    entry_text.set_activatable(true);
     entry_text.set_editable(true);
 
     this._icon = new St.Icon( {
@@ -501,7 +514,7 @@ class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
     //Utils.logObjectPretty(list);
     for (let i=0; i < list.length; i++) {
       let item = new ClippieHistoryItem(list[i], this.menu, this, current === list[i]);
-      this.menu.addMenuItem(item);
+      //this.menu.addMenuItem(item);
     }
   }
 

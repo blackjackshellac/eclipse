@@ -37,6 +37,7 @@ const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 var Clippie = class Clippie {
   constructor() {
     this._clips = [];
+    this._cur_clip = 0;
 
     // id => clip
     this._lookup = {};
@@ -147,8 +148,15 @@ var Clippie = class Clippie {
 
     if (accel_ids.includes('accel-next')) {
       this._accel.listenFor('accel-next', this.settings.accel_next, () => {
-        // TODO select clip this.clips[1]
-        this.logger.debug("Select next in history");
+        this.indicator.clippie_menu.open();
+        this.logger.debug("Select clip %d in history: %d", this.cur_clip+1, this.clips.length);
+        let clip = this.get_next_clip();
+        if (clip !== undefined) {
+          this.logger.debug("Select clip %d in history: %s", this.cur_clip, clip.label_text());
+          clip.menu_item.select();
+        } else {
+          this.logger.debug("No clips %s", clip);
+        }
       });
     }
   }
@@ -169,6 +177,30 @@ var Clippie = class Clippie {
 
   set clips(clips) {
     this._clips = clips;
+  }
+
+  get cur_clip() {
+    return this._cur_clip;
+  }
+
+  set cur_clip(idx) {
+    this.logger.debug('clip %d %d', idx, this._cur_clip);
+    if (idx >= this.clips.length) {
+      idx = 0;
+    }
+    this._cur_clip = idx;
+  }
+
+  inc_cur_clip() {
+    this.cur_clip = this.cur_clip+1;
+    return this.cur_clip;
+  }
+
+  get_next_clip() {
+    if (this.clips.length === 0) {
+      return undefined;
+    }
+    return this.clips[this.inc_cur_clip()];
   }
 
   get attached() {
