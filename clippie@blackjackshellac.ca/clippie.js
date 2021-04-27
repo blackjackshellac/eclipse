@@ -34,9 +34,9 @@ const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
 const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 
-var Clippie = class Clippie extends Array {
-  constructor(...args) {
-    super(...args);
+var Clippie = class Clippie {
+  constructor() {
+    this._clips = [];
 
     // id => clip
     this._lookup = {};
@@ -47,6 +47,8 @@ var Clippie = class Clippie extends Array {
     this._accel = new KeyboardShortcuts(this.settings);
 
     this.logger = new Logger('cl_ippie', this.settings);
+
+    this.logger.debug('Instantiating Clippie');
 
     this.gpaste_client = Utils.exec_path('gpaste-client');
     if (this.gpaste_client === null) {
@@ -78,7 +80,7 @@ var Clippie = class Clippie extends Array {
 
     clippieInstance.logger.settings = clippieInstance._settings;
 
-    clippieInstance.logger.info("Attaching indicator, size=%d items", clippieInstance.length);
+    clippieInstance.logger.info("Attaching indicator, size=%d items", clippieInstance.clips.length);
 
     clippieInstance._indicator = indicator;
 
@@ -145,7 +147,7 @@ var Clippie = class Clippie extends Array {
 
     if (accel_ids.includes('accel-next')) {
       this._accel.listenFor('accel-next', this.settings.accel_next, () => {
-        // TODO select clip this[1]
+        // TODO select clip this.clips[1]
         this.logger.debug("Select next in history");
       });
     }
@@ -159,6 +161,14 @@ var Clippie = class Clippie extends Array {
 
   get clippie() {
     return clippieInstance;
+  }
+
+  get clips() {
+    return this._clips;
+  }
+
+  set clips(clips) {
+    this._clips = clips;
   }
 
   get attached() {
@@ -194,8 +204,8 @@ var Clippie = class Clippie extends Array {
 
   save_state() {
     this._state={};
-    // for (let i=0; i < this.length; i++) {
-    //   let clip = this[i];
+    // for (let i=0; i < this.clips.length; i++) {
+    //   let clip = this.clips[i];
     //   if (clip.lock) {
     //     this._state[clip.uuid] = { lock: true }
     //   }
@@ -210,15 +220,15 @@ var Clippie = class Clippie extends Array {
   }
 
   search(filter) {
-    if (!filter || filter.length == 0) {
-      return this;
+    if (!filter || filter.trim().length === 0) {
+      return this.clips;
     }
 
     let filter_re=new RegExp(this.escapeRegex(filter), 'im');
 
     let entries = [];
-    for (let i=0; i < this.length; i++) {
-      let clip=this[i];
+    for (let i=0; i < this.clips.length; i++) {
+      let clip=this.clips[i];
       if (clip.search(filter_re)) {
         entries.push(clip);
       }
@@ -228,7 +238,7 @@ var Clippie = class Clippie extends Array {
 
   refresh_result(stdout) {
     let lines=stdout.replace(/\r?\n$/, "").split(/\r?\n/);
-    let arr = [];
+    let clips = [];
     for (let i=0; i < lines.length; i++) {
       let line=lines[i];
       if (line.length > 0) {
@@ -239,8 +249,8 @@ var Clippie = class Clippie extends Array {
         }
         let idx = this.find(clip);
         if (idx >= 0) {
-          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
-          clip = this[idx];
+          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this.clips[idx].uuid);
+          clip = this.clips[idx];
           if (clip.lock) {
             this.logger.debug('Found lock entry %s', clip.toString());
           }
@@ -249,14 +259,11 @@ var Clippie = class Clippie extends Array {
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
         }
-        arr[i] = clip;
+        clips[i] = clip;
         this.menu.add_item(clip);
       }
     }
-    for (let i=0; i < arr.length; i++) {
-      this[i]=arr[i];
-    }
-    this.length = arr.length;
+    this.clips = clips;
   }
 
   // Obsolete: Asynchronous refresh replaced by refresh_dbus()
@@ -276,6 +283,7 @@ var Clippie = class Clippie extends Array {
         return;
       }
       history = history[0];
+      let clips = [];
       this.logger.debug("history %d", history.length);
       for (let i=0; i < history.length; i++) {
         let entry=history[i];
@@ -283,19 +291,10 @@ var Clippie = class Clippie extends Array {
         let clip = new Clip(entry[0], entry[1]);
         let idx = this.find(clip);
         if (idx >= 0) {
-          clip = this[idx];
-          if (idx !== i) {
-            //this.logger.debug('moving clip from %d to %d: %s', idx, i, clip.uuid);
-            // remove it from its old location
-            this.splice(idx, 1);
-            // move it to the current location
-            this.splice(i, 0, clip);
-          }
-        } else {
-          //this.logger.debug("New clip uuid=%s", clip.uuid);
-          // add the new clip at this location
-          this.splice(i, 0, clip);
+          // clip already exists
+          clip = this.clips[idx];
         }
+        clips[i] = clip;
         //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
@@ -309,7 +308,7 @@ var Clippie = class Clippie extends Array {
         }
         this.menu.add_item(clip);
       }
-      this.length = history.length;
+      this.clips = clips;
     });
   }
 
@@ -322,7 +321,7 @@ var Clippie = class Clippie extends Array {
     }
 
     let lines=result[1].replace(/\r?\n$/, "").split(/\r?\n/);
-    let arr = [];
+    let clips = [];
     for (let i=0; i < lines.length; i++) {
       let line=lines[i];
       if (line.length > 0) {
@@ -333,8 +332,8 @@ var Clippie = class Clippie extends Array {
         }
         let idx = this.find(clip);
         if (idx >= 0) {
-          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this[idx].uuid);
-          clip = this[idx];
+          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this.clips[idx].uuid);
+          clip = this.clips[idx];
           if (clip.lock) {
             this.logger.debug('Found lock entry %s', clip.toString());
           }
@@ -344,27 +343,24 @@ var Clippie = class Clippie extends Array {
           clip.lock = this._state[clip.uuid].lock;
           delete this._state[clip.uuid];
         }
-        arr[i] = clip;
+        clips[i] = clip;
       }
     }
-    for (let i=0; i < lines.length; i++) {
-      this[i]=arr[i];
-    }
-    this.length = lines.length;
+    this.clips = clips;
   }
 
   find(clip) {
-    return this.findIndex(c => c.uuid === clip.uuid);
+    return this.clips.findIndex(c => c.uuid === clip.uuid);
   }
 
   has(clip) {
-    return this.some(c => c.uuid === clip.uuid);
+    return this.clips.some(c => c.uuid === clip.uuid);
   }
 
   delete(clip) {
     let idx = this.find(clip);
     if (idx >= -1) {
-      this.splice(idx, 1);
+      this.clips.splice(idx, 1);
     }
   }
 
@@ -528,15 +524,9 @@ var Clip = class Clip {
       let [ exit_status , stdout, stderr ] = Utils.execute(cmdargs);
       if (exit_status === 0) {
         this.logger.debug("Renamed password [%s] to [%s]", this.password_name, label);
-        clippieInstance.length = 0;
       } else {
         this.logger.error("Failed to rename password %s to %s", this.password_name, label)
       }
-      // if (clippieInstance.dbus_gpaste.renamePassword(this.password_name, label)) {
-      //   this._password_name = label;
-      //   clippieInstance.length = 0;
-      // }
-
     } else {
       // unlocked, convert clipboard entry to password
 

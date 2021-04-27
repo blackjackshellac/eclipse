@@ -53,7 +53,6 @@ var ClippieMenu = class ClippieMenu {
     this.menu.connect('open-state-changed', (self, open) => {
       logger.debug("menu open="+open);
       if (open) {
-        //this.build();
         this.rebuild();
         global.stage.set_key_focus(this._searchItem.entry);
       } else {
@@ -74,7 +73,7 @@ var ClippieMenu = class ClippieMenu {
     if (len === max) {
       this.more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
       menu.addMenuItem(this.more);
-      this.items.push(this.more);
+      //this.items.push(this.more);
       menu = this.more.menu;
     } else if (len > max) {
       menu = this.more.menu;
@@ -102,7 +101,7 @@ var ClippieMenu = class ClippieMenu {
   }
 
   build(filter=undefined) {
-    logger.debug("Building clippie menu filter=[%s]", filter);
+    logger.debug("Building clippie menu filter=[%s]", filter === undefined ? filter : "undefined");
 
     let menu = this.menu;
 
@@ -110,14 +109,22 @@ var ClippieMenu = class ClippieMenu {
       this.rebuild();
       return;
     }
+
+    //log(Error().stack);
     logger.debug("items=%d", this.items.length);
     for (let i=0; i < this.items.length; i++) {
-      this.items[i].destroy();
+      let item = this.items[i];
+      item.destroy();
+    }
+    if (this.more) {
+      this.more.destroy();
+      this.more = undefined;
     }
     this.items = [];
 
+    // if filter is empty string
     let entries = this.clippie.search(filter);
-    logger.debug("found %d entries with filter=%s", entries.length, filter);
+    logger.debug("found %d entries with filter=[%s]", entries.length, filter);
 
     for (let i=0; i < entries.length; i++) {
       let clip=entries[i];
