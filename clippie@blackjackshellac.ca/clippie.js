@@ -93,9 +93,7 @@ var Clippie = class Clippie {
 
     clippieInstance.settings_changed_signals();
 
-    if (clippieInstance.settings.accel_enable) {
-      clippieInstance.enable_keyboard_shortcuts();
-    }
+    clippieInstance.toggle_keyboard_shortcuts();
 
     return clippieInstance;
   }
