@@ -53,11 +53,12 @@ var ClippieMenu = class ClippieMenu {
     this.menu.connect('open-state-changed', (self, open) => {
       logger.debug("menu open="+open);
       if (open) {
-        //this.build();
         this.rebuild();
         global.stage.set_key_focus(this._searchItem.entry);
+        //this._searchItem.entry.get_clutter_text().grab_key_focus();
       } else {
         this.items.length = 0;
+        this.clippie.cur_clip = 0;
         global.stage.set_key_focus(null);
       }
     });
@@ -74,7 +75,6 @@ var ClippieMenu = class ClippieMenu {
     if (len === max) {
       this.more = new PopupMenu.PopupSubMenuMenuItem(_("More…"), { reactive: false } );
       menu.addMenuItem(this.more);
-      this.items.push(this.more);
       menu = this.more.menu;
     } else if (len > max) {
       menu = this.more.menu;
@@ -102,7 +102,7 @@ var ClippieMenu = class ClippieMenu {
   }
 
   build(filter=undefined) {
-    logger.debug("Building clippie menu filter=[%s]", filter);
+    logger.debug("Building clippie menu filter=[%s]", filter === undefined ? filter : "undefined");
 
     let menu = this.menu;
 
@@ -110,14 +110,23 @@ var ClippieMenu = class ClippieMenu {
       this.rebuild();
       return;
     }
+
+    //log(Error().stack);
     logger.debug("items=%d", this.items.length);
     for (let i=0; i < this.items.length; i++) {
-      this.items[i].destroy();
+      let item = this.items[i];
+      item.destroy();
+    }
+    // destroy more after the items
+    if (this.more) {
+      this.more.destroy();
+      this.more = undefined;
     }
     this.items = [];
 
+    // if filter is empty string
     let entries = this.clippie.search(filter);
-    logger.debug("found %d entries with filter=%s", entries.length, filter);
+    logger.debug("found %d entries with filter=[%s]", entries.length, filter);
 
     for (let i=0; i < entries.length; i++) {
       let clip=entries[i];
@@ -178,6 +187,12 @@ var ClippieMenu = class ClippieMenu {
     }
     this.historyMenu.setSubmenuShown(open);
   }
+
+  select(item) {
+    if (this.items.includes(item)) {
+      this.menu.moveMenuItem(item, 2);
+    }
+  }
 }
 
 var ClipMenuItem = GObject.registerClass(
@@ -207,6 +222,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.label.set_text(clip.label_text());
 
       box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      //box.add_child(new ClipItemControlButton(clip, 'edit'));
       box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, 'delete'));
 
@@ -230,12 +246,18 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
     this.clip.clippie.indicator.clippie_menu.trash(this);
     this.destroy();
   }
+
+  select() {
+    this.clip.select();
+    this.clip.clippie.indicator.clippie_menu.select(this);
+  }
 });
 
 var CICBTypes = {
   'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
   'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
-  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' }
+  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
+  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -264,6 +286,9 @@ class ClipItemControlButton extends St.Button {
 
     connect_type() {
         switch(this.type) {
+        case 'edit':
+          // TODO
+          break;
         case "lock":
         case "unlock":
           this.connect('clicked', (cb) => {
@@ -356,7 +381,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     this._entry.set_track_hover(true);
 
     let entry_text = this._entry.get_clutter_text();
-    //entry_text.set_activatable(true);
+    entry_text.set_activatable(true);
     entry_text.set_editable(true);
 
     this._icon = new St.Icon( {
@@ -489,7 +514,7 @@ class ClippieHistoryMenu extends PopupMenu.PopupSubMenuMenuItem {
     //Utils.logObjectPretty(list);
     for (let i=0; i < list.length; i++) {
       let item = new ClippieHistoryItem(list[i], this.menu, this, current === list[i]);
-      this.menu.addMenuItem(item);
+      //this.menu.addMenuItem(item);
     }
   }
 

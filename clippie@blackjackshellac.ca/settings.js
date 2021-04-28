@@ -116,6 +116,10 @@ var Settings = class Settings {
     return this.settings.get_default_value(key);
   }
 
+  reset(key) {
+    this.settings.reset(key);
+  }
+
   get entries() {
     return this.settings.get_int('entries');
   }
@@ -171,4 +175,13 @@ var Settings = class Settings {
   set accel_show_history(accel) {
     this.settings.set_string('accel-show-history', accel);
   }
+
+  get accel_next() {
+    return this.settings.get_string('accel-next');
+  }
+
+  set accel_next(accel) {
+    return this.settings.set_string('accel-next', accel);
+  }
+
 };

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  /*
+ * Clippie: Gnome Shell gaste-client extension
+ * Copyright (C) 2021 Steeve McCauley
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+-->
+<interface domain="clippie-blackjackshellac">
+  <requires lib="gtk+" version="4.0"/>
+  <!-- interface-license-type gplv3 -->
+  <!-- interface-name Cippie -->
+  <!-- interface-description Clipboard interface to gpaste-client output -->
+  <!-- interface-copyright 2021, Steeve McCauley -->
+  <!-- interface-authors Steeve McCauley -->
+  <object class="GtkBox" id="prefs_box">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="spacing">15</property>
+    <property name="orientation">vertical</property>
+    <property name="margin-top">10</property>
+    <property name="margin-start">10</property>
+    <property name="margin-end">10</property>
+    <property name="margin-bottom">10</property>
+    <property name="hexpand">True</property>
+
+    <!--
+    <child>
+      <object class="GtkLabel" id="title">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="margin-top">5</property>
+        <property name="margin-start">5</property>
+        <property name="label" translatable="yes" context="prefs-title">Preferences</property>
+      </object>
+    </child>
+    -->
+
+    <child> <!-- stack_switcher -->
+      <object class="GtkStackSwitcher" id="stack_switcher">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <!--<property name="homogeneous">True</property>-->
+        <property name="stack">stack</property>
+        <property name="hexpand">True</property>
+      </object>
+    </child> <!-- stack_switcher -->
+
+    <child> <!-- stack -->
+      <object class="GtkStack" id="stack">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="transition-type">crossfade</property>
+        <child> <!-- stack page: clippie_grid -->
+          <object class="GtkStackPage"><!-- options -->
+            <property name="name">options</property>
+            <property name="title" translatable="yes">Options</property>
+            <property name="child">
+              <object class="GtkGrid" id="clippie_grid">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: clippie_grid -->
+
+        <child> <!-- stack page: shortcuts_grid -->
+          <object class="GtkStackPage"><!-- shortcuts -->
+            <property name="name">shortcuts</property>
+            <property name="title" translatable="yes">Shortcuts</property>
+            <property name="child">
+              <object class="GtkGrid" id="shortcuts_grid">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: shortcuts_grid -->
+
+        <child> <!-- stack page: gpaste_grid -->
+          <object class="GtkStackPage"><!-- gpaste -->
+            <property name="name">gpaste</property>
+            <property name="title" translatable="no">GPaste</property>
+            <property name="child">
+              <object class="GtkGrid" id="gpaste_grid">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: gpaste_grid -->
+
+        <child> <!-- stack page: about_grid -->
+          <object class="GtkStackPage"><!-- about -->
+            <property name="name">about</property>
+            <property name="title" translatable="yes">About</property>
+            <property name="child">
+              <object class="GtkGrid" id="about_grid">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-end">10</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label">Clippie</property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="font-desc" value="Sans 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="medium"/>
+                          <attribute name="variant" value="small-caps"/>
+                          <attribute name="scale" value="2"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="description">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label"></property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="scale" value="1.2"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="clippie_icon_button">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name='has-frame'>False</property>
+                        <property name="halign">center</property>
+                        <child>
+                          <object class="GtkImage" id='clippie_icon'>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">0</property>
+                            <property name="margin-bottom">0</property>
+                            <property name="icon-name">clippie_icon</property>
+                            <property name="icon-size">2</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="version">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label">Version</property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="scale" value="1.2"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="copyright">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label">Copyright © 2021, Steeve McCauley</property>
+                        <property name="halign">center</property>
+                        <attributes>
+                          <attribute name="weight" value="normal"/>
+                          <attribute name="scale" value="0.90000000000000002"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLinkButton" id="link_blackjackshellac">
+                        <property name="label" translatable="no">https://github.com/blackjackshellac/clippie</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="uri">https://github.com/blackjackshellac/clippie</property>
+                        <property name="hexpand">0</property>
+                        <property name="vexpand">0</property>
+                        <property name='has-frame'>False</property>
+                        <property name="halign">center</property>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">0</property>
+                            <property name="margin-bottom">0</property>
+                            <property name="icon-name">clippie_icon</property>
+                            <property name="icon-size">2</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label">&lt;span size='smaller' style='italic'&gt;This program comes with absolutely no warranty.
+See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 License&lt;/a&gt; for details.&lt;/span&gt;</property>
+                        <property name="use-markup">True</property>
+                        <property name="justify">center</property>
+                        <property name="wrap">True</property>
+                        <!--<property name="track-visited-links">False</property>-->
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-top">5</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLinkButton" id="link_bmac">
+                            <property name="label">www.buymeacoffee.com/blckjackshellac</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="uri">https://www.buymeacoffee.com/blckjackshellac</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: about_grid -->
+      </object>
+    </child>  <!-- stack -->
+
+    <child>
+      <object class="GtkLabel" id="msg_text">
+        <property name="label"></property>
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="receives-default">False</property>
+        <property name="hexpand">True</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- clippie option controls -->
+  <object class="GtkLabel" id="debug_text">
+    <property name="label" translatable="yes" context="debug-text">Debug</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="debug">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="debug-tooltip">Enable debugging output</property>
+  </object>
+  <object class="GtkLabel" id="show_histories_text">
+    <property name="label" translatable="yes" context="show-histories-text">Show history menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="show_histories">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
+  </object>
+
+  <!-- keyboard shortcut controls -->
+  <object class="GtkLabel" id="accel_enable_text">
+    <property name="label" translatable="yes" context="accel-enable-text">Enable keyboard shortcuts</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="accel_enable">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="accel-enable">Enable keyboard shortcuts</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+  </object>
+
+  <object class="GtkLabel" id="accel_menu_text">
+    <property name="label" translatable="yes" context="accel-menu-text">Show clippie menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="accel_menu">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="accel-menu">Enable clippie menu keyboard shortcut</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+  </object>
+  <object class="GtkLabel" id="accel_menu_value">
+    <property name="label" translatable="no"></property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property>
+  </object>
+
+  <object class="GtkLabel" id="accel_history_text">
+    <property name="label" translatable="yes" context="accel-history-text">Show history menu</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="accel_history">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="accel-history">Enable clippie history menu keyboard shortcut</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+  </object>
+  <object class="GtkLabel" id="accel_history_value">
+    <property name="label" translatable="no"></property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property>
+  </object>
+
+  <object class="GtkLabel" id="accel_next_text">
+    <property name="label" translatable="yes" context="accel-history-text">Select next clipboard item</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="accel_next">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="accel-next">Enable clippie next keyboard shortcut</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+  </object>
+  <object class="GtkLabel" id="accel_next_value">
+    <property name="label" translatable="no"></property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="halign">1</property>
+  </object>
+
+    <!-- gpaste option controls -->
+  <object class="GtkLabel" id="track_changes_text">
+    <property name="label" translatable="yes" context="track-changes-text">GPaste track changes</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="track_changes">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="track-changes-tooltip">Enable debugging output</property>
+  </object>
+  <object class="GtkButton" id="daemon_reexec">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label" translatable="yes" context="daemon-reexec">GPaste daemon restart</property>
+    <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Restart the gpaste-client daemon</property>
+  </object>
+  <object class="GtkButton" id="gpaste_ui">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="label" translatable="yes" context="daemon-reexec">GPaste Settings</property>
+    <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Open the GPaste settings UI</property>
+  </object>
+
+</interface>
+

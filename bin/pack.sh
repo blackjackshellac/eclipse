@@ -16,7 +16,7 @@ for es in $extra_source; do
 	eso="$eso --extra-source=$es"
 done
 
-eso="$eso --extra-source=./icons/ --extra-source=./bin/"
+eso="$eso --extra-source=./icons/ --extra-source=./bin/ --extra-source=./ui/"
 
 cmd="gnome-extensions pack --podir=po/ --schema=schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml --gettext-domain=clippie-blackjackshellac $eso -o ../ --force"
 echo $cmd

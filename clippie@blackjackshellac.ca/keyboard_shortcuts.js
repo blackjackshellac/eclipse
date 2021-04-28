@@ -30,10 +30,20 @@ const Utils = Me.imports.utils;
 var KeyboardShortcuts = class KeyboardShortcuts {
   constructor(settings) {
     this._settings = settings;
+    /*
+      this._grabbers[action] = {
+        accel_id: <accel_id>,
+        name: <name>,
+        accelerator: <accelerator>,
+        callback: <callback>
+      }
+    */
     this._grabbers = {};
 
     this.logger = new Logger('cl_kbshortcuts', settings);
 
+    //log(Error().stack);
+    this.logger.debug('Creating KeyboardShortcuts');
     global.display.connect('accelerator-activated', (display, action, deviceId, timestamp) => {
       this.logger.debug("Accelerator Activated: [display=%s, action=%s, deviceId=%s, timestamp=%s]",
         display, action, deviceId, timestamp);
@@ -41,20 +51,25 @@ var KeyboardShortcuts = class KeyboardShortcuts {
     });
   }
 
-  listenFor(accelerator, callback) {
-    let [ action, grabber ] = this.lookupGrabber(accelerator);
+  listenFor(accel_id, accelerator, callback) {
+    let [ action, grabber ] = this.lookupGrabber(accel_id);
     if (grabber) {
-      this.remove(grabber.accelerator);
+      this.remove(grabber.accel_id);
     }
 
-    this.logger.debug('Trying to listen for hot key [accelerator=%s]', accelerator);
-    action = global.display.grab_accelerator(accelerator, 0);
-    if (action == Meta.KeyBindingAction.NONE) {
-      this.logger.error('Unable to grab accelerator [%s]', accelerator);
+    if (accelerator.length === 0) {
+      // just removing accel_id, not updating
       return;
     }
 
-    this.logger.debug('Grabbed accelerator [action=%s]', action);
+    this.logger.debug('Trying to listen for shortcut %s [accelerator=%s]', accel_id, accelerator);
+    action = global.display.grab_accelerator(accelerator, 0);
+    if (action == Meta.KeyBindingAction.NONE) {
+      this.logger.error('Unable to grab shortcut %s [%s]', accel_id, accelerator);
+      return;
+    }
+
+    this.logger.debug('Grabbed shortcut %s [action=%s]', accel_id, action);
     let name = Meta.external_binding_name_for_action(action);
     this.logger.debug('Received binding name for action [name=%s, action=%s]', name, action);
 
@@ -62,29 +77,30 @@ var KeyboardShortcuts = class KeyboardShortcuts {
     Main.wm.allowKeybinding(name, Shell.ActionMode.ALL);
 
     this._grabbers[action]={
+      accel_id: accel_id,
       name: name,
       accelerator: accelerator,
       callback: callback
     };
+    //Utils.logObjectPretty(this._grabbers);
   }
 
-  lookupGrabber(accelerator) {
-    //Utils.logObjectPretty(this._grabbers);
+  lookupGrabber(accel_id) {
     for (const [action, grabber] of Object.entries(this._grabbers)) {
-      if (grabber.accelerator === accelerator) {
+      if (grabber.accel_id === accel_id) {
         return [ action, grabber ];
       }
     }
     return [ undefined, undefined ];
   }
 
-  remove(accelerator) {
-    let [ action, grabber ] = this.lookupGrabber(accelerator);
+  remove(accel_id) {
+    let [ action, grabber ] = this.lookupGrabber(accel_id);
 
     if (grabber) {
       let name=grabber.name;
       if (name) {
-        this.logger.debug('Requesting WM to remove binding [name=%s] accelerator=%s', name, accelerator);
+        this.logger.debug('Requesting WM to remove binding [name=%s] accelerator=%s', name, grabber.accelerator);
         global.display.ungrab_accelerator(action);
         Main.wm.allowKeybinding(name, Shell.ActionMode.NONE);
         delete this._grabbers[action];
@@ -101,6 +117,7 @@ var KeyboardShortcuts = class KeyboardShortcuts {
       grabber.callback();
     } else {
       this.logger.debug('No listeners [action=%s]', action);
+      //Utils.logObjectPretty(this._grabbers);
     }
   }
 }
