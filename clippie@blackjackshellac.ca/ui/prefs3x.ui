@@ -133,10 +133,164 @@
             <property name="margin-start">10</property>
             <property name="margin-end">10</property>
             <property name="margin-bottom">10</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Clippie</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Sans 10"/>
+                      <attribute name="style" value="normal"/>
+                      <attribute name="weight" value="medium"/>
+                      <attribute name="variant" value="small-caps"/>
+                      <attribute name="scale" value="2"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="description">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label">description</property>
+                    <attributes>
+                      <attribute name="scale" value="1.2"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEventBox" id="clippie_icon">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">5</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="pixel-size">10</property>
+                        <property name="pixbuf">../icons/clippie_icon.svg</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="version">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label">Version</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="1.2"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="copyright">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Copyright © 2021, Steeve McCauley</property>
+                    <attributes>
+                      <attribute name="weight" value="normal"/>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton">
+                    <property name="label" translatable="no">https://github.com/blackjackshellac/clippie</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <!--<property name="image">img_kitchentimer_symbolic</property>-->
+                    <property name="always-show-image">True</property>
+                    <property name="uri">https://github.com/blackjackshellac/clippie</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">&lt;span size='smaller' style='italic'&gt;This program comes with absolutely no warranty.
+See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 License&lt;/a&gt; for details.&lt;/span&gt;</property>
+                    <property name="use-markup">True</property>
+                    <property name="justify">center</property>
+                    <property name="wrap">True</property>
+                    <property name="track-visited-links">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="bmc">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="image">img_bmac</property>
+                    <property name="relief">none</property>
+                    <property name="always-show-image">True</property>
+                    <property name="uri">https://www.buymeacoffee.com/blckjackshellac</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">7</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="name">about</property>
-            <property name="title" translatable="no">About</property>
+            <property name="title" translatable="yes" context="about">About</property>
           </packing>
         </child>
       </object>
@@ -261,6 +415,13 @@
     <property name="can-focus">True</property>
     <property name="label" translatable="yes" context="daemon-reexec">GPaste Settings</property>
     <property name="tooltip-text" translatable="yes" context="daemon-reexec-tooltip">Open the GPaste settings UI</property>
+  </object>
+
+  <object class="GtkImage" id="img_bmac">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="margin-top">10</property>
+    <property name="pixbuf">../icons/bmc_logo_wordmark.svg</property>
   </object>
 
 </interface>

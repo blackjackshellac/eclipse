@@ -252,6 +252,15 @@ class PreferencesBuilder {
     if (this._bo('show_histories').grab_focus()) {
       this.logger.debug('set focus to history switch');
     }
+
+    this._bo('version').set_text("Version "+Me.metadata.version);
+    this._bo('description').set_text(Me.metadata.description.split('\n')[0]);
+
+    if (Utils.isGnome40()) {
+      let bmac = Gtk.Picture.new_for_filename(Me.dir.get_path()+'/icons/bmc_logo_wordmark.svg');
+      this._bo('link_bmac').set_child(bmac);
+    }
+
     return this._widget;
   }
 
