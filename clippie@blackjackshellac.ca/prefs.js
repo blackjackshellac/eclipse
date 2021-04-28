@@ -148,64 +148,111 @@ class PreferencesBuilder {
     this._accel_enable = this._bo('accel_enable');
     // keyboard shortcut buttons
     this._accel_menu = this._bo('accel_menu');
+    this._accel_menu_value = this._bo('accel_menu_value');
+
     this._accel_history = this._bo('accel_history');
+    this._accel_history_value = this._bo('accel_history_value');
+
     this._accel_next = this._bo('accel_next');
+    this._accel_next_value = this._bo('accel_next_value');
 
-    this._accel_menu.connect('clicked', (btn) => {
-      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
-        if (binding) {
-          this.settings.accel_show_menu = binding;
-          btn.set_label(binding.length > 0 ? binding : _("<None>") );
-        }
-      });
 
-      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
-      dialog.set_transient_for(toplevel);
-      dialog.present();
-      this.logger.debug('top level=%s', toplevel);
+    this._accel_menu.set_active(this.settings.accel_show_menu.length > 0);
+    this._accel_menu_value.set_text(this.settings.accel_show_menu);
+
+    this._accel_history.set_active(this.settings.accel_show_history.length > 0);
+    this._accel_history_value.set_text(this.settings.accel_show_history);
+
+    this._accel_next.set_active(this.settings.accel_next.length > 0);
+    this._accel_next_value.set_text(this.settings.accel_next);
+
+    this._accel_menu.connect('notify::active', (sw) => {
+      let active = sw.get_active();
+      if (active) {
+        let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+          if (binding === undefined) {
+            // no change
+          } else if (binding.length > 0) {
+            this.settings.accel_show_menu = binding;
+            this._accel_menu_value.set_text(binding);
+          } else {
+            sw.set_active(false);
+          }
+        });
+
+        let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+        dialog.set_transient_for(toplevel);
+        dialog.present();
+        this.logger.debug('top level=%s', toplevel);
+      } else {
+        this.settings.accel_show_menu = "";
+        this._accel_menu_value.set_text(_("<disabled>"));
+      }
     });
 
-    this._accel_history.connect('clicked', (btn) => {
-      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
-        if (binding) {
-          this.settings.accel_show_history = binding;
-          btn.set_label(binding.length > 0 ? binding : _("<None>") );
-        }
-      });
+    this._accel_history.connect('notify::active', (sw) => {
+      let active = sw.get_active();
+      if (active) {
+        let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+          if (binding === undefined) {
+            // no change
+          } else if (binding.length > 0) {
+            this.settings.accel_show_history = binding;
+            this._accel_history_value.set_text(binding);
+          } else {
+            sw.set_active(false);
+          }
+        });
 
-      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
-      dialog.set_transient_for(toplevel);
-      dialog.present();
-      this.logger.debug('top level=%s', toplevel);
+        let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+        dialog.set_transient_for(toplevel);
+        dialog.present();
+        this.logger.debug('top level=%s', toplevel);
+      } else {
+        this.settings.accel_show_history = "";
+        this._accel_history_value.set_text(_("<disabled>"));
+      }
     });
 
-    this._accel_next.connect('clicked', (btn) => {
-      let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
-        if (binding) {
-          this.settings.accel_next = binding;
-          btn.set_label(binding.length > 0 ? binding : _("<None>") );
-        }
-      });
+    this._accel_next.connect('notify::active', (sw) => {
+      let active = sw.get_active();
+      if (active) {
+        let dialog = new KeyboardShortcutDialog( ( { binding, mask, keycode, keyval }) => {
+          if (binding === undefined) {
+            // no change
+          } else if (binding.length > 0) {
+            this.settings.accel_next = binding;
+            this._accel_next_value.set_text(binding);
+          } else {
+            sw.set_active(false);
+          }
+        });
 
-      let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
-      dialog.set_transient_for(toplevel);
-      dialog.present();
-      this.logger.debug('top level=%s', toplevel);
+        let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
+        dialog.set_transient_for(toplevel);
+        dialog.present();
+        this.logger.debug('top level=%s', toplevel);
+      } else {
+        this.settings.accel_next = "";
+        this._accel_next_value.set_text(_("<disabled>"));
+      }
     });
-
-    this._accel_menu.set_label(this.settings.accel_show_menu);
-    this._accel_history.set_label(this.settings.accel_show_history);
-    this._accel_next.set_label(this.settings.accel_next);
 
     // col, row, col_span, row_span
     this._shortcuts_grid.attach(this._bo('accel_enable_text'),   0, 0, 1, 1); // row 0
     this._shortcuts_grid.attach(this._accel_enable,              1, 0, 1, 1);
-    this._shortcuts_grid.attach(this._bo('accel_menu_text'),     0, 1, 1, 1);
+
+    this._shortcuts_grid.attach(this._bo('accel_menu_text'),     0, 1, 1, 1); // row 1
     this._shortcuts_grid.attach(this._accel_menu,                1, 1, 1, 1);
+    this._shortcuts_grid.attach(this._accel_menu_value,          2, 1, 1, 1);
+
     this._shortcuts_grid.attach(this._bo('accel_history_text'),  0, 2, 1, 1);
     this._shortcuts_grid.attach(this._accel_history,             1, 2, 1, 1);
+    this._shortcuts_grid.attach(this._accel_history_value,       2, 2, 1, 1);
+
     this._shortcuts_grid.attach(this._bo('accel_next_text'),     0, 3, 1, 1);
     this._shortcuts_grid.attach(this._accel_next,                1, 3, 1, 1);
+    this._shortcuts_grid.attach(this._accel_next_value,          2, 3, 1, 1);
 
     this._track_changes = this._bo('track_changes');
     this._daemon_reexec = this._bo('daemon_reexec');

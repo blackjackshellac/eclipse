@@ -111,7 +111,11 @@ var Clippie = class Clippie {
       this.toggle_keyboard_shortcuts();
     });
     this.settings.settings.connect('changed::accel-show-menu', () => {
-      this.enable_keyboard_shortcuts(['accel-show-menu']);
+      if (this.settings.accel_show_menu.length > 0) {
+        this.enable_keyboard_shortcuts(['accel-show-menu']);
+      } else {
+        this._accel.remove('accel-show-menu');
+      }
     });
     this.settings.settings.connect('changed::accel-show-history', () => {
       this.enable_keyboard_shortcuts(['accel-show-history']);
