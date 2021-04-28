@@ -54,6 +54,12 @@ class PreferencesBuilder {
       set_track_changes_true:  (this.gsettings+' set org.gnome.GPaste track-changes true').split(/\s+/),
       set_track_changes_false: (this.gsettings+' set org.gnome.GPaste track-changes false').split(/\s+/)
     };
+
+    if (Utils.isGnome40()) {
+      let iconPath = Me.dir.get_child("icons").get_path();
+      let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default());
+      iconTheme.add_search_path(iconPath);
+    }
   }
 
   get gsettings() {
@@ -256,12 +262,38 @@ class PreferencesBuilder {
     this._bo('version').set_text("Version "+Me.metadata.version);
     this._bo('description').set_text(Me.metadata.description.split('\n')[0]);
 
-    if (Utils.isGnome40()) {
+    // About box
+    this._about_clicks = 0;
+    if (Utils.isGnome3x()) {
+
+      this.timer_icon = this._bo('clippie_icon');
+
+      this.timer_icon.connect('button-press-event', () => {
+        this._about_clicks = this._spawn_dconf_config(this._about_clicks);
+      });
+    } else {
+      this.timer_icon_button = this._bo('clippie_icon_button');
+
+      this.timer_icon_button.connect('clicked', (btn) => {
+        this._about_clicks = this._spawn_dconf_config(this._about_clicks);
+      });
+
       let bmac = Gtk.Picture.new_for_filename(Me.dir.get_path()+'/icons/bmc_logo_wordmark.svg');
       this._bo('link_bmac').set_child(bmac);
     }
-
     return this._widget;
+  }
+
+  _spawn_dconf_config(clicks) {
+    if (clicks === 2) {
+      var cmd = Me.path+"/bin/dconf-editor.sh";
+      this.logger.debug("spawn %s", cmd);
+      Utils.spawn(cmd, undefined);
+      clicks = 0;
+    } else {
+      clicks++;
+    }
+    return clicks;
   }
 
   get dbus_gpaste() {
