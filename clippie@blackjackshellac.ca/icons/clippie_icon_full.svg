@@ -8,27 +8,27 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="114.83844mm"
-   height="126.84642mm"
-   viewBox="0 0 114.83844 126.84642"
+   width="480"
+   height="480"
+   viewBox="0 0 127 127"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="clippie_icon.svg">
+   sodipodi:docname="clippie_icon_full.svg">
   <defs
      id="defs2">
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter1254"
-       x="-1.3395589e-06"
-       width="1.0000027"
-       y="-1.2009523e-06"
-       height="1.0000024">
+       id="filter1668"
+       x="-0.0031568466"
+       width="1.0063137"
+       y="-0.0028580013"
+       height="1.005716">
       <feGaussianBlur
          inkscape:collect="always"
-         stdDeviation="5.9706635e-05"
-         id="feGaussianBlur1256" />
+         stdDeviation="0.15105272"
+         id="feGaussianBlur1670" />
     </filter>
     <filter
        inkscape:collect="always"
@@ -46,15 +46,15 @@
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter1668"
-       x="-0.0031568466"
-       width="1.0063137"
-       y="-0.0028580013"
-       height="1.005716">
+       id="filter1254"
+       x="-1.3395589e-06"
+       width="1.0000027"
+       y="-1.2009523e-06"
+       height="1.0000024">
       <feGaussianBlur
          inkscape:collect="always"
-         stdDeviation="0.15105272"
-         id="feGaussianBlur1670" />
+         stdDeviation="5.9706635e-05"
+         id="feGaussianBlur1256" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -71,22 +71,20 @@
      inkscape:current-layer="layer2"
      inkscape:document-rotation="0"
      showgrid="false"
-     showguides="true"
+     showguides="false"
      inkscape:guide-bbox="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1011"
      inkscape:window-x="0"
      inkscape:window-y="32"
      inkscape:window-maximized="1"
-     units="mm"
+     units="px"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
-    <sodipodi:guide
-       position="-39.769817,95.689732"
-       orientation="1,0"
-       id="guide910" />
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:showpageshadow="false">
     <sodipodi:guide
        position="13.902801,47.308783"
        orientation="0,-1"
@@ -103,10 +101,6 @@
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="4.9851921,111.14534"
-       orientation="1,0"
-       id="guide972" />
-    <sodipodi:guide
        position="91.186393,134.22689"
        orientation="1,0"
        id="guide974" />
@@ -118,10 +112,6 @@
        position="32.04566,26.076636"
        orientation="0,-1"
        id="guide978" />
-    <sodipodi:guide
-       position="0.049964335,94.946942"
-       orientation="1,0"
-       id="guide1299" />
     <sodipodi:guide
        position="15.422542,21.086269"
        orientation="0,-1"
@@ -187,11 +177,13 @@
      style="opacity:0.75;filter:url(#filter1668)"
      transform="translate(-39.769819,-43.61712)">
     <g
-       id="g870">
+       id="g888"
+       transform="matrix(8.832906,0,0,8.832906,-752.85479,-836.02303)"
+       style="opacity:0.75;filter:url(#filter957)">
       <g
          id="g1329-1"
-         transform="translate(-99.365035,-18.368356)"
-         style="opacity:1;filter:url(#filter1254-4)">
+         transform="matrix(0.11059015,0,0,0.11059015,74.922928,92.6422)"
+         style="filter:url(#filter1254-4)">
         <rect
            style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.397902;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1254-4)"
            id="rect1295-3-2"
@@ -212,7 +204,7 @@
       </g>
       <g
          id="g1329"
-         transform="translate(-118.20834,-38.925213)">
+         transform="matrix(0.11059015,0,0,0.11059015,73.368211,90.897981)">
         <rect
            style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.397902;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1254)"
            id="rect1295-3"
@@ -231,33 +223,37 @@
            y="88.062119"
            ry="1.6597211" />
       </g>
-      <rect
-         style="opacity:1;fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:0.339976;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect1266"
-         width="50.396774"
-         height="58.298412"
-         x="62.846588"
-         y="68.936607"
-         ry="2.8891828" />
       <g
-         id="g1630"
-         transform="translate(0.66223717)">
+         id="g875"
+         transform="matrix(1.3812264,0,0,1.3812264,-36.763513,-40.542339)">
         <rect
-           style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="rect1268"
-           width="26.831547"
-           height="11.397543"
-           x="73.966965"
-           y="82.055115"
-           ry="2.8891704" />
-        <rect
-           style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1254)"
-           id="rect1268-6"
-           width="26.831547"
-           height="11.397543"
-           x="73.966965"
-           y="102.98964"
-           ry="2.8891704" />
+           style="fill:#1a1a1a;fill-opacity:1;stroke:#808080;stroke-width:0.037598;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1266"
+           width="5.5733867"
+           height="6.4472303"
+           x="93.391106"
+           y="102.82644"
+           ry="0.31951517" />
+        <g
+           id="g1630"
+           transform="matrix(0.11059015,0,0,0.11059015,86.514126,95.202726)">
+          <rect
+             style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             id="rect1268"
+             width="26.831547"
+             height="11.397543"
+             x="73.966965"
+             y="82.055115"
+             ry="2.8891704" />
+          <rect
+             style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1254)"
+             id="rect1268-6"
+             width="26.831547"
+             height="11.397543"
+             x="73.966965"
+             y="102.98964"
+             ry="2.8891704" />
+        </g>
       </g>
     </g>
   </g>
