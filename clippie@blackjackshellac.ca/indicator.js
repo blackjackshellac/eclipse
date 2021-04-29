@@ -51,9 +51,9 @@ class ClippieIndicator extends PanelMenu.Button {
         //icon_name: 'view-paged-symbolic',
         gicon: gicon,
         style_class: 'system-status-icon',
-        icon_size: 16
+        icon_size: 20
     }));
-    box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
+    //box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
 
     this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
