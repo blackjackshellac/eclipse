@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const { GObject, St } = imports.gi;
+const { GLib, Gio, GObject, St } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -43,10 +43,15 @@ class ClippieIndicator extends PanelMenu.Button {
     this.logger = new Logger('cl_indicator', this.settings);
     this.logger.debug('Initializing extension');
 
+    let clippie_icon_path = GLib.build_filenamev([Me.path, 'icons', 'clippie_icon.svg']);
+    let gicon = Gio.icon_new_for_string(clippie_icon_path);
+
     let box = new St.BoxLayout({ style_class: 'panel-status-menu-box' });
     box.add_child(new St.Icon({
-        icon_name: 'view-paged-symbolic',
+        //icon_name: 'view-paged-symbolic',
+        gicon: gicon,
         style_class: 'system-status-icon',
+        icon_size: 16
     }));
     box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
