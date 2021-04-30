@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-26 16:58-0400\n"
-"PO-Revision-Date: 2021-04-26 16:58-0400\n"
+"POT-Creation-Date: 2021-04-30 11:14-0400\n"
+"PO-Revision-Date: 2021-04-30 11:14-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -41,13 +41,14 @@ msgstr ""
 msgid "Clippie"
 msgstr ""
 
-#: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:91 menus.js:96
+#: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:76 menus.js:91
+#: menus.js:96
 msgid "More…"
 msgstr ""
 
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
 #: menus.js:313 menus.js:333 menus.js:334 menus.js:335 menus.js:346
-#: menus.js:352 menus.js:357
+#: menus.js:352 menus.js:357 menus.js:377
 msgid "Search"
 msgstr ""
 
@@ -56,21 +57,22 @@ msgid "Histories"
 msgstr ""
 
 #: menus.js:432 menus.js:433 menus.js:445 menus.js:451 menus.js:456
+#: menus.js:476
 msgid "History ["
 msgstr ""
 
 #: menus.js:504 menus.js:506 menus.js:507 menus.js:509 menus.js:510
-#: menus.js:511 menus.js:518 menus.js:524 menus.js:529
+#: menus.js:511 menus.js:518 menus.js:524 menus.js:529 menus.js:549
 msgid "Create history"
 msgstr ""
 
 #: menus.js:606 menus.js:621 menus.js:623 menus.js:624 menus.js:627
-#: menus.js:632
+#: menus.js:632 menus.js:652
 msgid "Clear"
 msgstr ""
 
 #: menus.js:647 menus.js:662 menus.js:664 menus.js:665 menus.js:668
-#: menus.js:673
+#: menus.js:673 menus.js:693
 msgid "Delete"
 msgstr ""
 
@@ -79,13 +81,17 @@ msgid "<None>"
 msgstr ""
 
 #: prefs.js:150 prefs.js:154 prefs.js:162 prefs.js:189 prefs.js:201
-#: prefs.js:232
+#: prefs.js:232 prefs.js:285
 msgid "GPaste deamon restarted"
 msgstr ""
 
 #: prefs.js:156 prefs.js:160 prefs.js:168 prefs.js:195 prefs.js:207
-#: prefs.js:238
+#: prefs.js:238 prefs.js:291
 msgid "Launched gpaste-client ui"
+msgstr ""
+
+#: prefs.js:189 prefs.js:213 prefs.js:237
+msgid "<disabled>"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26

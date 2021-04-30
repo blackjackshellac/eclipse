@@ -106,7 +106,7 @@ var KeyboardShortcuts = class KeyboardShortcuts {
         delete this._grabbers[action];
       }
     } else {
-      this.logger.debug('grabber not found for accelerator=%s', accelerator);
+      this.logger.debug('grabber not found for accelerator=%s', accel_id);
     }
   }
 
