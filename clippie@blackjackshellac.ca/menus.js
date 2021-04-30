@@ -29,6 +29,8 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
+const EditItemDialog = Me.imports.dialog.EditItemDialog;
+
 const Logger = Me.imports.logger.Logger;
 const Utils = Me.imports.utils;
 
@@ -222,7 +224,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.label.set_text(clip.label_text());
 
       box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
-      //box.add_child(new ClipItemControlButton(clip, 'edit'));
+      box.add_child(new ClipItemControlButton(clip, 'edit'));
       box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, 'delete'));
 
@@ -287,7 +289,10 @@ class ClipItemControlButton extends St.Button {
     connect_type() {
         switch(this.type) {
         case 'edit':
-          // TODO
+          this.connect('clicked', (btn) => {
+            let dialog = new EditItemDialog(this.clip);
+            dialog.open(global.get_current_time());
+          });
           break;
         case "lock":
         case "unlock":
