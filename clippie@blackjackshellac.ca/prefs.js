@@ -334,8 +334,11 @@ class PreferencesBuilder {
   _spawn_dconf_config(clicks) {
     if (clicks === 2) {
       var cmd = Me.path+"/bin/dconf-editor.sh";
-      this.logger.debug("spawn %s", cmd);
-      Utils.spawn(cmd, undefined);
+      this.logger.debug("execute %s", cmd);
+      let [ exit_status, stdout, stderr ] = Utils.execute( [ cmd ] );
+      if (exit_status !== 0) {
+        this._msg_text.set_label(stderr);
+      }
       clicks = 0;
     } else {
       clicks++;
