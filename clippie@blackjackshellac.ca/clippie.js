@@ -605,15 +605,17 @@ var Clip = class Clip {
     $ echo -en "super secret passphrase\nencrypt this secret" | openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
     U2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt
   */
-  encrypt(passphrase) {
+  encrypt(label, passphrase) {
     // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
     if (!clippieInstance.openssl) {
-      this.logger.error('openssl not found');
-      return;
+      let msg=_('openssl not found');
+      this.logger.error(msg);
+      return msg;
     }
     if (!passphrase || passphrase.trim().length === 0) {
-      this.logger.error('will not encrypt without passphrase');
-      return;
+      let msg=_('will not encrypt without passphrase');
+      this.logger.error(msg);
+      return msg;
     }
     let data=passphrase+"\n"+this.content;
     this.logger.debug("%s | %s", data, clippieInstance.openssl_enc_args.join(' '));
@@ -622,12 +624,13 @@ var Clip = class Clip {
       let stdout = result[1];
       let stderr = result[2];
       if (ok) {
-        this.logger.debug("Encrypted content [%s-%s] to [%s]", passphrase, this.content, stdout);
+        this.logger.warn("TEST: Encrypted content [%s-%s] to [%s]", passphrase, this.content, stdout);
         this.decrypt(passphrase, stdout);
       } else {
         this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
       }
     });
+    return undefined;
   }
 
   /*
