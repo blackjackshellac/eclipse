@@ -565,7 +565,7 @@ var Clip = class Clip {
       // unlocked, convert clipboard entry to password
 
       // get the index of the clip before setting as password
-      let idx = clippieInstance.indexOf(this);
+      let idx = clippieInstance.clips.indexOf(this);
 
       clippieInstance.dbus_gpaste.setPassword(this.uuid, label);
       this.menu_item.trash_self();
@@ -576,7 +576,7 @@ var Clip = class Clip {
         let [uuid, content] = clippieInstance.dbus_gpaste.getElementAtIndex(idx);
         if (uuid) {
           let clip=new Clip(uuid, content);
-          clippieInstance.push(clip);
+          clippieInstance.clips.push(clip);
           clippieInstance.dbus_gpaste.select(uuid);
         }
       }
