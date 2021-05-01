@@ -146,7 +146,7 @@ function addSignalsHelperMethods(prototype) {
  *
  * A simple, asynchronous process launcher wrapped in a Promise.
  *
- * Returns: stdout text output
+ * Returns: [ ok, stdout, stderr ]
  */
 async function execCommandAsync(argv, input = null, cancellable = null) {
     try {
@@ -154,30 +154,34 @@ async function execCommandAsync(argv, input = null, cancellable = null) {
         let flags = Gio.SubprocessFlags.STDOUT_PIPE;
 
         // If we aren't given any input, we don't need to open stdin
-        if (input !== null)
-            flags |= Gio.SubprocessFlags.STDIN_PIPE;
+        if (input !== null) {
+          flags |= Gio.SubprocessFlags.STDIN_PIPE;
+        }
 
         let proc = new Gio.Subprocess({
-            argv: argv,
-            flags: flags
+          argv: argv,
+          flags: flags
         });
 
         // Classes that implement GInitable must be initialized before use, but
         // an alternative in GJS is to just use Gio.Subprocess.new(argv, flags)
         proc.init(cancellable);
 
-        let stdout = await new Promise((resolve, reject) => {
-            proc.communicate_utf8_async(input, cancellable, (proc, res) => {
-                try {
-                    let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
-                    resolve(stdout);
-                } catch (e) {
-                    reject(e);
-                }
-            });
+        log('argv='+argv.join(' '));
+        let result = await new Promise((resolve, reject) => {
+          log('input='+input);
+          proc.communicate_utf8_async(input, cancellable, (proc, res) => {
+            try {
+              //let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
+              let result = proc.communicate_utf8_finish(res);
+              resolve(result);
+            } catch (e) {
+              reject(e);
+            }
+          });
         });
 
-        return stdout;
+        return result;
     } catch (e) {
         logError(e);
     }

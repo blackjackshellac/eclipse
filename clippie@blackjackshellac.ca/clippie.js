@@ -63,6 +63,14 @@ var Clippie = class Clippie {
       //   {gicon: Gio.icon_new_for_string('dialog-information')});
     }
     this.gpaste_client_oneline = [ this.gpaste_client, '--oneline' ];
+
+    this.openssl = Utils.exec_path('openssl');
+    if (this.openssl === null) {
+      this.logger.error('openssl not found');
+    } else {
+      this.openssl_enc_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -a -pass stdin').trim().split(/\s+/);
+      this.openssl_dec_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -d -a -pass stdin').trim().split(/\s+/);
+    }
   }
 
   notification(title, banner, urgency=MessageTray.Urgency.NORMAL, params={}) {
@@ -304,8 +312,15 @@ var Clippie = class Clippie {
   refresh_async(menu) {
     this.menu = menu;
 
-    Utils.execCommandAsync(this.gpaste_client_oneline).then(stdout => {
-      this.refresh_result(stdout);
+    Utils.execCommandAsync(this.gpaste_client_oneline).then(result => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2];
+      if (ok) {
+        this.refresh_result(stdout);
+      } else {
+        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+      }
     });
   }
 
@@ -565,7 +580,7 @@ var Clip = class Clip {
       // unlocked, convert clipboard entry to password
 
       // get the index of the clip before setting as password
-      let idx = clippieInstance.indexOf(this);
+      let idx = clippieInstance.clips.indexOf(this);
 
       clippieInstance.dbus_gpaste.setPassword(this.uuid, label);
       this.menu_item.trash_self();
@@ -576,12 +591,73 @@ var Clip = class Clip {
         let [uuid, content] = clippieInstance.dbus_gpaste.getElementAtIndex(idx);
         if (uuid) {
           let clip=new Clip(uuid, content);
-          clippieInstance.push(clip);
+          clippieInstance.clips.push(clip);
           clippieInstance.dbus_gpaste.select(uuid);
         }
       }
-
     }
+    return true;
+  }
+
+  /*
+    Encryption test phrase
+    # encrypt secret password with pin 'super secret passphrase' as first line of data to stdin for openssl
+    $ echo -en "super secret passphrase\nencrypt this secret" | openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
+    U2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt
+  */
+  encrypt(passphrase) {
+    // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
+    if (!clippieInstance.openssl) {
+      this.logger.error('openssl not found');
+      return;
+    }
+    if (!passphrase || passphrase.trim().length === 0) {
+      this.logger.error('will not encrypt without passphrase');
+      return;
+    }
+    let data=passphrase+"\n"+this.content;
+    this.logger.debug("%s | %s", data, clippieInstance.openssl_enc_args.join(' '));
+    Utils.execCommandAsync(clippieInstance.openssl_enc_args, data).then((result) => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2];
+      if (ok) {
+        this.logger.debug("Encrypted content [%s-%s] to [%s]", passphrase, this.content, stdout);
+        this.decrypt(passphrase, stdout);
+      } else {
+        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+      }
+    });
+  }
+
+  /*
+    # successfully decrypt secret with good pin
+    $ echo -e "super secret passphrase\nU2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt" | openssl enc -aes-256-cbc -pbkdf2 -d -a -pass stdin
+    encrypt this secret
+    $ echo $?
+    0
+  */
+  decrypt(passphrase, enc_data) {
+    if (!clippieInstance.openssl) {
+      this.logger.error('openssl not found');
+      return false;
+    }
+    if (!passphrase || passphrase.trim().length === 0) {
+      this.logger.error('can not decrypt without passphrase');
+      return false;
+    }
+    let data=passphrase+"\n"+enc_data;
+    this.logger.debug("%s | %s", data, clippieInstance.openssl_enc_args.join(' '));
+    Utils.execCommandAsync(clippieInstance.openssl_dec_args, data).then((result) => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2];
+      if (ok) {
+        this.logger.debug("decrypted content [%s-%s] to [%s]", passphrase, enc_data, stdout);
+      } else {
+        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+      }
+    });
     return true;
   }
 }
