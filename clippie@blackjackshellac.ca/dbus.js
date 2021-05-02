@@ -136,6 +136,26 @@ var DBusGPaste = class DBusGPaste {
     this.gpaste_proxy.ReexecuteSync();
   }
 
+  add(entry) {
+    try {
+      this.gpaste_proxy.AddSync(entry);
+    } catch (e) {
+      this.logger.error("Failed to add entry %s: %s", entry, e);
+      return false;
+    }
+    return true;
+  }
+
+  addPassword(name, content) {
+    try {
+      this.gpaste_proxy.AddPasswordSync(name, content);
+    } catch (e) {
+      this.logger.error("Failed to add password entry %s: %s", name, e);
+      return false;
+    }
+    return true;
+  }
+
   setPassword(uuid, label) {
     this.gpaste_proxy.SetPasswordSync(uuid, label);
   }

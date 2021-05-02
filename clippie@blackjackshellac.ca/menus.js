@@ -29,7 +29,8 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
-const EncryptDecryptModalDialog = Me.imports.dialog.EncryptDecryptModalDialog;
+const EncryptModalDialog = Me.imports.dialog.EncryptModalDialog;
+const DecryptModalDialog = Me.imports.dialog.DecryptModalDialog;
 const Logger = Me.imports.logger.Logger;
 const Utils = Me.imports.utils;
 
@@ -222,7 +223,9 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.label.set_text(clip.label_text());
 
-      if (clip.lock) {
+      if (clip.eclipsed) {
+        box.add_child(new ClipItemControlButton(clip, 'decrypt'));
+      } else if (clip.lock) {
         box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
       } else {
         box.add_child(new ClipItemControlButton(clip, 'encrypt'));
@@ -233,7 +236,10 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
-        if (mi.clip.select()) {
+        if (mi.clip.isEclipsed()) {
+          // decrypt as password entry
+          new DecryptModalDialog(mi.clip);
+        } else if (mi.clip.select()) {
           let cm = mi.clip.clippie.indicator.clippie_menu.menu;
           cm.moveMenuItem(mi, 1);
         }
@@ -263,7 +269,8 @@ var CICBTypes = {
   'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
   'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
   'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' },
-  'encrypt' : { icon: 'dialog-password-symbolic', style: 'clippie-menu-lock-icon' }
+  'encrypt' : { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
+  'decrypt' : { icon: 'dialog-password-symbolic', style: 'clippie-menu-lock-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -297,7 +304,13 @@ class ClipItemControlButton extends St.Button {
           break;
         case 'encrypt':
           this.connect('clicked', (cb) => {
-            let dialog = new EncryptDecryptModalDialog(this.clip);
+            let dialog = new EncryptModalDialog(this.clip);
+            dialog.open(global.get_current_time());
+          });
+          break;
+        case 'decrypt':
+          this.connect('clicked', (cb) => {
+            let dialog = new DecryptModalDialog(this.clip);
             dialog.open(global.get_current_time());
           });
           break;
