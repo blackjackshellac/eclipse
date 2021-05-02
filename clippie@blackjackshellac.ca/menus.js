@@ -222,7 +222,11 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.label.set_text(clip.label_text());
 
-      box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      if (clip.lock) {
+        box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      } else {
+        box.add_child(new ClipItemControlButton(clip, 'encrypt'));
+      }
       //box.add_child(new ClipItemControlButton(clip, 'edit'));
       box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, 'delete'));
@@ -258,7 +262,8 @@ var CICBTypes = {
   'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
   'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
   'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
-  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' }
+  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' },
+  'encrypt' : { icon: 'dialog-password-symbolic', style: 'clippie-menu-lock-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -290,11 +295,16 @@ class ClipItemControlButton extends St.Button {
         case 'edit':
           // TODO
           break;
+        case 'encrypt':
+          this.connect('clicked', (cb) => {
+            let dialog = new EncryptDecryptModalDialog(this.clip);
+            dialog.open(global.get_current_time());
+          });
+          break;
         case 'lock':
         case 'unlock':
           this.connect('clicked', (cb) => {
-            //let dialog = new LockItemModalDialog(this.clip);
-            let dialog = new EncryptDecryptModalDialog(this.clip);
+            let dialog = new LockItemModalDialog(this.clip);
             dialog.open(global.get_current_time());
           });
           break;
