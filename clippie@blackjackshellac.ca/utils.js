@@ -167,9 +167,9 @@ async function execCommandAsync(argv, input = null, cancellable = null) {
         // an alternative in GJS is to just use Gio.Subprocess.new(argv, flags)
         proc.init(cancellable);
 
-        log('argv='+argv.join(' '));
+        //log('argv='+argv.join(' '));
         let result = await new Promise((resolve, reject) => {
-          log('input='+input);
+          //log('input='+input);
           proc.communicate_utf8_async(input, cancellable, (proc, res) => {
             try {
               //let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);

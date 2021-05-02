@@ -238,7 +238,8 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         logger.debug("Selected %s", mi.clip.uuid);
         if (mi.clip.isEclipsed()) {
           // decrypt as password entry
-          new DecryptModalDialog(mi.clip);
+          let dialog = new DecryptModalDialog(mi.clip);
+          dialog.open();
         } else if (mi.clip.select()) {
           let cm = mi.clip.clippie.indicator.clippie_menu.menu;
           cm.moveMenuItem(mi, 1);

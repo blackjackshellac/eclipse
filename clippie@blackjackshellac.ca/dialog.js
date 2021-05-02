@@ -36,7 +36,7 @@ var DecryptModalDialog = GObject.registerClass({
     this._clip = clip;
 
     this.setButtons([
-      { label: _("Ok"),
+      { label: _("Decrypt"),
         action: this._onOk.bind(this)
       },
       {
@@ -61,32 +61,27 @@ var DecryptModalDialog = GObject.registerClass({
     });
     //box.add(icon);
 
-    this._entry = new St.Entry({
-      x_expand: true,
-      y_expand: false,
-      can_focus: true,
-      track_hover: true,
-      style_class: 'clippie-password-entry',
-      x_align: Clutter.ActorAlign.CENTER,
-      y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: icon,
-      hint_text: _("Entry label"),
-      reactive: true
-    });
+    // this._entry = new St.Entry({
+    //   x_expand: true,
+    //   y_expand: false,
+    //   can_focus: false,
+    //   track_hover: false,
+    //   style_class: 'clippie-password-entry',
+    //   x_align: Clutter.ActorAlign.CENTER,
+    //   y_align: Clutter.ActorAlign.CENTER,
+    //   primary_icon: icon,
+    //   hint_text: _("Entry label"),
+    //   reactive: true
+    // });
 
-    this._entry.set_hover(true);
-    let etext = this._entry.get_clutter_text();
-    etext.set_activatable(false);
-    etext.set_editable(true);
+    // this._entry.set_hover(true);
+    // let etext = this._entry.get_clutter_text();
+    // etext.set_activatable(false);
+    // etext.set_editable(false);
 
-    this._entry.set_text(clip.content);
+    // this._entry.set_text(clip.content);
 
-    let label_text=_("Enter name for the encrypted entry");
-    if (clip.isPassword()) {
-      let label = clip.password_name;
-      this._entry.set_text(label);
-      label_text =_("Enter new name for the password entry");
-    }
+    let label_text=clip.content;
 
     this._password_entry = new St.PasswordEntry({
       x_expand: true,
@@ -104,7 +99,7 @@ var DecryptModalDialog = GObject.registerClass({
 
     this._password_entry.set_hover(true);
     let ptext = this._password_entry.get_clutter_text();
-    ptext.set_activatable(false);
+    ptext.set_activatable(true);
     ptext.set_editable(true);
 
     this._label = new St.Label({
@@ -113,11 +108,10 @@ var DecryptModalDialog = GObject.registerClass({
       style_class: 'clippie-password-text'
     });
     box.add(this._label);
-    box.add(this._entry);
     box.add(this._password_entry);
 
     this.connect('opened', (dialog) => {
-      global.stage.set_key_focus(this._entry);
+      global.stage.set_key_focus(this._password_entry);
     });
 
     this.connect('closed', (dialog) => {
@@ -129,14 +123,11 @@ var DecryptModalDialog = GObject.registerClass({
         this.submit();
       }
     });
+
+    ptext.grab_key_focus();
   }
 
   confirm() {
-    let label = this._entry.get_text().trim();
-    if (label.length === 0) {
-      this.set_msg(_('Specify a label for the encrypted entry'));
-      return undefined;
-    }
     let ptext = this._password_entry.get_text().trim();
     if (ptext.length < 4) {
       this.set_msg(_('Passphrase too short'));
@@ -150,10 +141,14 @@ var DecryptModalDialog = GObject.registerClass({
   submit() {
     let password = this.confirm();
     if (password) {
-      let msg=this.clip.decrypt(password);
-      if (msg === undefined) {
-        this.close(global.get_current_time());
-      } else {
+      let msg=this.clip.decrypt(password, (ok, stderr) => {
+        if (ok) {
+          this.close(global.get_current_time());
+        } else {
+          this.set_msg(stderr);
+        }
+      });
+      if (msg) {
         this.set_msg(msg);
       }
     }
@@ -187,7 +182,7 @@ var EncryptModalDialog = GObject.registerClass({
     this._clip = clip;
 
     this.setButtons([
-      { label: _("Ok"),
+      { label: _("Encrypt"),
         action: this._onOk.bind(this)
       },
       {
