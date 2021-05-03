@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-01 10:40-0400\n"
-"PO-Revision-Date: 2021-05-01 10:40-0400\n"
+"POT-Creation-Date: 2021-05-03 16:35-0400\n"
+"PO-Revision-Date: 2021-05-03 16:35-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,38 +17,94 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: dialog.js:38 dialog.js:40
+#: clippie.js:683
+msgid "openssl not found"
+msgstr ""
+
+#: clippie.js:686
+msgid "will not encrypt without passphrase"
+msgstr ""
+
+#: dialog.js:38 dialog.js:40 dialog.js:357
 msgid "Ok"
 msgstr ""
 
-#: dialog.js:43 dialog.js:44
+#: dialog.js:39
+msgid "Decrypt"
+msgstr ""
+
+#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:361
 msgid "Cancel"
 msgstr ""
 
-#: dialog.js:72 dialog.js:74
+#: dialog.js:72 dialog.js:74 dialog.js:391
 msgid "Password label"
 msgstr ""
 
-#: dialog.js:75 dialog.js:85
+#: dialog.js:73 dialog.js:220
+msgid "Passphrase"
+msgstr ""
+
+#: dialog.js:75 dialog.js:85 dialog.js:402
 msgid "Enter name for the password entry"
 msgstr ""
 
-#: dialog.js:79 dialog.js:89
+#: dialog.js:79 dialog.js:89 dialog.js:406
 msgid "Enter new name for the password entry"
+msgstr ""
+
+#: dialog.js:83
+msgid "Enter the decryption passphrase"
+msgstr ""
+
+#: dialog.js:118 dialog.js:299
+msgid "Passphrase too short"
+msgstr ""
+
+#: dialog.js:134
+msgid "Decryption failed"
+msgstr ""
+
+#: dialog.js:171
+msgid "Encrypt"
+msgstr ""
+
+#: dialog.js:201
+msgid "Label for encrypted entry"
+msgstr ""
+
+#: dialog.js:239
+msgid "Confirm"
+msgstr ""
+
+#: dialog.js:249
+msgid "Enter and confirm the encryption passphrase"
+msgstr ""
+
+#: dialog.js:293
+msgid "Specify a label for the encrypted entry"
+msgstr ""
+
+#: dialog.js:303
+msgid "Passphrase mismatch"
+msgstr ""
+
+#: dialog.js:306
+msgid "Passphrase match"
 msgstr ""
 
 #: indicator.js:38 indicator.js:39
 msgid "Clippie"
 msgstr ""
 
-#: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:76 menus.js:91
-#: menus.js:96
+#: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:76 menus.js:78
+#: menus.js:91 menus.js:96
 msgid "More…"
 msgstr ""
 
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
 #: menus.js:313 menus.js:333 menus.js:334 menus.js:335 menus.js:346
-#: menus.js:352 menus.js:357 menus.js:377
+#: menus.js:352 menus.js:357 menus.js:377 menus.js:397
 msgid "Search"
 msgstr ""
 
@@ -57,22 +113,23 @@ msgid "Histories"
 msgstr ""
 
 #: menus.js:432 menus.js:433 menus.js:445 menus.js:451 menus.js:456
-#: menus.js:476
+#: menus.js:476 menus.js:496
 msgid "History ["
 msgstr ""
 
 #: menus.js:504 menus.js:506 menus.js:507 menus.js:509 menus.js:510
 #: menus.js:511 menus.js:518 menus.js:524 menus.js:529 menus.js:549
+#: menus.js:569
 msgid "Create history"
 msgstr ""
 
 #: menus.js:606 menus.js:621 menus.js:623 menus.js:624 menus.js:627
-#: menus.js:632 menus.js:652
+#: menus.js:632 menus.js:652 menus.js:672
 msgid "Clear"
 msgstr ""
 
 #: menus.js:647 menus.js:662 menus.js:664 menus.js:665 menus.js:668
-#: menus.js:673 menus.js:693
+#: menus.js:673 menus.js:693 menus.js:713
 msgid "Delete"
 msgstr ""
 
