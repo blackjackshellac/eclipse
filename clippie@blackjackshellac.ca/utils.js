@@ -151,7 +151,7 @@ function addSignalsHelperMethods(prototype) {
 async function execCommandAsync(argv, input = null, cancellable = null) {
     try {
         // We'll assume we want output, or that returning none is not a problem
-        let flags = Gio.SubprocessFlags.STDOUT_PIPE;
+        let flags = Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE;
 
         // If we aren't given any input, we don't need to open stdin
         if (input !== null) {
@@ -172,11 +172,21 @@ async function execCommandAsync(argv, input = null, cancellable = null) {
           //log('input='+input);
           proc.communicate_utf8_async(input, cancellable, (proc, res) => {
             try {
+              let exit_status = proc.get_exit_status();
+              //log('exit_status='+exit_status);
               //let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
               let result = proc.communicate_utf8_finish(res);
+              result.push(exit_status);
+              if (exit_status !== 0) {
+                result[0] = false;
+              }
+              //log('Utils: ok=%s stdout=[%s] stderr=[%s] es=%d'.format(result[0], result[1], result[2].trimEnd(), proc.get_exit_status()));
               resolve(result);
             } catch (e) {
-              reject(e);
+              //reject(e);
+              let result=[false, '', e.message, 255];
+              log('Utils: failed '+e.message);
+              resolve(result);
             }
           });
         });

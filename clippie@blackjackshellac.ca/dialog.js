@@ -81,8 +81,6 @@ var DecryptModalDialog = GObject.registerClass({
 
     // this._entry.set_text(clip.content);
 
-    let label_text=clip.content;
-
     this._password_entry = new St.PasswordEntry({
       x_expand: true,
       y_expand: false,
@@ -103,12 +101,19 @@ var DecryptModalDialog = GObject.registerClass({
     ptext.set_editable(true);
 
     this._label = new St.Label({
-      text: label_text,
+      text: clip.content,
       x_align: Clutter.ActorAlign.CENTER,
       style_class: 'clippie-password-text'
     });
+
+    this._msg = new St.Label({
+      text: _("Enter the decryption passphrase"),
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-msg-text'
+    });
     box.add(this._label);
     box.add(this._password_entry);
+    box.add(this._msg);
 
     this.connect('opened', (dialog) => {
       global.stage.set_key_focus(this._password_entry);
@@ -145,7 +150,8 @@ var DecryptModalDialog = GObject.registerClass({
         if (ok) {
           this.close(global.get_current_time());
         } else {
-          this.set_msg(stderr);
+          //this.set_msg(stderr);
+          this.set_msg(_('Decryption failed, wrong passphrase'));
         }
       });
       if (msg) {
@@ -167,7 +173,7 @@ var DecryptModalDialog = GObject.registerClass({
   }
 
   set_msg(msg) {
-    this._label.set_text(msg);
+    this._msg.set_text(msg);
   }
 });
 
@@ -329,8 +335,16 @@ var EncryptModalDialog = GObject.registerClass({
   submit() {
     let password = this.confirm();
     if (password) {
-      this.clip.encrypt(this._entry.get_text(), password);
-      this.close(global.get_current_time());
+      this.clip.encrypt(this._entry.get_text(), password, (ok, stderr) => {
+        //this.clip.logger.debug("ok=%s stderr=[%s]", ok, stderr);
+        if (ok) {
+          // success, delete from clipboard
+          this.clip.delete();
+          this.close(global.get_current_time());
+        } else {
+          this.set_msg(stderr);
+        }
+      });
     }
   }
 

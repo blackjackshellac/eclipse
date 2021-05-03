@@ -22,7 +22,11 @@
 }
 
 .clippie-password-text {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.clippie-msg-text {
+  margin-top: 10px;
 }
 
 .clippie-search-entry {

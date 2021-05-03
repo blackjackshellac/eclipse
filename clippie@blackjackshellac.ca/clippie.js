@@ -68,8 +68,9 @@ var Clippie = class Clippie {
     if (this.openssl === null) {
       this.logger.error('openssl not found');
     } else {
-      this.openssl_enc_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -a -pass stdin').trim().split(/\s+/);
-      this.openssl_dec_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -d -a -pass stdin').trim().split(/\s+/);
+      // use -A -a for oneline ascii armoured output
+      this.openssl_enc_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -A -a -pass stdin').trim().split(/\s+/);
+      this.openssl_dec_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -d -A -a -pass stdin').trim().split(/\s+/);
     }
   }
 
@@ -341,26 +342,22 @@ var Clippie = class Clippie {
         //this.logger.debug('uuid=%s', uuid);
         if (eclipsed_uuids.includes(uuid)) {
           this.logger.debug('%s entry is eclipsed', uuid);
-          // delete uuid
-          //this.dbus_gpaste.delete(uuid);
+          // delete uuid here (or below?)
+          // TODO this.dbus_gpaste.delete(uuid);
           continue;
         }
 
         // find clip with this uuid (if any)
         let clip = this.find_uuid(uuid);
         if (clip === undefined) {
-          //this.logger.debug("%03d>%s:%d", i, uuid, content.length);
           // clip not found in clips, create a new one
           clip = new Clip(uuid, content);
         }
-        //this.logger.debug("got clip: %s %s", clip.uuid, clip.eclipsed !== undefined);
         if (clip.isEclipsed()) {
-          // TODO delete eclipsed_uuid
-          this.logger.debug("%s eclipsed: %s [%s]", clip.uuid, clip.content, clip.eclipsed);
+          //this.logger.debug("%s eclipsed: %s [%s]", clip.uuid, clip.content, clip.eclipsed);
           eclipsed_uuids.push(clip.eclipsed_uuid);
         }
         clips.push(clip);
-        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
         }
@@ -376,7 +373,7 @@ var Clippie = class Clippie {
       this.clips = clips;
       for (uuid of eclipsed_uuids) {
         this.logger.debug('deleting eclipsed uuid=%s', uuid);
-        this.dbus_gpaste.delete(uuid);
+        // TODO this.dbus_gpaste.delete(uuid);
       }
     });
   }
@@ -654,13 +651,13 @@ var Clip = class Clip {
 
   // add gpaste entry with ~~eclipse~~label~~this.uuid~~eclipse~~
   eclipser(label, eclipse) {
-    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, this.uuid, eclipse.replace(/(\r\n|\n|\r)/gm, ""));
-    this.logger.debug(str);
+    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, this.uuid, eclipse);
+    //this.logger.debug("eclipser:"+str);
     return str;
   }
 
   declipser(content) {
-    const declipse_re = /~~eclipse~~(.*?)~~(.*?)~~(.*?)~~/m;
+    const declipse_re = /^~~eclipse~~(.*?)~~(.*?)~~(.*?)~~/m;
     let m = content.match(declipse_re);
     if (m) {
       let label = m[1];
@@ -680,34 +677,35 @@ var Clip = class Clip {
     $ echo -en "super secret passphrase\nencrypt this secret" | openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
     U2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt
   */
-  encrypt(label, passphrase) {
+  encrypt(label, passphrase, callback) {
     // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
     if (!clippieInstance.openssl) {
-      let msg=_('openssl not found');
-      this.logger.error(msg);
-      return msg;
+      return this.logger.error(_('openssl not found'));
     }
     if (!passphrase || passphrase.trim().length === 0) {
-      let msg=_('will not encrypt without passphrase');
-      this.logger.error(msg);
-      return msg;
+      return this.logger.error(_('will not encrypt without passphrase'));
     }
 
+    let cmdargs=clippieInstance.openssl_enc_args.join(' ');
     // passphrase is piped as first line of data to openssl
     let data=passphrase+"\n"+this.content;
-    //this.logger.debug("%s | %s", data, clippieInstance.openssl_enc_args.join(' '));
+    //this.logger.debug("%s | %s", data, );
+    this.logger.debug("encrypt content | %s", cmdargs);
     Utils.execCommandAsync(clippieInstance.openssl_enc_args, data).then((result) => {
       let ok = result[0];
       let stdout = result[1];
       let stderr = result[2];
-      if (ok) {
+      let status = result[3];
+      if (ok && status === 0) {
         //this.logger.debug("Encrypted %s [%s]", label, stdout);
         // test decryption with same password
-        clippieInstance.dbus_gpaste.add(this.eclipser(label, stdout));
+        clippieInstance.dbus_gpaste.add(this.eclipser(label, stdout.trimEnd()));
         // TODO trash this
       } else {
-        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+        ok = false;
+        this.logger.error("%s failed status=%d: %s", cmdargs, status, stderr);
       }
+      callback(ok, stderr);
     });
     return undefined;
   }
@@ -727,17 +725,20 @@ var Clip = class Clip {
       return this.logger.error('can not decrypt without passphrase');
     }
     // passphrase is piped as first line of data to openssl
+    let cmdargs = clippieInstance.openssl_dec_args.join(' ');
     let data=passphrase+"\n"+this.eclipsed+"\n";
-    this.logger.debug("... | %s", clippieInstance.openssl_dec_args.join(' '));
+    this.logger.debug("decrypt content | %s", cmdargs);
     Utils.execCommandAsync(clippieInstance.openssl_dec_args, data).then((result) => {
       let ok = result[0];
       let stdout = result[1];
-      let stderr = result[2];
-      if (ok) {
-        //this.logger.debug("decrypted content [%s:%s] to [%s]", '*****', this.eclipsed, stdout);
+      let stderr = result[2].trimEnd();
+      let status = result[3];
+      if (ok && status == 0) {
+        //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
         clippieInstance.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
       } else {
-        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+        this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr);
+        ok = false;
       }
       callback(ok, stderr);
     });
