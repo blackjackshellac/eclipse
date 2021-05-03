@@ -59,27 +59,6 @@ var DecryptModalDialog = GObject.registerClass({
       gicon: gicon,
       icon_size: 20
     });
-    //box.add(icon);
-
-    // this._entry = new St.Entry({
-    //   x_expand: true,
-    //   y_expand: false,
-    //   can_focus: false,
-    //   track_hover: false,
-    //   style_class: 'clippie-password-entry',
-    //   x_align: Clutter.ActorAlign.CENTER,
-    //   y_align: Clutter.ActorAlign.CENTER,
-    //   primary_icon: icon,
-    //   hint_text: _("Entry label"),
-    //   reactive: true
-    // });
-
-    // this._entry.set_hover(true);
-    // let etext = this._entry.get_clutter_text();
-    // etext.set_activatable(false);
-    // etext.set_editable(false);
-
-    // this._entry.set_text(clip.content);
 
     this._password_entry = new St.PasswordEntry({
       x_expand: true,
@@ -87,7 +66,7 @@ var DecryptModalDialog = GObject.registerClass({
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-password-entry',
+      style_class: 'clippie-decrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: icon,
@@ -100,17 +79,18 @@ var DecryptModalDialog = GObject.registerClass({
     ptext.set_activatable(true);
     ptext.set_editable(true);
 
-    this._label = new St.Label({
-      text: clip.content,
-      x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-password-text'
-    });
-
     this._msg = new St.Label({
       text: _("Enter the decryption passphrase"),
       x_align: Clutter.ActorAlign.CENTER,
       style_class: 'clippie-msg-text'
     });
+
+    this._label = new St.Label({
+      text: clip.content,
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-label-text'
+    });
+
     box.add(this._label);
     box.add(this._password_entry);
     box.add(this._msg);
@@ -150,8 +130,8 @@ var DecryptModalDialog = GObject.registerClass({
         if (ok) {
           this.close(global.get_current_time());
         } else {
-          //this.set_msg(stderr);
-          this.set_msg(_('Decryption failed, wrong passphrase'));
+          this._password_entry.add_style_class_name('clippie-entry-red');
+          this.set_msg(_('Decryption failed'));
         }
       });
       if (msg) {
@@ -207,10 +187,7 @@ var EncryptModalDialog = GObject.registerClass({
     this.contentLayout.add(box);
 
     let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
-    let icon = new St.Icon({
-      gicon: gicon,
-      icon_size: 20
-    });
+    //let icon = new St.Icon({ gicon: gicon, icon_size: 20 });
     //box.add(icon);
 
     this._entry = new St.Entry({
@@ -218,11 +195,10 @@ var EncryptModalDialog = GObject.registerClass({
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-password-entry',
+      style_class: 'clippie-encrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: icon,
-      hint_text: _("Entry label"),
+      hint_text: _("Label for encrypted entry"),
       reactive: true
     });
 
@@ -231,23 +207,16 @@ var EncryptModalDialog = GObject.registerClass({
     etext.set_activatable(false);
     etext.set_editable(true);
 
-    let label_text=_("Enter name for the encrypted entry");
-    if (clip.isPassword()) {
-      let label = clip.password_name;
-      this._entry.set_text(label);
-      label_text =_("Enter new name for the password entry");
-    }
-
     this._password_entry = new St.PasswordEntry({
       x_expand: true,
       y_expand: false,
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-password-entry',
+      style_class: 'clippie-encrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: icon,
+      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
       hint_text: _("Passphrase"),
       reactive: true
     });
@@ -263,10 +232,10 @@ var EncryptModalDialog = GObject.registerClass({
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-password-entry',
+      style_class: 'clippie-confirm-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: icon,
+      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
       hint_text: _("Confirm"),
       reactive: true
     });
@@ -276,15 +245,16 @@ var EncryptModalDialog = GObject.registerClass({
     ctext.set_activatable(true);
     ctext.set_editable(true);
 
-    this._label = new St.Label({
-      text: label_text,
+    this._msg = new St.Label({
+      text: _("Enter and confirm the encryption passphrase"),
       x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-password-text'
+      style_class: 'clippie-label-text'
     });
-    box.add(this._label);
+
     box.add(this._entry);
     box.add(this._password_entry);
     box.add(this._password_confirm);
+    box.add(this._msg);
 
     this.connect('opened', (dialog) => {
       global.stage.set_key_focus(this._entry);
@@ -295,18 +265,26 @@ var EncryptModalDialog = GObject.registerClass({
     });
 
     ctext.connect('activate', (ctext) => {
-      if (this.confirm()) {
-        this.submit();
-      }
+      this.submit();
     });
 
     ptext.connect('text-changed', (ptext) => {
-      this.confirm();
+      this.confirm_with_style();
     });
 
     ctext.connect('text-changed', (ctext) => {
-      this.confirm();
+      this.confirm_with_style();
     });
+  }
+
+  confirm_with_style() {
+    if (this.confirm()) {
+      this._password_entry.add_style_class_name('clippie-entry-green');
+      this._password_confirm.add_style_class_name('clippie-entry-green');
+    } else {
+      this._password_entry.remove_style_class_name('clippie-entry-green');
+      this._password_confirm.remove_style_class_name('clippie-entry-green');
+    }
   }
 
   confirm() {
@@ -361,7 +339,7 @@ var EncryptModalDialog = GObject.registerClass({
   }
 
   set_msg(msg) {
-    this._label.set_text(msg);
+    this._msg.set_text(msg);
   }
 });
 

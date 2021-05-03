@@ -17,8 +17,36 @@
   padding: 7px 9px;
    */
   width: 20em;
-  border-radius: 18px;
-  border: 10px;
+  border-radius: 10px;
+  border: 5px;
+}
+
+.clippie-decrypt-entry {
+  width: 20em;
+  border-radius: 4px;
+  border: 4px;
+}
+
+.clippie-encrypt-entry {
+  width: 20em;
+  border-radius: 4px;
+  border: 4px;
+  margin-bottom: 10px;
+}
+
+.clippie-confirm-entry {
+  width: 20em;
+  border-radius: 4px;
+  border: 4px;
+  margin-bottom: 10px;
+}
+
+.clippie-entry-red {
+  border-color: red;
+}
+
+.clippie-entry-green {
+  border-color: green;
 }
 
 .clippie-password-text {
@@ -26,7 +54,11 @@
 }
 
 .clippie-msg-text {
-  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.clippie-label-text {
+  margin-top: 20px;
 }
 
 .clippie-search-entry {

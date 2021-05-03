@@ -236,13 +236,14 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
-        if (mi.clip.isEclipsed()) {
-          // decrypt as password entry
-          let dialog = new DecryptModalDialog(mi.clip);
-          dialog.open();
-        } else if (mi.clip.select()) {
+        if (mi.clip.select()) {
           let cm = mi.clip.clippie.indicator.clippie_menu.menu;
           cm.moveMenuItem(mi, 1);
+          if (mi.clip.isEclipsed()) {
+            // decrypt as password entry
+            let dialog = new DecryptModalDialog(mi.clip);
+            dialog.open();
+          }
         }
       });
 
