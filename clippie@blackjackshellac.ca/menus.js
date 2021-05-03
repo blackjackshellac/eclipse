@@ -29,6 +29,8 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
+const EncryptModalDialog = Me.imports.dialog.EncryptModalDialog;
+const DecryptModalDialog = Me.imports.dialog.DecryptModalDialog;
 const Logger = Me.imports.logger.Logger;
 const Utils = Me.imports.utils;
 
@@ -221,7 +223,13 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.label.set_text(clip.label_text());
 
-      box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      if (clip.eclipsed) {
+        box.add_child(new ClipItemControlButton(clip, 'decrypt'));
+      } else if (clip.lock) {
+        box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
+      } else {
+        box.add_child(new ClipItemControlButton(clip, 'encrypt'));
+      }
       //box.add_child(new ClipItemControlButton(clip, 'edit'));
       box.add_child(this.label);
       box.add_child(new ClipItemControlButton(clip, 'delete'));
@@ -231,6 +239,11 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         if (mi.clip.select()) {
           let cm = mi.clip.clippie.indicator.clippie_menu.menu;
           cm.moveMenuItem(mi, 1);
+          if (mi.clip.isEclipsed()) {
+            // decrypt as password entry
+            let dialog = new DecryptModalDialog(mi.clip);
+            dialog.open();
+          }
         }
       });
 
@@ -257,7 +270,9 @@ var CICBTypes = {
   'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
   'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
   'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
-  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' }
+  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' },
+  'encrypt' : { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
+  'decrypt' : { icon: 'dialog-password-symbolic', style: 'clippie-menu-lock-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -289,21 +304,26 @@ class ClipItemControlButton extends St.Button {
         case 'edit':
           // TODO
           break;
-        case "lock":
-        case "unlock":
+        case 'encrypt':
           this.connect('clicked', (cb) => {
-
-            let dialog = new LockItemModalDialog(this.clip);
+            let dialog = new EncryptModalDialog(this.clip);
             dialog.open(global.get_current_time());
-
-            // this.clip.toggle_lock();
-            // let type = this.clip.lock ? 'lock' : 'unlock';
-            // this.child = this.get_icon(type);
-            // this.clip.menu_item.label.set_text(this.clip.label_text());
-            // this.clip.menu_item.queue_redraw();
           });
           break;
-        case "delete":
+        case 'decrypt':
+          this.connect('clicked', (cb) => {
+            let dialog = new DecryptModalDialog(this.clip);
+            dialog.open(global.get_current_time());
+          });
+          break;
+        case 'lock':
+        case 'unlock':
+          this.connect('clicked', (cb) => {
+            let dialog = new LockItemModalDialog(this.clip);
+            dialog.open(global.get_current_time());
+          });
+          break;
+        case 'delete':
           this.connect('clicked', (cb) => {
             let item = this.clip.menu_item;
             item.trash_self();

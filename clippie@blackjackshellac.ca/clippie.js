@@ -63,6 +63,15 @@ var Clippie = class Clippie {
       //   {gicon: Gio.icon_new_for_string('dialog-information')});
     }
     this.gpaste_client_oneline = [ this.gpaste_client, '--oneline' ];
+
+    this.openssl = Utils.exec_path('openssl');
+    if (this.openssl === null) {
+      this.logger.error('openssl not found');
+    } else {
+      // use -A -a for oneline ascii armoured output
+      this.openssl_enc_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -A -a -pass stdin').trim().split(/\s+/);
+      this.openssl_dec_args = (this.openssl+' enc -aes-256-cbc -pbkdf2 -d -A -a -pass stdin').trim().split(/\s+/);
+    }
   }
 
   notification(title, banner, urgency=MessageTray.Urgency.NORMAL, params={}) {
@@ -304,8 +313,15 @@ var Clippie = class Clippie {
   refresh_async(menu) {
     this.menu = menu;
 
-    Utils.execCommandAsync(this.gpaste_client_oneline).then(stdout => {
-      this.refresh_result(stdout);
+    Utils.execCommandAsync(this.gpaste_client_oneline).then(result => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2];
+      if (ok) {
+        this.refresh_result(stdout);
+      } else {
+        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
+      }
     });
   }
 
@@ -318,18 +334,30 @@ var Clippie = class Clippie {
       }
       history = history[0];
       let clips = [];
+      let eclipsed_uuids = [];
       this.logger.debug("history %d", history.length);
       for (let i=0; i < history.length; i++) {
-        let entry=history[i];
-        //this.logger.debug("%03d>%s:%d", i, entry[0], entry[1].length);
-        let clip = new Clip(entry[0], entry[1]);
-        let idx = this.find(clip);
-        if (idx >= 0) {
-          // clip already exists
-          clip = this.clips[idx];
+        let [uuid, content]=history[i];
+
+        //this.logger.debug('uuid=%s', uuid);
+        if (eclipsed_uuids.includes(uuid)) {
+          this.logger.debug('%s entry is eclipsed', uuid);
+          // delete uuid here (or below?)
+          // TODO this.dbus_gpaste.delete(uuid);
+          continue;
         }
-        clips[i] = clip;
-        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+
+        // find clip with this uuid (if any)
+        let clip = this.find_uuid(uuid);
+        if (clip === undefined) {
+          // clip not found in clips, create a new one
+          clip = new Clip(uuid, content);
+        }
+        if (clip.isEclipsed()) {
+          //this.logger.debug("%s eclipsed: %s [%s]", clip.uuid, clip.content, clip.eclipsed);
+          eclipsed_uuids.push(clip.eclipsed_uuid);
+        }
+        clips.push(clip);
         if (this._state[clip.uuid]) {
           clip.lock = this._state[clip.uuid].lock;
         }
@@ -343,48 +371,56 @@ var Clippie = class Clippie {
         this.menu.add_item(clip);
       }
       this.clips = clips;
+      for (uuid of eclipsed_uuids) {
+        this.logger.debug('deleting eclipsed uuid=%s', uuid);
+        // TODO this.dbus_gpaste.delete(uuid);
+      }
     });
   }
 
   // Obsolete: Synchronous refresh replaced by refresh_async() and then refresh_dbus()
-  refresh() {
-    let result = Utils.execute(this.gpaste_client_oneline);
-    if (result[0] != 0) {
-      this.logger.error("Failed to execute %s", this.gpaste_client_oneline.join(" "));
-      return;
-    }
+  // refresh() {
+  //   let result = Utils.execute(this.gpaste_client_oneline);
+  //   if (result[0] != 0) {
+  //     this.logger.error("Failed to execute %s", this.gpaste_client_oneline.join(" "));
+  //     return;
+  //   }
 
-    let lines=result[1].replace(/\r?\n$/, "").split(/\r?\n/);
-    let clips = [];
-    for (let i=0; i < lines.length; i++) {
-      let line=lines[i];
-      if (line.length > 0) {
-        let clip=Clip.parse(line);
-        if (!clip) {
-          this.logger.error("failed to parse output=%s", line);
-          continue;
-        }
-        let idx = this.find(clip);
-        if (idx >= 0) {
-          this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this.clips[idx].uuid);
-          clip = this.clips[idx];
-          if (clip.lock) {
-            this.logger.debug('Found lock entry %s', clip.toString());
-          }
-        }
-        this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
-        if (this._state[clip.uuid]) {
-          clip.lock = this._state[clip.uuid].lock;
-          delete this._state[clip.uuid];
-        }
-        clips[i] = clip;
-      }
-    }
-    this.clips = clips;
-  }
+  //   let lines=result[1].replace(/\r?\n$/, "").split(/\r?\n/);
+  //   let clips = [];
+  //   for (let i=0; i < lines.length; i++) {
+  //     let line=lines[i];
+  //     if (line.length > 0) {
+  //       let clip=Clip.parse(line);
+  //       if (!clip) {
+  //         this.logger.error("failed to parse output=%s", line);
+  //         continue;
+  //       }
+  //       let idx = this.find(clip);
+  //       if (idx >= 0) {
+  //         this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this.clips[idx].uuid);
+  //         clip = this.clips[idx];
+  //         if (clip.lock) {
+  //           this.logger.debug('Found lock entry %s', clip.toString());
+  //         }
+  //       }
+  //       this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
+  //       if (this._state[clip.uuid]) {
+  //         clip.lock = this._state[clip.uuid].lock;
+  //         delete this._state[clip.uuid];
+  //       }
+  //       clips[i] = clip;
+  //     }
+  //   }
+  //   this.clips = clips;
+  // }
 
   find(clip) {
     return this.clips.findIndex(c => c.uuid === clip.uuid);
+  }
+
+  find_uuid(uuid) {
+    this.clips.find(c => c.uuid === uuid);
   }
 
   has(clip) {
@@ -408,22 +444,39 @@ const PASSWORD_NAME_RE=/\[.*?\](.*)$/
 
 var Clip = class Clip {
 
-  constructor(uuid, content=undefined) {
-    this._uuid = uuid;
-    this._content = content;
-    this._menu_item = undefined; // clippie menu
+  constructor(uuid, content) {
     this.logger = clippieInstance.logger;
+    this._uuid = uuid;
+    this._menu_item = undefined; // clippie menu
+
+    //this.logger.debug('%s: %s', uuid, content);
+
+    let res = this.declipser(content);
+
+    /*
+      if it is encrypted the entry will be label,eclipsed_uuid, eclipsed data
+    */
+    this._content = res[0];
+    this._eclipsed_uuid = res[1];
+    this._eclipsed = res[2];
+
+    if (this.eclipsed) {
+      // TODO delete uuid this._eclipsed_uuid
+      // gpaste delete(this._eclipsed_uuid);
+    }
+
     this._kind = this.dbus_gpaste.getElementKind(this.uuid);
     this._lock = this.isPassword();
     if (this._lock) {
       this._password_name = this.get_password_name(content);
-      this._content = "▷▷▷ "+content;
+      this._content = "▷ "+content;
     }
   }
 
   static parse(line) {
     let m = line.match(GPASTE_LINE_RE);
     if (m) {
+      this.logger.debug('parsed %s: %s', m[1], m[2]);
       return new Clip(m[1], m[2]);
     }
     return undefined;
@@ -460,6 +513,18 @@ var Clip = class Clip {
       return m[1].trim();
     }
     return content;
+  }
+
+  get eclipsed() {
+    return this._eclipsed;
+  }
+
+  get eclipsed_uuid() {
+    return this._eclipsed_uuid;
+  }
+
+  isEclipsed() {
+    return this.eclipsed !== undefined;
   }
 
   isPassword() {
@@ -580,9 +645,104 @@ var Clip = class Clip {
           clippieInstance.dbus_gpaste.select(uuid);
         }
       }
-
     }
     return true;
+  }
+
+  // add gpaste entry with ~~eclipse~~label~~this.uuid~~eclipse~~
+  eclipser(label, eclipse) {
+    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, this.uuid, eclipse);
+    //this.logger.debug("eclipser:"+str);
+    return str;
+  }
+
+  declipser(content) {
+    const declipse_re = /^~~eclipse~~(.*?)~~(.*?)~~(.*?)~~/m;
+    let m = content.match(declipse_re);
+    if (m) {
+      let label = m[1];
+      let eclipsed_uuid = m[2];
+      let eclipse = m[3];
+      //this.logger.debug('declipser: %s "%s" eclipse=[%s]', eclipsed_uuid, label, eclipse);
+      return [ label, eclipsed_uuid, eclipse ];
+    }
+    //this.logger.debug('content not encrypted: %s', content);
+    // not encrypted, so content is itself
+    return [ content, undefined, undefined ];
+  }
+
+  /*
+    Encryption test phrase
+    # encrypt secret password with pin 'super secret passphrase' as first line of data to stdin for openssl
+    $ echo -en "super secret passphrase\nencrypt this secret" | openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
+    U2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt
+  */
+  encrypt(label, passphrase, callback) {
+    // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
+    if (!clippieInstance.openssl) {
+      return this.logger.error(_('openssl not found'));
+    }
+    if (!passphrase || passphrase.trim().length === 0) {
+      return this.logger.error(_('will not encrypt without passphrase'));
+    }
+
+    let cmdargs=clippieInstance.openssl_enc_args.join(' ');
+    // passphrase is piped as first line of data to openssl
+    let data=passphrase+"\n"+this.content;
+    //this.logger.debug("%s | %s", data, );
+    this.logger.debug("encrypt content | %s", cmdargs);
+    Utils.execCommandAsync(clippieInstance.openssl_enc_args, data).then((result) => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2];
+      let status = result[3];
+      if (ok && status === 0) {
+        //this.logger.debug("Encrypted %s [%s]", label, stdout);
+        // test decryption with same password
+        clippieInstance.dbus_gpaste.add(this.eclipser(label, stdout.trimEnd()));
+        // TODO trash this
+      } else {
+        ok = false;
+        this.logger.error("%s failed status=%d: %s", cmdargs, status, stderr);
+      }
+      callback(ok, stderr);
+    });
+    return undefined;
+  }
+
+  /*
+    # successfully decrypt secret with good pin
+    $ echo -e "super secret passphrase\nU2FsdGVkX19AY8pFZ+HcRtZhXBy0m+/MvPVmdM4mJ6HHoKREUNh7M1LUHSJHQ+vt" | openssl enc -aes-256-cbc -pbkdf2 -d -a -pass stdin
+    encrypt this secret
+    $ echo $?
+    0
+  */
+  decrypt(passphrase, callback) {
+    if (!clippieInstance.openssl) {
+      return this.logger.error('openssl not found');
+    }
+    if (!passphrase || passphrase.trim().length === 0) {
+      return this.logger.error('can not decrypt without passphrase');
+    }
+    // passphrase is piped as first line of data to openssl
+    let cmdargs = clippieInstance.openssl_dec_args.join(' ');
+    let data=passphrase+"\n"+this.eclipsed+"\n";
+    this.logger.debug("decrypt content | %s", cmdargs);
+    Utils.execCommandAsync(clippieInstance.openssl_dec_args, data).then((result) => {
+      let ok = result[0];
+      let stdout = result[1];
+      let stderr = result[2].trimEnd();
+      let status = result[3];
+      if (ok && status == 0) {
+        //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
+        clippieInstance.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
+      } else {
+        this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr);
+        ok = false;
+      }
+      callback(ok, stderr);
+    });
+    return undefined;
   }
 }
 

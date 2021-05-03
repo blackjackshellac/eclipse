@@ -146,38 +146,52 @@ function addSignalsHelperMethods(prototype) {
  *
  * A simple, asynchronous process launcher wrapped in a Promise.
  *
- * Returns: stdout text output
+ * Returns: [ ok, stdout, stderr ]
  */
 async function execCommandAsync(argv, input = null, cancellable = null) {
     try {
         // We'll assume we want output, or that returning none is not a problem
-        let flags = Gio.SubprocessFlags.STDOUT_PIPE;
+        let flags = Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE;
 
         // If we aren't given any input, we don't need to open stdin
-        if (input !== null)
-            flags |= Gio.SubprocessFlags.STDIN_PIPE;
+        if (input !== null) {
+          flags |= Gio.SubprocessFlags.STDIN_PIPE;
+        }
 
         let proc = new Gio.Subprocess({
-            argv: argv,
-            flags: flags
+          argv: argv,
+          flags: flags
         });
 
         // Classes that implement GInitable must be initialized before use, but
         // an alternative in GJS is to just use Gio.Subprocess.new(argv, flags)
         proc.init(cancellable);
 
-        let stdout = await new Promise((resolve, reject) => {
-            proc.communicate_utf8_async(input, cancellable, (proc, res) => {
-                try {
-                    let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
-                    resolve(stdout);
-                } catch (e) {
-                    reject(e);
-                }
-            });
+        //log('argv='+argv.join(' '));
+        let result = await new Promise((resolve, reject) => {
+          //log('input='+input);
+          proc.communicate_utf8_async(input, cancellable, (proc, res) => {
+            try {
+              let exit_status = proc.get_exit_status();
+              //log('exit_status='+exit_status);
+              //let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
+              let result = proc.communicate_utf8_finish(res);
+              result.push(exit_status);
+              if (exit_status !== 0) {
+                result[0] = false;
+              }
+              //log('Utils: ok=%s stdout=[%s] stderr=[%s] es=%d'.format(result[0], result[1], result[2].trimEnd(), proc.get_exit_status()));
+              resolve(result);
+            } catch (e) {
+              //reject(e);
+              let result=[false, '', e.message, 255];
+              log('Utils: failed '+e.message);
+              resolve(result);
+            }
+          });
         });
 
-        return stdout;
+        return result;
     } catch (e) {
         logError(e);
     }

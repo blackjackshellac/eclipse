@@ -18,13 +18,330 @@
 
 const { GObject, St, Clutter, Gio } = imports.gi;
 
-const Lang = imports.lang;
 const ModalDialog = imports.ui.modalDialog;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 const Clip = Me.imports.clippie.Clip;
+
+var DecryptModalDialog = GObject.registerClass({
+}, class DecryptModalDialog extends ModalDialog.ModalDialog {
+
+  _init(clip) {
+    super._init({
+      styleClass: 'extension-dialog'
+    });
+
+    this._clip = clip;
+
+    this.setButtons([
+      { label: _("Decrypt"),
+        action: this._onOk.bind(this)
+      },
+      {
+        label: _("Cancel"),
+        action: this._onCancel.bind(this),
+        key:    Clutter.Escape // doesn't work
+      }
+    ]);
+
+    let box = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      vertical: true,
+      style_class: 'clippie-password-box'
+    });
+    this.contentLayout.add(box);
+
+    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
+    let icon = new St.Icon({
+      gicon: gicon,
+      icon_size: 20
+    });
+
+    this._password_entry = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'clippie-decrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: icon,
+      hint_text: _("Passphrase"),
+      reactive: true
+    });
+
+    this._password_entry.set_hover(true);
+    let ptext = this._password_entry.get_clutter_text();
+    ptext.set_activatable(true);
+    ptext.set_editable(true);
+
+    this._msg = new St.Label({
+      text: _("Enter the decryption passphrase"),
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-msg-text'
+    });
+
+    this._label = new St.Label({
+      text: clip.content,
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-label-text'
+    });
+
+    box.add(this._label);
+    box.add(this._password_entry);
+    box.add(this._msg);
+
+    this.connect('opened', (dialog) => {
+      global.stage.set_key_focus(this._password_entry);
+    });
+
+    this.connect('closed', (dialog) => {
+      global.stage.set_key_focus(null);
+    });
+
+    ptext.connect('activate', (ctext) => {
+      if (this.confirm()) {
+        this.submit();
+      }
+    });
+
+    ptext.grab_key_focus();
+  }
+
+  confirm() {
+    let ptext = this._password_entry.get_text().trim();
+    if (ptext.length < 4) {
+      this.set_msg(_('Passphrase too short'));
+      return undefined;
+    }
+
+    this._password_entry.set_text(ptext);
+    return ptext;
+  }
+
+  submit() {
+    let password = this.confirm();
+    if (password) {
+      let msg=this.clip.decrypt(password, (ok, stderr) => {
+        if (ok) {
+          this.close(global.get_current_time());
+        } else {
+          this._password_entry.add_style_class_name('clippie-entry-red');
+          this.set_msg(_('Decryption failed'));
+        }
+      });
+      if (msg) {
+        this.set_msg(msg);
+      }
+    }
+  }
+
+  _onOk(button, event) {
+    this.submit();
+  }
+
+  _onCancel(button, event) {
+    this.close(global.get_current_time());
+  }
+
+  get clip() {
+    return this._clip;
+  }
+
+  set_msg(msg) {
+    this._msg.set_text(msg);
+  }
+});
+
+var EncryptModalDialog = GObject.registerClass({
+}, class EncryptModalDialog extends ModalDialog.ModalDialog {
+
+  _init(clip) {
+    super._init({
+      styleClass: 'extension-dialog'
+    });
+
+    this._clip = clip;
+
+    this.setButtons([
+      { label: _("Encrypt"),
+        action: this._onOk.bind(this)
+      },
+      {
+        label: _("Cancel"),
+        action: this._onCancel.bind(this),
+        key:    Clutter.Escape // doesn't work
+      }
+    ]);
+
+    let box = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      vertical: true,
+      style_class: 'clippie-password-box'
+    });
+    this.contentLayout.add(box);
+
+    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
+    //let icon = new St.Icon({ gicon: gicon, icon_size: 20 });
+    //box.add(icon);
+
+    this._entry = new St.Entry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      style_class: 'clippie-encrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      hint_text: _("Label for encrypted entry"),
+      reactive: true
+    });
+
+    this._entry.set_hover(true);
+    let etext = this._entry.get_clutter_text();
+    etext.set_activatable(false);
+    etext.set_editable(true);
+
+    this._password_entry = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'clippie-encrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
+      hint_text: _("Passphrase"),
+      reactive: true
+    });
+
+    this._password_entry.set_hover(true);
+    let ptext = this._password_entry.get_clutter_text();
+    ptext.set_activatable(false);
+    ptext.set_editable(true);
+
+    this._password_confirm = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'clippie-confirm-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
+      hint_text: _("Confirm"),
+      reactive: true
+    });
+
+    this._password_confirm.set_hover(true);
+    let ctext = this._password_confirm.get_clutter_text();
+    ctext.set_activatable(true);
+    ctext.set_editable(true);
+
+    this._msg = new St.Label({
+      text: _("Enter and confirm the encryption passphrase"),
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'clippie-label-text'
+    });
+
+    box.add(this._entry);
+    box.add(this._password_entry);
+    box.add(this._password_confirm);
+    box.add(this._msg);
+
+    this.connect('opened', (dialog) => {
+      global.stage.set_key_focus(this._entry);
+    });
+
+    this.connect('closed', (dialog) => {
+      global.stage.set_key_focus(null);
+    });
+
+    ctext.connect('activate', (ctext) => {
+      this.submit();
+    });
+
+    ptext.connect('text-changed', (ptext) => {
+      this.confirm_with_style();
+    });
+
+    ctext.connect('text-changed', (ctext) => {
+      this.confirm_with_style();
+    });
+  }
+
+  confirm_with_style() {
+    if (this.confirm()) {
+      this._password_entry.add_style_class_name('clippie-entry-green');
+      this._password_confirm.add_style_class_name('clippie-entry-green');
+    } else {
+      this._password_entry.remove_style_class_name('clippie-entry-green');
+      this._password_confirm.remove_style_class_name('clippie-entry-green');
+    }
+  }
+
+  confirm() {
+    let label = this._entry.get_text().trim();
+    if (label.length === 0) {
+      this.set_msg(_('Specify a label for the encrypted entry'));
+      return undefined;
+    }
+    let ptext = this._password_entry.get_text().trim();
+    let ctext = this._password_confirm.get_text().trim();
+    if (ptext.length < 4) {
+      this.set_msg(_('Passphrase too short'));
+      return undefined;
+    }
+    if (ptext !== ctext) {
+      this.set_msg(_('Passphrase mismatch'));
+      return undefined;
+    }
+    this.set_msg(_('Passphrase match'));
+    this._entry.set_text(label);
+    this._password_entry.set_text(ptext);
+    this._password_confirm.set_text(ctext);
+    return ptext;
+  }
+
+  submit() {
+    let password = this.confirm();
+    if (password) {
+      this.clip.encrypt(this._entry.get_text(), password, (ok, stderr) => {
+        //this.clip.logger.debug("ok=%s stderr=[%s]", ok, stderr);
+        if (ok) {
+          // success, delete from clipboard
+          this.clip.delete();
+          this.close(global.get_current_time());
+        } else {
+          this.set_msg(stderr);
+        }
+      });
+    }
+  }
+
+  _onOk(button, event) {
+    this.submit();
+  }
+
+  _onCancel(button, event) {
+    this.close(global.get_current_time());
+  }
+
+  get clip() {
+    return this._clip;
+  }
+
+  set_msg(msg) {
+    this._msg.set_text(msg);
+  }
+});
 
 var LockItemModalDialog = GObject.registerClass({
 }, class LockItemModalDialog extends ModalDialog.ModalDialog {
@@ -38,11 +355,11 @@ var LockItemModalDialog = GObject.registerClass({
 
     this.setButtons([
       { label: _("Ok"),
-        action: Lang.bind(this, this._onOk)
+        action: this._onOk.bind(this)
       },
       {
         label: _("Cancel"),
-        action: Lang.bind(this, this._onCancel),
+        action: this._onCancel.bind(this),
         key:    Clutter.Escape // doesn't work
       }
     ]);

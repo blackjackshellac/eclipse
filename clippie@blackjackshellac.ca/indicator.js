@@ -58,7 +58,7 @@ class ClippieIndicator extends PanelMenu.Button {
 
     this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
     // set the filter to an empty string to prevent refreshing on startup
-    this._clippie_menu.build("");
+    //this._clippie_menu.build("");
   }
 
   get settings() {
