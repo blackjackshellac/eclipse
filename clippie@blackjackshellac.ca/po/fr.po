@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: clippie-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-03 16:35-0400\n"
+"POT-Creation-Date: 2021-05-03 17:24-0400\n"
 "PO-Revision-Date: 2021-05-03 17:09-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -24,7 +24,8 @@ msgstr "Activer le débogage"
 
 #: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:30
 msgid "Maximum number of clipboard entries to show on the main menu"
-msgstr "Nombre maximum d'entrées du presse-papiers à afficher dans le menu principal"
+msgstr ""
+"Nombre maximum d'entrées du presse-papiers à afficher dans le menu principal"
 
 #: ../schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:34
 msgid "Information to restore state after restart"
