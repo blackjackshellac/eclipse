@@ -66,7 +66,7 @@ var ClippieMenu = class ClippieMenu {
     });
 
     //logger.debug("menu style=%s", this.menu.box.style_class);
-    //this.menu.box.style_class = 'clippie-menu-content';
+    //this.menu.box.style_class = 'eclipse-menu-content';
   }
 
   add_item(clip) {
@@ -211,12 +211,12 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         x_expand: true,
         x_align: St.Align.START,
         pack_start: false,
-        style_class: 'clippie-menu-layout'
+        style_class: 'eclipse-menu-layout'
       });
       this.add(box);
 
       this.label = new St.Label({
-        style_class: 'clippie-menu-content',
+        style_class: 'eclipse-menu-content',
         x_expand: true,
         track_hover: false,
         x_align: St.Align.START
@@ -267,12 +267,12 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 });
 
 var CICBTypes = {
-  'lock': { icon: 'changes-prevent-symbolic', style: 'clippie-menu-lock-icon' },
-  'unlock': { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
-  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'clippie-menu-delete-icon' },
-  'edit' : { icon: 'document-edit-symbolic', style: 'clippie-menu-edit-icon' },
-  'encrypt' : { icon: 'changes-allow-symbolic', style: 'clippie-menu-lock-icon' },
-  'decrypt' : { icon: 'dialog-password-symbolic', style: 'clippie-menu-lock-icon' }
+  'lock': { icon: 'changes-prevent-symbolic', style: 'eclipse-menu-lock-icon' },
+  'unlock': { icon: 'changes-allow-symbolic', style: 'eclipse-menu-lock-icon' },
+  'delete' :  { icon: 'edit-delete-symbolic'    , style: 'eclipse-menu-delete-icon' },
+  'edit' : { icon: 'document-edit-symbolic', style: 'eclipse-menu-edit-icon' },
+  'encrypt' : { icon: 'changes-allow-symbolic', style: 'eclipse-menu-lock-icon' },
+  'decrypt' : { icon: 'dialog-password-symbolic', style: 'eclipse-menu-lock-icon' }
 }
 
 var ClipItemControlButton = GObject.registerClass(
@@ -369,7 +369,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     logger.settings = this.clippie.settings;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-item-layout',
+      style_class: 'eclipse-item-layout',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -391,7 +391,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-search-entry',
+      style_class: 'eclipse-search-entry',
       x_align: St.Align.START,
       y_align: Clutter.ActorAlign.CENTER,
       hint_text: _("Search")
@@ -417,7 +417,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       can_focus: true,
       x_align: St.Align.END,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-prefs-button',
+      style_class: 'eclipse-prefs-button',
       child: this._icon
     });
 
@@ -446,7 +446,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-find-symbolic',
       icon_size: 20,
-      style_class: 'clippie-search-icon'
+      style_class: 'eclipse-search-icon'
     });
 
     layout.add_child(this._search_icon);
@@ -550,7 +550,7 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
     this._clippie = this.clippie_menu.clippie;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-history-menu-item',
+      style_class: 'eclipse-history-menu-item',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -563,7 +563,7 @@ class ClippieCreateHistoryItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-create-history-entry',
+      style_class: 'eclipse-create-history-entry',
       x_align: St.Align.START,
       y_align: St.Align.START, // Clutter.ActorAlign.CENTER,
       hint_text: _("Create history")
@@ -616,7 +616,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
     this._clippie = clippie_menu.clippie;
 
     var layout = new St.BoxLayout({
-      style_class: 'clippie-item-layout',
+      style_class: 'eclipse-item-layout',
       pack_start: false,
       x_expand: true,
       y_expand: false,
@@ -631,7 +631,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       size=0;
     }
     this._size = new St.Label({
-      style_class: 'clippie-history-size',
+      style_class: 'eclipse-history-size',
       x_expand: false,
       y_expand: false,
       track_hover: false,
@@ -642,7 +642,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
     this._size.set_text("%03d".format(size));
 
     this._name = new St.Label({
-      style_class: 'clippie-menu-content',
+      style_class: 'eclipse-menu-content',
       x_expand: true,
       y_expand: false,
       track_hover: false,
@@ -664,7 +664,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       can_focus: true,
       x_align: St.Align.END,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-history-clear-icon',
+      style_class: 'eclipse-history-clear-icon',
       child: this._clear_icon
     });
 
@@ -705,7 +705,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       can_focus: true,
       x_align: St.Align.END,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-history-delete-icon',
+      style_class: 'eclipse-history-delete-icon',
       child: this._delete_icon
     });
 

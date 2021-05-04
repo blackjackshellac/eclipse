@@ -50,7 +50,7 @@ var DecryptModalDialog = GObject.registerClass({
       x_expand: true,
       y_expand: true,
       vertical: true,
-      style_class: 'clippie-password-box'
+      style_class: 'eclipse-password-box'
     });
     this.contentLayout.add(box);
 
@@ -66,7 +66,7 @@ var DecryptModalDialog = GObject.registerClass({
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-decrypt-entry',
+      style_class: 'eclipse-decrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: icon,
@@ -82,13 +82,13 @@ var DecryptModalDialog = GObject.registerClass({
     this._msg = new St.Label({
       text: _("Enter the decryption passphrase"),
       x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-msg-text'
+      style_class: 'eclipse-msg-text'
     });
 
     this._label = new St.Label({
       text: clip.content,
       x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-label-text'
+      style_class: 'eclipse-label-text'
     });
 
     box.add(this._label);
@@ -130,7 +130,7 @@ var DecryptModalDialog = GObject.registerClass({
         if (ok) {
           this.close(global.get_current_time());
         } else {
-          this._password_entry.add_style_class_name('clippie-entry-red');
+          this._password_entry.add_style_class_name('eclipse-entry-red');
           this.set_msg(_('Decryption failed'));
         }
       });
@@ -182,7 +182,7 @@ var EncryptModalDialog = GObject.registerClass({
       x_expand: true,
       y_expand: true,
       vertical: true,
-      style_class: 'clippie-password-box'
+      style_class: 'eclipse-password-box'
     });
     this.contentLayout.add(box);
 
@@ -195,7 +195,7 @@ var EncryptModalDialog = GObject.registerClass({
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-encrypt-entry',
+      style_class: 'eclipse-encrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       hint_text: _("Label for encrypted entry"),
@@ -213,7 +213,7 @@ var EncryptModalDialog = GObject.registerClass({
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-encrypt-entry',
+      style_class: 'eclipse-encrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
@@ -232,7 +232,7 @@ var EncryptModalDialog = GObject.registerClass({
       can_focus: true,
       track_hover: true,
       show_peek_icon: true,
-      style_class: 'clippie-confirm-entry',
+      style_class: 'eclipse-confirm-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
@@ -248,7 +248,7 @@ var EncryptModalDialog = GObject.registerClass({
     this._msg = new St.Label({
       text: _("Enter and confirm the encryption passphrase"),
       x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-label-text'
+      style_class: 'eclipse-label-text'
     });
 
     box.add(this._entry);
@@ -279,11 +279,11 @@ var EncryptModalDialog = GObject.registerClass({
 
   confirm_with_style() {
     if (this.confirm()) {
-      this._password_entry.add_style_class_name('clippie-entry-green');
-      this._password_confirm.add_style_class_name('clippie-entry-green');
+      this._password_entry.add_style_class_name('eclipse-entry-green');
+      this._password_confirm.add_style_class_name('eclipse-entry-green');
     } else {
-      this._password_entry.remove_style_class_name('clippie-entry-green');
-      this._password_confirm.remove_style_class_name('clippie-entry-green');
+      this._password_entry.remove_style_class_name('eclipse-entry-green');
+      this._password_confirm.remove_style_class_name('eclipse-entry-green');
     }
   }
 
@@ -368,7 +368,7 @@ var LockItemModalDialog = GObject.registerClass({
       x_expand: true,
       y_expand: true,
       vertical: true,
-      style_class: 'clippie-password-box'
+      style_class: 'eclipse-password-box'
     });
     this.contentLayout.add(box);
 
@@ -384,7 +384,7 @@ var LockItemModalDialog = GObject.registerClass({
       y_expand: false,
       can_focus: true,
       track_hover: true,
-      style_class: 'clippie-password-entry',
+      style_class: 'eclipse-password-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
       primary_icon: icon,
@@ -409,7 +409,7 @@ var LockItemModalDialog = GObject.registerClass({
     box.add(new St.Label({
       text: label_text,
       x_align: Clutter.ActorAlign.CENTER,
-      style_class: 'clippie-password-text'
+      style_class: 'eclipse-password-text'
     }))
     box.add(this._entry);
 
