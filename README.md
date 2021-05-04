@@ -40,8 +40,8 @@ Install from github using something like the following,
 ```
 $ mkdir ~/github
 $ cd ~/github
-$ git clone https://github.com/blackjackshellac/clippie.git
-$ cd clippie
+$ git clone https://github.com/blackjackshellac/eclipse.git
+$ cd eclipse
 $ ./install_local.sh
 ```
 
