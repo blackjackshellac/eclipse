@@ -101,6 +101,7 @@ class PreferencesBuilder {
     // });
 
     this._clippie_grid = this._bo('clippie_grid');
+    this._eclips_grid = this._bo('eclips_grid');
     this._shortcuts_grid = this._bo('shortcuts_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
     this._msg_text = this._bo('msg_text');
