@@ -19,7 +19,7 @@
 const { Gio, Gtk, GLib, Gdk } = imports.gi;
 const ByteArray = imports.byteArray;
 
-const GETTEXT_DOMAIN = 'clippie-blackjackshellac';
+const GETTEXT_DOMAIN = 'eclipse-blackjackshellac';
 const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
 const _ = Gettext.gettext;
 

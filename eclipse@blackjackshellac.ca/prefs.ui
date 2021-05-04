@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 -->
-<interface domain="clippie-blackjackshellac">
+<interface domain="eclipse-blackjackshellac">
   <!-- interface-license-type gplv3 -->
   <!-- interface-name Cippie -->
   <!-- interface-description Clipboard interface to gpaste-client output -->

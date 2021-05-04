@@ -18,9 +18,9 @@
 */
 -->
 
-<schemalist gettext-domain="clippie-blackjackshellac">
-  <schema id="org.gnome.shell.extensions.clippie-blackjackshellac"
-          path="/org/gnome/shell/extensions/clippie-blackjackshellac/">
+<schemalist gettext-domain="eclipse-blackjackshellac">
+  <schema id="org.gnome.shell.extensions.eclipse-blackjackshellac"
+          path="/org/gnome/shell/extensions/eclipse-blackjackshellac/">
     <key name="debug" type="b">
       <default>false</default>
       <summary>Turn on debugging</summary>
@@ -34,7 +34,7 @@
       <summary>Information to restore state after restart</summary>
     </key>
     <key name="show-histories" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Support gpaste histories</summary>
     </key>
     <key name="accel-enable" type="b">

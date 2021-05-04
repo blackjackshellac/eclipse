@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 -->
-<interface domain="clippie-blackjackshellac">
+<interface domain="eclipse-blackjackshellac">
   <requires lib="gtk+" version="4.0"/>
   <!-- interface-license-type gplv3 -->
   <!-- interface-name Cippie -->
@@ -216,11 +216,11 @@
                     </child>
                     <child>
                       <object class="GtkLinkButton" id="link_blackjackshellac">
-                        <property name="label" translatable="no">https://github.com/blackjackshellac/clippie</property>
+                        <property name="label" translatable="no">https://github.com/blackjackshellac/eclipse</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="uri">https://github.com/blackjackshellac/clippie</property>
+                        <property name="uri">https://github.com/blackjackshellac/eclipse</property>
                         <property name="hexpand">0</property>
                         <property name="vexpand">0</property>
                         <property name='has-frame'>False</property>

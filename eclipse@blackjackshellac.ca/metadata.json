@@ -1,13 +1,13 @@
 {
   "name": "eclipse",
   "description": "Extension interface for GPaste daemon with encryption\n\n(formerly Clippie)\n\nEclipse now uses dbus to communicate with the gpaste daemon\nAdded encryption of clipboard items with eclipse feature",
-  "gettext-domain": "clippie-blackjackshellac",
-  "uuid": "clippie@blackjackshellac.ca",
+  "gettext-domain": "eclipse-blackjackshellac",
+  "uuid": "eclipse@blackjackshellac.ca",
   "shell-version": [
     "3.36", "3.38",
     "40"
   ],
-  "settings-schema": "org.gnome.shell.extensions.clippie-blackjackshellac",
-  "url": "https://github.com/blackjackshellac/clippie",
+  "settings-schema": "org.gnome.shell.extensions.eclipse-blackjackshellac",
+  "url": "https://github.com/blackjackshellac/eclipse",
   "version": "7"
 }

@@ -4,7 +4,7 @@ ME=$(basename $0)
 MD=$(cd $(dirname $0); pwd)
 
 echo $MD
-cd $MD/../clippie@blackjackshellac.ca/po
+cd $MD/../eclipse@blackjackshellac.ca/po
 [ $? -ne 0 ] && echo "Failed to change to extension po directory" && exit 1
 
 echo Working in $(pwd)
@@ -22,5 +22,5 @@ rm messages.po
 cd ..
 echo Working in $(pwd)
 mkdir -p locale/$lang/LC_MESSAGES
-msgfmt -v po/$po -o locale/$lang/LC_MESSAGES/clippie-blackjackshellac.mo
+msgfmt -v po/$po -o locale/$lang/LC_MESSAGES/eclipse-blackjackshellac.mo
 

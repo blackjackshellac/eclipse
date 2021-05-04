@@ -47,7 +47,7 @@ $ ./install_local.sh
 
 Restart the shell or logout and login.
 
-The extension is installed in `~/.local/share/gnome-shell/extensions/clippie@blackjackshellac.ca`
+The extension is installed in `~/.local/share/gnome-shell/extensions/eclipse@blackjackshellac.ca`
 
 ### Clipboard Menu
 

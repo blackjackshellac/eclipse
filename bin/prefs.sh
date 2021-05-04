@@ -3,4 +3,4 @@
 # run prefs from the command line
 #
 
-gnome-extensions prefs clippie@blackjackshellac.ca
+gnome-extensions prefs eclipse@blackjackshellac.ca

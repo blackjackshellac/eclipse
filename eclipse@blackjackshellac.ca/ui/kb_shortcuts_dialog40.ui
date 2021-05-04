@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 -->
-<interface domain="clippie-blackjackshellac">
+<interface domain="eclipse-blackjackshellac">
   <requires lib="gtk+" version="4.0"/>
   <object class="GtkDialog" id="dialog">
     <property name="modal">True</property>

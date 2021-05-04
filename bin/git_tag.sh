@@ -12,7 +12,7 @@ info() {
 [ $# -lt 2 ] && test="DRYRUN" && info -e "set > 1 parameters to create tag"
 
 info $MD
-cd $MD/../clippie@blackjackshellac.ca
+cd $MD/../eclipse@blackjackshellac.ca
 [ $? -ne 0 ] && echo "Failed to change to extension directory" && exit 1
 
 info Working in $(pwd)

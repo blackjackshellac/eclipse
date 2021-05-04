@@ -5,7 +5,7 @@ MD="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 SCHEMA_DIR=$(cd $MD/../schemas; pwd)
 
 bin=gschemas.compiled
-xml=org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml
+xml=org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml
 
 if [ ! -f $bin -o $xml -nt $bin ]; then
 	echo glib-compile-schemas --strict $SCHEMA_DIR
