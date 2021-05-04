@@ -117,11 +117,7 @@ icon on the far right to delete the clipboard item.
 
 ### Preferences
 
-There are some rudimentary controls for interacting with gpaste in the Preferences (top right menu button)
-
-![image](https://user-images.githubusercontent.com/825403/114990482-8af38500-9e66-11eb-9a7c-4ca5eccef603.png)
-
-and the dialog displayed when that button is clicked,
+Preferences button can be found to the right of the search entry in the main menu.
 
 ![image](https://user-images.githubusercontent.com/825403/117047625-1af75280-ace0-11eb-88ef-e221cdab8db6.png)
 
