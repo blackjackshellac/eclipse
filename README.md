@@ -4,13 +4,14 @@ _formerly clippie_
 
 ### Description
 
-Gnome shell extension to interface with gpaste-client output
+Gnome shell extension to interface with gpaste-client output,
+and provide a means to _encrypt clipboard items_ with a pin/password
+or pass phrase.
 
 The purpose of this extension is to get some GPaste clipboard
-functionality back for Gnome 40. It currently has the ability
-to list the currently selected history.
-
-I've added some search functionality to the panel menu.
+functionality back for Gnome 40. It has support for gpaste
+histories, and a More submenu to show all items in the history.
+A search feature is available in the panel menu.
 
 There is a lock/unlock icon on the side of each item that can
 be used to hide sensitive information. The extension will now 
@@ -19,8 +20,54 @@ an encrypted item is decrypted, its contents are saved as a GPaste
 password entry with the same label.
 
 The extension now uses dbus to communicate with the gpaste daemon 
-rather than spawning gpaste-client. The openssl command line utility
-must be installed to support encryption.
+rather than spawning gpaste-client.
+
+### Encryption
+
+eclipse uses openssl to encrypt entries and stores them back in the
+GPaste in base64.  This is how an encrypted entry is encoded,
+
+```
+~~eclipse~~Secret entry~~376f006d-6080-4d74-8606-8831cf5c5c69~~U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=~~
+```
+
+When an item is encrypted, the original item is deleted using the uuid
+stored in the encoded entry.
+
+When the encrypted item is selected a dialog requests the encryption pass
+phrase and deccrypts the result, duplicating it in a GPaste password entry with
+the same label as the encrypted item, in this example it would be `[Password] Secret entry`.
+The item is selected into the clipboard so once it has been used it can be
+deleted.
+
+![image](https://user-images.githubusercontent.com/825403/117049654-6ca0dc80-ace2-11eb-8fa1-24f9ddf58b5a.png)
+
+One benefit to this approach is that encrypted items are securely persisted in the clipboard
+history when changing histories, or restarting one's session.
+
+The openssl command line utility must be installed to support encryption.  The extension
+uses the following openssh commands for encryption and decryption respectively,
+
+```
+openssl enc -aes-256-cbc -pbkdf2 -A -a -pass stdin
+openssl enc -aes-256-cbc -pbkdf2 -d -A -a -pass stdin
+```
+
+The password is never stored, and is passed to openssl using its standard input.  At the
+command line the process would look like this,
+
+```
+# passord is passed in the first line to openssl's stdin, the encrypted data is
+# everything else
+$ echo -en "this is my passphrase\nand this is the secret that is being encrypted" \
+> | openssl enc -aes-256-cbc -pbkdf2 -A -a -pass stdin
+U2FsdGVkX19DMZlELabFmSs1dbzyPEJE+JmkqgmDfjtmDGXGRcNMhuYZ1fyUyN3+eiJFXlJQYlsNlHIt9EcCVA==
+# for decryption we do the same with the passphrase in the first line and the encrypted
+# base64 data following
+$ echo -e "this is my passphrase\nU2FsdGVkX19DMZlELabFmSs1dbzyPEJE+JmkqgmDfjtmDGXGRcNMhuYZ1fyUyN3+eiJFXlJQYlsNlHIt9EcCVA==" \
+> | openssl enc -aes-256-cbc -pbkdf2 -d -A -a -pass stdin 
+and this is the secret that is being encrypted
+```
 
 ### Requirements
 
