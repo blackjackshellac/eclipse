@@ -1,4 +1,6 @@
-# clippie
+# eclipse
+
+_formerly clippie_
 
 ### Description
 
@@ -22,15 +24,13 @@ must be installed to support encryption.
 
 ### Requirements
 
-Make sure gpaste-client is installed, and the daemon is running. For example, on Fedora,
+Make sure gpaste-client is installed, and the daemon is running. For encryption
+support you also need openssl to be install. For example, on Fedora,
 
 ```
 $ sudo dnf install gpaste gpaste-ui gpaste-libs openssl
 ...
 $ gpaste-client daemon-reexec
-$ gsettings set org.gnome.GPaste track-changes true
-$ gsettings get org.gnome.GPaste track-changes
-true
 ```
 
 ### Installation
