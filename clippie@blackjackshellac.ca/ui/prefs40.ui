@@ -151,7 +151,7 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label">Clippie</property>
+                        <property name="label">eclipse</property>
                         <property name="halign">center</property>
                         <attributes>
                           <attribute name="font-desc" value="Sans 10"/>

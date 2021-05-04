@@ -66,10 +66,10 @@
       <object class="GtkStack" id="stack">
         <property name="visible">True</property>
         <property name="can-focus">True</property>
-        <property name="margin-start">10</property>
-        <property name="margin-end">10</property>
-        <property name="margin-top">10</property>
-        <property name="margin-bottom">10</property>
+        <property name="margin-start">0</property>
+        <property name="margin-end">0</property>
+        <property name="margin-top">0</property>
+        <property name="margin-bottom">0</property>
         <property name="transition-type">crossfade</property>
 
         <child> <!-- stack page: clippie_grid -->
@@ -129,17 +129,16 @@
             <property name="can-focus">True</property>
             <property name="column-spacing">10</property>
             <property name="row-spacing">5</property>
-            <property name="margin-top">10</property>
-            <property name="margin-start">10</property>
-            <property name="margin-end">10</property>
-            <property name="margin-bottom">10</property>
             <property name="valign">center</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="margin-top">0</property>
                 <property name="margin-start">10</property>
                 <property name="margin-end">10</property>
+                <property name="margin-bottom">0</property>
+                <property name="spacing">5</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <property name="orientation">vertical</property>
@@ -147,12 +146,12 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Clippie</property>
+                    <property name="label">eclipse</property>
                     <property name="justify">center</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans 10"/>
                       <attribute name="style" value="normal"/>
-                      <attribute name="weight" value="medium"/>
+                      <attribute name="weight" value="bold"/>
                       <attribute name="variant" value="small-caps"/>
                       <attribute name="scale" value="2"/>
                     </attributes>

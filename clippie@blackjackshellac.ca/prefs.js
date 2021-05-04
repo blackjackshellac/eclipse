@@ -121,7 +121,7 @@ class PreferencesBuilder {
         provider,
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-      //this._title.add_css_class('prefs-title');
+      this._title.add_css_class('prefs-title');
     }
 
     // col, row, col_span, row_span

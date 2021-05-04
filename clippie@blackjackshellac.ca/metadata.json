@@ -1,6 +1,6 @@
 {
-  "name": "clippie",
-  "description": "Clipboard interface to gpaste-client output\n\nClippie now uses dbus to communicate with the gpaste daemon\nAdded encryption of clipboard items with eclipse feature",
+  "name": "eclipse",
+  "description": "Extension interface for GPaste daemon with encryption\n\n(formerly Clippie)\n\nEclipse now uses dbus to communicate with the gpaste daemon\nAdded encryption of clipboard items with eclipse feature",
   "gettext-domain": "clippie-blackjackshellac",
   "uuid": "clippie@blackjackshellac.ca",
   "shell-version": [
