@@ -70,5 +70,6 @@ There are some rudimentary controls for interacting with gpaste in the Preferenc
 
 and the dialog displayed when that button is clicked,
 
-![image](https://user-images.githubusercontent.com/825403/116744269-17a25500-a9c8-11eb-9c98-57dc8552ae99.png)
+![image](https://user-images.githubusercontent.com/825403/117047625-1af75280-ace0-11eb-88ef-e221cdab8db6.png)
+
 
