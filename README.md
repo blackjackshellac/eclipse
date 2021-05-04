@@ -25,13 +25,19 @@ rather than spawning gpaste-client.
 ### Encryption
 
 eclipse uses openssl to encrypt entries and stores them back in the
-GPaste in base64.  This is how an encrypted entry is encoded,
+current GPaste history in base64.  Encrypted items are encoded as
+follows, with entries separated by `~~` characters,
 
 ```
 ~~eclipse~~Secret entry~~376f006d-6080-4d74-8606-8831cf5c5c69~~U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=~~
+
+type: eclipse
+label: Secret entry
+eclipsed_uuid: 376f006d-6080-4d74-8606-8831cf5c5c69
+enc_data: U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=
 ```
 
-When an item is encrypted, the original item is deleted using the uuid
+When an item is encrypted, the original item is deleted using the eclipsed uuid
 stored in the encoded entry.
 
 When the encrypted item is selected a dialog requests the encryption pass
