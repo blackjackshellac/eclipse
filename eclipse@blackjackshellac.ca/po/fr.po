@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-04 10:35-0400\n"
+"POT-Creation-Date: 2021-05-04 16:12-0400\n"
 "PO-Revision-Date: 2021-05-03 17:09-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -187,6 +187,26 @@ msgstr "Ouvrez l'interface utilisateur des paramètres GPaste"
 msgid "About"
 msgstr "À propos"
 
+#: ../prefs.ui:43
+msgctxt "prefs-title"
+msgid "Preferences"
+msgstr "Préférences"
+
+#: ../prefs.ui:49
+msgctxt "clippie-frame"
+msgid "Clippie options"
+msgstr "Options de Clippie"
+
+#: ../prefs.ui:67
+msgctxt "clippie-frame"
+msgid "GPaste options"
+msgstr "Options GPaste"
+
+#: ../prefs.ui:136
+msgctxt "daemon-reexec"
+msgid "Test Keyboard shortcut"
+msgstr "Tester le raccourci clavier"
+
 #: ../clippie.js:683
 msgid "openssl not found"
 msgstr "openssl introuvable"
@@ -259,10 +279,6 @@ msgstr "Entrez le nom de l'entrée du mot de passe"
 msgid "Enter new name for the password entry"
 msgstr "Entrez un nouveau nom pour l'entrée du mot de passe"
 
-#: ../indicator.js:38
-msgid "eclipse"
-msgstr ""
-
 #: ../menus.js:78
 msgid "More…"
 msgstr "Plus…"
@@ -287,37 +303,17 @@ msgstr "Vider"
 msgid "Delete"
 msgstr "Effacer"
 
-#: ../prefs.js:189 ../prefs.js:213 ../prefs.js:237
+#: ../prefs.js:188 ../prefs.js:212 ../prefs.js:236
 msgid "<disabled>"
 msgstr "<désactivé>"
 
-#: ../prefs.js:285
+#: ../prefs.js:284
 msgid "GPaste deamon restarted"
 msgstr "GPaste deamon redémarré"
 
-#: ../prefs.js:291
+#: ../prefs.js:290
 msgid "Launched gpaste-client ui"
 msgstr "Lancement de l'interface utilisateur gpaste-client"
-
-#: ../prefs.ui:43
-msgctxt "prefs-title"
-msgid "Preferences"
-msgstr "Préférences"
-
-#: ../prefs.ui:49
-msgctxt "clippie-frame"
-msgid "Clippie options"
-msgstr "Options de Clippie"
-
-#: ../prefs.ui:67
-msgctxt "clippie-frame"
-msgid "GPaste options"
-msgstr "Options GPaste"
-
-#: ../prefs.ui:136
-msgctxt "daemon-reexec"
-msgid "Test Keyboard shortcut"
-msgstr "Tester le raccourci clavier"
 
 #~ msgid "Clippie"
 #~ msgstr "Clippie"

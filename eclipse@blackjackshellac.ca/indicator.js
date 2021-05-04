@@ -35,7 +35,7 @@ const Logger = Me.imports.logger.Logger;
 var ClippieIndicator = GObject.registerClass(
 class ClippieIndicator extends PanelMenu.Button {
   _init() {
-    super._init(0.0, _('eclipse'));
+    super._init(0.0, 'eclipse');
 
     // settings lives in Clippie singleton
     this._clippie = Clippie.attach(this);
