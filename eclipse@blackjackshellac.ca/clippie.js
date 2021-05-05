@@ -24,6 +24,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 const {GLib, St, Clutter, Gio } = imports.gi;
+const ByteArray = imports.byteArray;
+
 const Main = imports.ui.main;
 const MessageTray = imports.ui.messageTray;
 const PopupMenu = imports.ui.popupMenu;
@@ -103,6 +105,8 @@ var Clippie = class Clippie {
     clippieInstance.settings_changed_signals();
 
     clippieInstance.toggle_keyboard_shortcuts();
+
+    clippieInstance.refresh_eclips_async();
 
     return clippieInstance;
   }
@@ -378,6 +382,50 @@ var Clippie = class Clippie {
     });
   }
 
+  refresh_eclips_async(menu=undefined) {
+    if (this.settings.save_eclips === false) {
+      return;
+    }
+    this.menu = menu;
+    // use async version in refresh
+    let dir = Gio.file_new_for_path(this.settings.save_eclips_path);
+    dir.enumerate_children_async("standard::*", Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, GLib.PRIORITY_DEFAULT, null, (dir, res) => {
+      let dir_enumerator = dir.enumerate_children_finish(res);
+      // Gio.FileInfo or null
+      do {
+        let file_info = dir_enumerator.next_file(null);
+        if (file_info == null) {
+          break;
+        }
+        let file_name = file_info.get_name();
+        if (file_name.endsWith('.eclip')) {
+          this.logger.debug("eclip name=%s", file_name);
+
+          let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
+          try {
+            let gfile = Gio.file_new_for_path(path);
+            let stream = gfile.read(null);
+            let size = gfile.query_info("standard::size", Gio.FileQueryInfoFlags.NONE, null).get_size();
+            let data = stream.read_bytes(size, null).get_data();
+            let eclip = ByteArray.toString(data);
+
+            this.logger.debug("read size=%d eclip=%s", size, eclip);
+            let uuid = Utils.uuid();
+            let clip = new Clip(uuid, eclip, 'eClip');
+            if (this.menu) {
+              this.menu.add_item(clip);
+            } else {
+              // just testing without menu
+              this.logger.debug("clip=%s", clip.toString());
+            }
+          } catch(e) {
+            this.logger.error("Failed to read eclip %s [%s]", path, e.message);
+          }
+        }
+      } while(true);
+    });
+  }
+
   // Obsolete: Synchronous refresh replaced by refresh_async() and then refresh_dbus()
   // refresh() {
   //   let result = Utils.execute(this.gpaste_client_oneline);
@@ -444,14 +492,14 @@ const PASSWORD_NAME_RE=/\[.*?\](.*)$/
 
 var Clip = class Clip {
 
-  constructor(uuid, content) {
+  constructor(uuid, content, kind=undefined) {
     this.logger = clippieInstance.logger;
     this._uuid = uuid;
     this._menu_item = undefined; // clippie menu
 
     //this.logger.debug('%s: %s', uuid, content);
 
-    let res = this.declipser(content);
+    let res = Clip.declipser(content);
 
     /*
       if it is encrypted the entry will be label,eclipsed_uuid, eclipsed data
@@ -465,7 +513,7 @@ var Clip = class Clip {
       // gpaste delete(this._eclipsed_uuid);
     }
 
-    this._kind = this.dbus_gpaste.getElementKind(this.uuid);
+    this._kind = kind === undefined ? this.dbus_gpaste.getElementKind(this.uuid) : kind;
     this._lock = this.isPassword();
     if (this._lock) {
       this._password_name = this.get_password_name(content);
@@ -656,7 +704,7 @@ var Clip = class Clip {
     return str;
   }
 
-  declipser(content) {
+  static declipser(content) {
     const declipse_re = /^~~eclipse~~(.*?)~~(.*?)~~(.*?)~~/m;
     let m = content.match(declipse_re);
     if (m) {

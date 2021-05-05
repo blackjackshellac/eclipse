@@ -43,10 +43,11 @@ var ClippieMenu = class ClippieMenu {
     this._items = [];
 
     this._clippie = clippie;
+    this._show_eclips = false;
 
     logger.settings = clippie.settings;
 
-    this.rebuild(false);
+    this.rebuild(false, false);
     // this._searchItem = new ClippieSearchItem(this);
     // this._historyMenu = new PopupMenu.PopupSubMenuMenuItem(_("Histories"), { reactive: false, can_focus: true } );
     // this.menu.addMenuItem(this._historyMenu);
@@ -62,6 +63,7 @@ var ClippieMenu = class ClippieMenu {
         this.items.length = 0;
         this.clippie.cur_clip = 0;
         global.stage.set_key_focus(null);
+        this._show_eclips = false;
       }
     });
 
@@ -87,7 +89,7 @@ var ClippieMenu = class ClippieMenu {
     this.items.push(item);
   }
 
-  rebuild(load=true, history=false) {
+  rebuild(load=true, history=true) {
     logger.debug('Refreshing all menu items. history=%s', this.clippie.settings.show_histories);
     this.menu.removeAll();
 
@@ -98,8 +100,12 @@ var ClippieMenu = class ClippieMenu {
 
     this.items = [];
     if (load) {
-      this.clippie.refresh_dbus(this);
       this.menu.open();
+      if (this.show_eclips) {
+        this.clippie.refresh_eclips_async(this);
+      } else {
+        this.clippie.refresh_dbus(this);
+      }
     }
   }
 
@@ -109,7 +115,7 @@ var ClippieMenu = class ClippieMenu {
     let menu = this.menu;
 
     if (filter === undefined) {
-      this.rebuild();
+      this.rebuild(true, true);
       return;
     }
 
@@ -147,6 +153,14 @@ var ClippieMenu = class ClippieMenu {
 
   set items(array) {
     this._items = array;
+  }
+
+  get show_eclips() {
+    return this._show_eclips;
+  }
+
+  set show_eclips(bool) {
+    this._show_eclips = bool;
   }
 
   get menu() {
@@ -386,23 +400,70 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     // track_hover: true,
     // x_expand: true,
 
+    this._search_icon = new St.Icon( {
+      x_expand: false,
+      y_expand: false,
+      y_align: Clutter.ActorAlign.CENTER,
+      icon_name: 'edit-find-symbolic',
+      icon_size: 16,
+      style_class: 'eclipse-search-icon'
+    });
+
     this._entry = new St.Entry( {
       x_expand: true,
       y_expand: false,
       can_focus: true,
       track_hover: true,
+      primary_icon: this._search_icon,
       style_class: 'eclipse-search-entry',
       x_align: St.Align.START,
       y_align: Clutter.ActorAlign.CENTER,
       hint_text: _("Search")
     });
-    //this._entry.set_hint_text();
-
     this._entry.set_track_hover(true);
 
     let entry_text = this._entry.get_clutter_text();
     entry_text.set_activatable(true);
     entry_text.set_editable(true);
+
+    if (this.clippie.settings.save_eclips) {
+      let key_icon = new St.Icon( {
+        x_expand: false,
+        y_align: Clutter.ActorAlign.CENTER,
+        icon_name: 'dialog-password-symbolic',
+        icon_size: 20,
+      });
+
+      this._eclips = new St.Button( {
+        x_expand: false,
+        y_expand: false,
+        can_focus: true,
+        x_align: St.Align.END,
+        y_align: Clutter.ActorAlign.CENTER,
+        style_class: 'eclipse-prefs-button',
+        child: key_icon
+      });
+
+      this._eclips.connect('clicked', (btn, clicked_button) => {
+        logger.debug("mouse button pressed %d", clicked_button);
+
+        this.clippie_menu.show_eclips = !this.clippie_menu.show_eclips;
+        this.clippie_menu.build();
+
+        //this.clippie_menu.menu.close();
+        //global.stage.set_key_focus(null);
+      });
+
+      this._eclips.connect('enter_event', (btn, event) => {
+        //btn.get_child().icon_name = 'preferences-system-symbolic';
+        btn.get_child().icon_size = 28;
+      });
+
+      this._eclips.connect('leave_event', (btn, event) => {
+        //btn.get_child().icon_name = 'open-menu-symbolic';
+        btn.get_child().icon_size = 20;
+      });
+    }
 
     this._icon = new St.Icon( {
       x_expand: false,
@@ -440,17 +501,8 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
     //this._prefs.set_child(this._icon);
 
-    this._search_icon = new St.Icon( {
-      x_expand: false,
-      y_expand: false,
-      y_align: Clutter.ActorAlign.CENTER,
-      icon_name: 'edit-find-symbolic',
-      icon_size: 20,
-      style_class: 'eclipse-search-icon'
-    });
-
-    layout.add_child(this._search_icon);
     layout.add_child(this._entry);
+    layout.add_child(this._eclips);
     layout.add_child(this._prefs);
 
     // entry_text.connect('activate', (e) => {
