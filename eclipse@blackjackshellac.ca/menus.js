@@ -46,7 +46,7 @@ var ClippieMenu = class ClippieMenu {
 
     logger.settings = clippie.settings;
 
-    this.rebuild(false);
+    this.rebuild(false, false);
     // this._searchItem = new ClippieSearchItem(this);
     // this._historyMenu = new PopupMenu.PopupSubMenuMenuItem(_("Histories"), { reactive: false, can_focus: true } );
     // this.menu.addMenuItem(this._historyMenu);
@@ -87,11 +87,11 @@ var ClippieMenu = class ClippieMenu {
     this.items.push(item);
   }
 
-  rebuild(load=true, history=false) {
+  rebuild(load=true, history=true) {
     logger.debug('Refreshing all menu items. history=%s', this.clippie.settings.show_histories);
     this.menu.removeAll();
 
-    if (history || this.clippie.settings.show_histories) {
+    if (history && this.clippie.settings.show_histories) {
       this._historyMenu = new ClippieHistoryMenu(this);
     }
     this._searchItem = new ClippieSearchItem(this);
