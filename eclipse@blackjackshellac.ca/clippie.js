@@ -283,52 +283,6 @@ var Clippie = class Clippie {
     return entries;
   }
 
-  refresh_result(stdout) {
-    let lines=stdout.replace(/\r?\n$/, "").split(/\r?\n/);
-    let clips = [];
-    for (let i=0; i < lines.length; i++) {
-      let line=lines[i];
-      if (line.length > 0) {
-        let clip=Clip.parse(line);
-        if (!clip) {
-          this.logger.error("failed to parse output=%s", line);
-          continue;
-        }
-        let idx = this.find(clip);
-        if (idx >= 0) {
-          //this.logger.debug('clip already exists at idx=%d %s=%s', idx, clip.uuid, this.clips[idx].uuid);
-          clip = this.clips[idx];
-          if (clip.lock) {
-            this.logger.debug('Found lock entry %s', clip.toString());
-          }
-        }
-        //this.logger.debug('Adding clip=[%s] (lock=%s)', clip.uuid, clip.lock);
-        if (this._state[clip.uuid]) {
-          clip.lock = this._state[clip.uuid].lock;
-        }
-        clips[i] = clip;
-        this.menu.add_item(clip);
-      }
-    }
-    this.clips = clips;
-  }
-
-  // Obsolete: Asynchronous refresh replaced by refresh_dbus()
-  refresh_async(menu) {
-    this.menu = menu;
-
-    Utils.execCommandAsync(this.gpaste_client_oneline).then(result => {
-      let ok = result[0];
-      let stdout = result[1];
-      let stderr = result[2];
-      if (ok) {
-        this.refresh_result(stdout);
-      } else {
-        this.logger.error("%s failed: %s", this.gpaste_client_oneline.join(' '), stderr);
-      }
-    });
-  }
-
   // Asynchronous gpaste dbus GetHistory refresh
   refresh_dbus(menu) {
     this.menu = menu;

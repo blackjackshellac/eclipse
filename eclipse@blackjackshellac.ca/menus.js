@@ -440,7 +440,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
         can_focus: true,
         x_align: St.Align.END,
         y_align: Clutter.ActorAlign.CENTER,
-        style_class: 'eclipse-prefs-button',
+        style_class: 'eclipse-eclips-button',
         child: key_icon
       });
 
@@ -501,10 +501,10 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
     //this._prefs.set_child(this._icon);
 
-    layout.add_child(this._entry);
     if (this._eclips) {
       layout.add_child(this._eclips);
     }
+    layout.add_child(this._entry);
     layout.add_child(this._prefs);
 
     // entry_text.connect('activate', (e) => {

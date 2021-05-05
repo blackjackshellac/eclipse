@@ -83,6 +83,12 @@
   vertical-align: middle;
 }
 
+.eclipse-eclips-button {
+  border-right: 15px;
+  border-left: 0px;
+  vertical-align: middle;
+}
+
 .eclipse-search-icon {
   border-right: 10px;
 }
