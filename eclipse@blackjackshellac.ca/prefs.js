@@ -91,6 +91,8 @@ class PreferencesBuilder {
       this._widget.set_child(this._viewport);
     }
 
+    this._bind();
+
     // https://gjs-docs.gnome.org/gtk30~3.24.26/gtk.widget#signal-key-press-event
     // https://gjs-docs.gnome.org/gdk30/gdk.eventkey
     // this._widget.connect('key-press-event', (w, event) => {
@@ -101,6 +103,7 @@ class PreferencesBuilder {
     // });
 
     this._clippie_grid = this._bo('clippie_grid');
+    this._eclips_grid = this._bo('eclips_grid');
     this._shortcuts_grid = this._bo('shortcuts_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
     this._msg_text = this._bo('msg_text');
@@ -129,6 +132,31 @@ class PreferencesBuilder {
 
     this._clippie_grid.attach(this._bo('debug_text'),          0, 1, 1, 1); // row 1
     this._clippie_grid.attach(this._bo('debug'),               1, 1, 1, 1);
+
+    this._save_eclips = this._bo('save_eclips');
+    this._save_eclips_path = this._bo('save_eclips_path');
+    this._eclips_grid.attach(this._bo('save_eclips_text'),     0, 0, 1, 1);
+    this._eclips_grid.attach(this._save_eclips,                1, 0, 1, 1);
+    this._eclips_grid.attach(this._save_eclips_path,           0, 1, 3, 1);
+
+    this._save_eclips.connect('notify::active', (sw) => {
+      let active = sw.get_active();
+      if (active) {
+        this.select_eclips_folder();
+      } else {
+        this.settings.save_eclips_path = "";
+        this._save_eclips_path.set_text("");
+      }
+    });
+
+    if (this._save_eclips.get_active()) {
+      if (GLib.file_test(this.settings.save_eclips_path, GLib.FileTest.IS_DIR)) {
+        this._save_eclips_path.set_text(this.settings.save_eclips_path);
+      } else {
+        this.logger.warn('eclipse directory not found %s', this.settings.save_eclips_path);
+        this._save_eclips.set_active(false);
+      }
+    }
 
     //this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
 
@@ -295,12 +323,6 @@ class PreferencesBuilder {
       return true;
     });
 
-    // gsettings get org.gnome.GPaste track-changes
-    // gsettings set org.gnome.GPaste track-changes false
-    // gpaste-client daemon-reexec
-
-    this._bind();
-
     if (this._bo('show_histories').grab_focus()) {
       this.logger.debug('set focus to history switch');
     }
@@ -345,6 +367,62 @@ class PreferencesBuilder {
     return clicks;
   }
 
+  // https://stackoverflow.com/questions/54487052/how-do-i-add-a-save-button-to-the-gtk-filechooser-dialog
+  select_eclips_folder() {
+    // import/export settings
+    var select_folder_dialog = new Gtk.FileChooserDialog( {
+      title: _("Select eclips folder"),
+      action: Gtk.FileChooserAction.SELECT_FOLDER,
+      create_folders: true
+    });
+
+    //select_folder_dialog.set_transient_for(this._widget);
+
+    let default_path = (this.settings.save_eclips_path.length === 0)
+      ? GLib.build_filenamev( [ GLib.get_user_config_dir(), 'eclipse' ] )
+      : this.settings.save_eclips_path;
+    default_path = GLib.build_filenamev( [default_path, 'eclips'] );
+
+    this.logger.debug("default path=%s", default_path);
+    select_folder_dialog.current_folder = default_path;
+    let result = GLib.mkdir_with_parents(default_path, 0o700);
+    this.logger.debug('mkdir = %d', result);
+
+    let settings_json = 'kitchen_timer_settings.json';
+
+    select_folder_dialog.add_button(_('Cancel'), Gtk.ResponseType.CANCEL);
+    select_folder_dialog.add_button(_('Ok'), Gtk.ResponseType.OK);
+
+    if (Utils.isGnome3x()) {
+      select_folder_dialog.set_current_folder(default_path);
+      select_folder_dialog.set_local_only(false);
+    } else {
+      select_folder_dialog.set_current_folder(Gio.File.new_for_path(default_path));
+    }
+
+    select_folder_dialog.connect('response', (dialog, response_id) => {
+      if (response_id === Gtk.ResponseType.OK) {
+       // outputs "-5"
+        this.logger.debug("response_id=%d", response_id);
+
+        var file = dialog.get_file();
+
+        this.logger.debug(file.get_path());
+
+        this.settings.save_eclips_path = file.get_path();
+        this._save_eclips_path.set_text(file.get_path());
+
+      } else {
+        this.logger.debug("response_id not handled: %d", response_id);
+      }
+
+      // destroy the dialog regardless of the response when we're done.
+      dialog.destroy();
+    });
+
+    select_folder_dialog.show();
+  }
+
   get dbus_gpaste() {
     if (!this._dbus_gpaste) {
       this._dbus_gpaste = new DBusGPaste(this.settings);
@@ -381,6 +459,7 @@ class PreferencesBuilder {
     this._bo_ssb('debug', 'active');
     this._bo_ssb('show_histories', 'active');
     this._bo_ssb('accel_enable', 'active');
+    this._bo_ssb('save_eclips', 'active');
   }
 
   get settings() {

@@ -32,18 +32,9 @@ const Logger = Me.imports.logger.Logger;
 // adapted from Bluetooth-quick-connect extension by Bartosz Jaroszewski
 var Settings = class Settings {
   constructor() {
-    // try to recompile the schema
-    //let compile_schemas = [ Me.path+"/bin/compile_schemas.sh" ];
-    //let [ exit_status, stdout, stderr ] = Utils.execute(compile_schemas);
 
     this.settings = ExtensionUtils.getSettings();
     this.logger = new Logger('settings', this.settings);
-
-    // if (exit_status !== 0) {
-    //   this.logger.warn("Failed to compile schemas: %s\n%s", stdout, stderr);
-    // } else {
-    //   this.logger.debug("compile_schemas: %s", stdout);
-    // }
 
   }
 
@@ -126,6 +117,22 @@ var Settings = class Settings {
 
   set entries(val) {
     this.settings.set_int(val);
+  }
+
+  get save_eclips() {
+    return this.settings.get_boolean('save-eclips');
+  }
+
+  set save_eclips(bool) {
+    this.settings.set_boolean('save-eclips', bool);
+  }
+
+  get save_eclips_path() {
+    return this.settings.get_string('save-eclips-path');
+  }
+
+  set save_eclips_path(val) {
+    this.settings.set_string('save-eclips-path', val);
   }
 
   get state() {

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 06:07-0400\n"
-"PO-Revision-Date: 2021-05-05 06:07-0400\n"
+"POT-Creation-Date: 2021-05-05 17:23-0400\n"
+"PO-Revision-Date: 2021-05-05 17:23-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,15 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: clippie.js:683
+#: clippie.js:676 clippie.js:683 clippie.js:731
 msgid "openssl not found"
 msgstr ""
 
-#: clippie.js:686
+#: clippie.js:679 clippie.js:686 clippie.js:734
 msgid "will not encrypt without passphrase"
 msgstr ""
 
-#: dialog.js:38 dialog.js:40 dialog.js:357
+#: dialog.js:38 dialog.js:40 dialog.js:357 prefs.js:378 prefs.js:392
+#: prefs.js:394
 msgid "Ok"
 msgstr ""
 
@@ -33,7 +34,8 @@ msgstr ""
 msgid "Decrypt"
 msgstr ""
 
-#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:361
+#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:361 prefs.js:377
+#: prefs.js:391 prefs.js:393
 msgid "Cancel"
 msgstr ""
 
@@ -102,13 +104,13 @@ msgid "eclipse"
 msgstr ""
 
 #: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:76 menus.js:78
-#: menus.js:91 menus.js:96
+#: menus.js:80 menus.js:91 menus.js:96
 msgid "More…"
 msgstr ""
 
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
 #: menus.js:313 menus.js:333 menus.js:334 menus.js:335 menus.js:346
-#: menus.js:352 menus.js:357 menus.js:377 menus.js:397
+#: menus.js:352 menus.js:357 menus.js:377 menus.js:397 menus.js:421
 msgid "Search"
 msgstr ""
 
@@ -117,23 +119,23 @@ msgid "Histories"
 msgstr ""
 
 #: menus.js:432 menus.js:433 menus.js:445 menus.js:451 menus.js:456
-#: menus.js:476 menus.js:496
+#: menus.js:476 menus.js:496 menus.js:548 menus.js:550
 msgid "History ["
 msgstr ""
 
 #: menus.js:504 menus.js:506 menus.js:507 menus.js:509 menus.js:510
 #: menus.js:511 menus.js:518 menus.js:524 menus.js:529 menus.js:549
-#: menus.js:569
+#: menus.js:569 menus.js:621 menus.js:623
 msgid "Create history"
 msgstr ""
 
 #: menus.js:606 menus.js:621 menus.js:623 menus.js:624 menus.js:627
-#: menus.js:632 menus.js:652 menus.js:672
+#: menus.js:632 menus.js:652 menus.js:672 menus.js:724 menus.js:726
 msgid "Clear"
 msgstr ""
 
 #: menus.js:647 menus.js:662 menus.js:664 menus.js:665 menus.js:668
-#: menus.js:673 menus.js:693 menus.js:713
+#: menus.js:673 menus.js:693 menus.js:713 menus.js:765 menus.js:767
 msgid "Delete"
 msgstr ""
 
@@ -142,18 +144,27 @@ msgid "<None>"
 msgstr ""
 
 #: prefs.js:150 prefs.js:154 prefs.js:162 prefs.js:189 prefs.js:201
-#: prefs.js:232 prefs.js:284 prefs.js:285
+#: prefs.js:232 prefs.js:284 prefs.js:285 prefs.js:297 prefs.js:312
 msgid "GPaste deamon restarted"
 msgstr ""
 
 #: prefs.js:156 prefs.js:160 prefs.js:168 prefs.js:195 prefs.js:207
-#: prefs.js:238 prefs.js:290 prefs.js:291
+#: prefs.js:238 prefs.js:290 prefs.js:291 prefs.js:303 prefs.js:318
 msgid "Launched gpaste-client ui"
 msgstr ""
 
-#: prefs.js:188 prefs.js:189 prefs.js:212 prefs.js:213 prefs.js:236
-#: prefs.js:237
+#: prefs.js:188 prefs.js:189 prefs.js:201 prefs.js:212 prefs.js:213
+#: prefs.js:216 prefs.js:225 prefs.js:236 prefs.js:237 prefs.js:240
+#: prefs.js:249 prefs.js:264
 msgid "<disabled>"
+msgstr ""
+
+#: prefs.js:365 prefs.js:374
+msgid "Select eClips folder"
+msgstr ""
+
+#: prefs.js:374
+msgid "Select eclips folder"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26
@@ -168,30 +179,44 @@ msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:34
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:42
 msgid "Information to restore state after restart"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:38
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:38
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:46
 msgid "Support gpaste histories"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:42
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:42
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:50
 msgid "Enable keyboard shortcuts"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:46
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:46
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:54
 msgid "Keyboard shortcut for showing menu"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:50
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:50
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:58
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:54
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:54
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:62
 msgid "Keyboard shortcut next item"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
+msgid "Save encrypted clips to the specified folder"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:38
+msgid "Path where encrypted clips should be saved"
 msgstr ""

@@ -67,6 +67,7 @@
         <property name="margin-top">0</property>
         <property name="margin-bottom">0</property>
         <property name="transition-type">crossfade</property>
+
         <child> <!-- stack page: clippie_grid -->
           <object class="GtkStackPage"><!-- options -->
             <property name="name">options</property>
@@ -85,6 +86,25 @@
             </property>
           </object>
         </child> <!-- stack page: clippie_grid -->
+
+        <child> <!-- stack page: eclips_grid -->
+          <object class="GtkStackPage">
+            <property name="name">eclips</property>
+            <property name="title" translatable="no">eclips</property>
+            <property name="child">
+              <object class="GtkGrid" id="eclips_grid">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+            </property>
+          </object>
+        </child> <!-- stack page: eclips_grid -->
 
         <child> <!-- stack page: shortcuts_grid -->
           <object class="GtkStackPage"><!-- shortcuts -->
@@ -317,6 +337,30 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="can-focus">True</property>
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
+  </object>
+
+  <!-- eclips controls -->
+  <object class="GtkLabel" id="save_eclips_text">
+    <property name="label" translatable="yes" context="save-eclips-text">Save encrypted clips to disk</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="save_eclips">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="save-eclips-tooltip">Enable and select folder for eclips</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkEntry" id="save_eclips_path">
+    <property name="text"></property>
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="editable">False</property>
   </object>
 
   <!-- keyboard shortcut controls -->
