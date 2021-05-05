@@ -502,7 +502,9 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
     //this._prefs.set_child(this._icon);
 
     layout.add_child(this._entry);
-    layout.add_child(this._eclips);
+    if (this._eclips) {
+      layout.add_child(this._eclips);
+    }
     layout.add_child(this._prefs);
 
     // entry_text.connect('activate', (e) => {

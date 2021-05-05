@@ -371,20 +371,22 @@ class PreferencesBuilder {
   select_eclips_folder() {
     // import/export settings
     var select_folder_dialog = new Gtk.FileChooserDialog( {
-      title: _("Select eClips folder"),
+      title: _("Select eclips folder"),
       action: Gtk.FileChooserAction.SELECT_FOLDER,
       create_folders: true
     });
+
+    //select_folder_dialog.set_transient_for(this._widget);
 
     let default_path = (this.settings.save_eclips_path.length === 0)
       ? GLib.build_filenamev( [ GLib.get_user_config_dir(), 'eclipse' ] )
       : this.settings.save_eclips_path;
     default_path = GLib.build_filenamev( [default_path, 'eclips'] );
 
-    if (GLib.file_test(default_path, GLib.FileTest.IS_DIR)) {
-       select_folder_dialog.current_folder = default_path;
-       GLib.mkdir_with_parents(default_path, 0o700);
-    }
+    this.logger.debug("default path=%s", default_path);
+    select_folder_dialog.current_folder = default_path;
+    let result = GLib.mkdir_with_parents(default_path, 0o700);
+    this.logger.debug('mkdir = %d', result);
 
     let settings_json = 'kitchen_timer_settings.json';
 

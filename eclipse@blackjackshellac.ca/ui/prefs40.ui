@@ -339,6 +339,30 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
   </object>
 
+  <!-- eclips controls -->
+  <object class="GtkLabel" id="save_eclips_text">
+    <property name="label" translatable="yes" context="save-eclips-text">Save encrypted clips to disk</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="save_eclips">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="save-eclips-tooltip">Enable and select folder for eclips</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkEntry" id="save_eclips_path">
+    <property name="text"></property>
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="editable">False</property>
+  </object>
+
   <!-- keyboard shortcut controls -->
   <object class="GtkLabel" id="accel_enable_text">
     <property name="label" translatable="yes" context="accel-enable-text">Enable keyboard shortcuts</property>

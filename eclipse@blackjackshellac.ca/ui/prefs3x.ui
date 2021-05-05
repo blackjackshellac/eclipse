@@ -102,7 +102,7 @@
           </object>
           <packing>
             <property name="name">eclips</property>
-            <property name="title" translatable="yes">eclips</property>
+            <property name="title" translatable="no">eclips</property>
           </packing>
         </child>
 
