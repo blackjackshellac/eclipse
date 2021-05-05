@@ -438,11 +438,6 @@ var Clip = class Clip {
     this._eclipsed_uuid = res[1];
     this._eclipsed = res[2];
 
-    if (this.eclipsed) {
-      // TODO delete uuid this._eclipsed_uuid
-      // gpaste delete(this._eclipsed_uuid);
-    }
-
     if (kind === 'eClip') {
       this._kind = kind;
       this._uuid = this._eclipsed_uuid;

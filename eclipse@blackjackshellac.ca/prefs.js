@@ -489,32 +489,6 @@ function buildPrefsWidget() {
   var widget = preferencesBuilder.build();
   preferencesBuilder.show();
 
-  // gtk_widget_get_ancestor(w, GTK_TYPE_WINDOW);
-  // TODO find out where widget types are documented
-  // let window = widget.get_parent();
-  // if (window) {
-  //   window.set_icon_name('view-paged-symbolic');
-  // } else {
-  //   preferencesBuilder.logger.debug("Prefrences widget has no parent");
-  // }
-
-  // widget.connect('state-flags-changed', (w, flags) => {
-    //preferencesBuilder.logger.debug('state flags change %s, %s', w, flags);
-  //   if (flags & Gtk.StateFlags.BACKDROP) {
-  //     w = getTopLevelWindow(w)
-  //     let event_mask = w.get_events();
-  //     preferencesBuilder.logger.debug('In backdrop window %s %s', w, ""+event_mask);
-  //     w.set_events(event_mask & Gdk.EventMask.KEY_PRESS_MASK);
-  //   }
-
-  //   let dialog = new KeyboardShortcutDialog((binding, mask, keycode, keyval) => {
-  //     preferencesBuilder.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
-  //   });
-
-  //   dialog.set_transient_for(widget.get_toplevel());
-  //   dialog.present();
-  // });
-
   widget.connect('realize', () => {
     let window = Utils.isGnome3x() ? widget.get_toplevel() : widget.get_root();
     preferencesBuilder.logger.debug('window=%s', window);
