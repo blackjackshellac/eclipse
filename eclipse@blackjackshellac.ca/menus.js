@@ -90,7 +90,6 @@ var ClippieMenu = class ClippieMenu {
   }
 
   rebuild(load=true, history=true) {
-    logger.debug('Refreshing all menu items. history=%s', this.clippie.settings.show_histories);
     this.menu.removeAll();
 
     if (history && this.clippie.settings.show_histories) {
@@ -100,6 +99,7 @@ var ClippieMenu = class ClippieMenu {
 
     this.items = [];
     if (load) {
+      logger.debug('Refreshing all menu items');
       this.menu.open();
       if (this.show_eclips) {
         this.clippie.refresh_eclips_async(this);
@@ -237,7 +237,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       });
       this.label.set_text(clip.label_text());
 
-      if (clip.eclipsed) {
+      if (clip.eclip) {
         box.add_child(new ClipItemControlButton(clip, 'decrypt'));
       } else if (clip.lock) {
         box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
