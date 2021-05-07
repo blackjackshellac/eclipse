@@ -107,6 +107,8 @@ var Clippie = class Clippie {
 
     this.enable_keyboard_shortcuts();
 
+    this.cached_pass = this.settings.cache_password ? '' : undefined;
+
     return this;
   }
 
@@ -116,6 +118,7 @@ var Clippie = class Clippie {
       this.attached = false;
       this._indicator = undefined;
       this._dbus_gpaste = undefined;
+      this.cached_pass = undefined;
       this.disable_keyboard_shortcuts();
 
       // clear the clips
@@ -146,6 +149,12 @@ var Clippie = class Clippie {
     });
     this.settings.settings.connect('changed::accel-next', () => {
       this.enable_keyboard_shortcuts(['accel-next']);
+    });
+
+    this.settings.settings.connect('changed::cache-password', () => {
+      let cache_password = this.settings.cache_password;
+      this.logger.debug('cache password=%s', cache_password);
+      this.cached_pass = cache_password ? '' : undefined;
     });
   }
 
@@ -272,6 +281,14 @@ var Clippie = class Clippie {
       this._dbus_gpaste = new DBusGPaste(this.settings);
     }
     return this._dbus_gpaste;
+  }
+
+  get cached_pass() {
+    return this._cached_pass;
+  }
+
+  set cached_pass(pass) {
+    this._cached_pass = pass;
   }
 
   save_state() {

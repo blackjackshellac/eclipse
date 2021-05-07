@@ -135,9 +135,11 @@ class PreferencesBuilder {
 
     this._save_eclips = this._bo('save_eclips');
     this._save_eclips_path = this._bo('save_eclips_path');
-    this._eclips_grid.attach(this._bo('save_eclips_text'),     0, 0, 1, 1);
-    this._eclips_grid.attach(this._save_eclips,                1, 0, 1, 1);
-    this._eclips_grid.attach(this._save_eclips_path,           0, 1, 3, 1);
+    this._eclips_grid.attach(this._bo('cache_password_text'),  0, 0, 1, 1);
+    this._eclips_grid.attach(this._bo('cache_password'),       1, 0, 1, 1);
+    this._eclips_grid.attach(this._bo('save_eclips_text'),     0, 1, 1, 1);
+    this._eclips_grid.attach(this._save_eclips,                1, 1, 1, 1);
+    this._eclips_grid.attach(this._save_eclips_path,           0, 2, 3, 1);
 
     this._save_eclips.connect('notify::active', (sw) => {
       let active = sw.get_active();
@@ -157,6 +159,11 @@ class PreferencesBuilder {
         this._save_eclips.set_active(false);
       }
     }
+
+    this._save_eclips_path.connect('icon-press', (entry, icon_pos, event) => {
+      let path = this._save_eclips_path.get_text();
+      Utils.spawn_argv(['nautilus', path]);
+    });
 
     //this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
 
@@ -459,6 +466,7 @@ class PreferencesBuilder {
     this._bo_ssb('debug', 'active');
     this._bo_ssb('show_histories', 'active');
     this._bo_ssb('accel_enable', 'active');
+    this._bo_ssb('cache_password', 'active');
     this._bo_ssb('save_eclips', 'active');
   }
 
@@ -495,7 +503,11 @@ function buildPrefsWidget() {
     //window.default_width = 700;
     //window.default_height = 900;
     //window.set_default_icon_name('view-paged-symbolic');
-    window.set_position(Gtk.WindowPosition.CENTER);
+    if (Utils.isGnome3x()) {
+      window.set_position(Gtk.WindowPosition.CENTER);
+    } else {
+      window.set_transient_for(null);
+    }
     //window.resize(700, 900);
   });
   return widget;

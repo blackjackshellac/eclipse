@@ -119,6 +119,14 @@ var Settings = class Settings {
     this.settings.set_int(val);
   }
 
+  get cache_password() {
+    return this.settings.get_boolean('cache-password');
+  }
+
+  set cache_password(bool) {
+    this.settings.set_boolean('cache-password');
+  }
+
   get save_eclips() {
     return this.settings.get_boolean('save-eclips');
   }

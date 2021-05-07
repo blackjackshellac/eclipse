@@ -1,4 +1,4 @@
-# eclipse GPaste interface with encryption
+# Clippie
 # Copyright (C) 2021, Steeve McCauley
 # This file is distributed under the same license as the eclipse-blackjackshellac package.
 # Steeve McCauley <steeve.mccauley@gmail.com>, 2001
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-07 05:07-0400\n"
-"PO-Revision-Date: 2021-05-07 05:07-0400\n"
+"POT-Creation-Date: 2021-05-07 14:57-0400\n"
+"PO-Revision-Date: 2021-05-07 14:57-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,16 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:731
+#: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:706 clippie.js:731
 msgid "openssl not found"
 msgstr ""
 
-#: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:734
+#: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:709 clippie.js:734
 msgid "will not encrypt without passphrase"
 msgstr ""
 
-#: dialog.js:38 dialog.js:40 dialog.js:357 prefs.js:378 prefs.js:392
-#: prefs.js:394
+#: dialog.js:38 dialog.js:40 dialog.js:357 dialog.js:379 prefs.js:378
+#: prefs.js:392 prefs.js:394 prefs.js:401
 msgid "Ok"
 msgstr ""
 
@@ -34,24 +34,24 @@ msgstr ""
 msgid "Decrypt"
 msgstr ""
 
-#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:361 prefs.js:377
-#: prefs.js:391 prefs.js:393
+#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:361
+#: dialog.js:383 prefs.js:377 prefs.js:391 prefs.js:393 prefs.js:400
 msgid "Cancel"
 msgstr ""
 
-#: dialog.js:72 dialog.js:74 dialog.js:391
+#: dialog.js:72 dialog.js:74 dialog.js:391 dialog.js:413
 msgid "Password label"
 msgstr ""
 
-#: dialog.js:73 dialog.js:220
+#: dialog.js:73 dialog.js:220 dialog.js:231
 msgid "Passphrase"
 msgstr ""
 
-#: dialog.js:75 dialog.js:85 dialog.js:402
+#: dialog.js:75 dialog.js:85 dialog.js:402 dialog.js:424
 msgid "Enter name for the password entry"
 msgstr ""
 
-#: dialog.js:79 dialog.js:89 dialog.js:406
+#: dialog.js:79 dialog.js:89 dialog.js:406 dialog.js:428
 msgid "Enter new name for the password entry"
 msgstr ""
 
@@ -59,39 +59,39 @@ msgstr ""
 msgid "Enter the decryption passphrase"
 msgstr ""
 
-#: dialog.js:118 dialog.js:299
+#: dialog.js:118 dialog.js:129 dialog.js:299 dialog.js:321
 msgid "Passphrase too short"
 msgstr ""
 
-#: dialog.js:134
+#: dialog.js:134 dialog.js:145
 msgid "Decryption failed"
 msgstr ""
 
-#: dialog.js:171
+#: dialog.js:171 dialog.js:182
 msgid "Encrypt"
 msgstr ""
 
-#: dialog.js:201
+#: dialog.js:201 dialog.js:212
 msgid "Label for encrypted entry"
 msgstr ""
 
-#: dialog.js:239
+#: dialog.js:239 dialog.js:250
 msgid "Confirm"
 msgstr ""
 
-#: dialog.js:249
+#: dialog.js:249 dialog.js:260
 msgid "Enter and confirm the encryption passphrase"
 msgstr ""
 
-#: dialog.js:293
+#: dialog.js:293 dialog.js:315
 msgid "Specify a label for the encrypted entry"
 msgstr ""
 
-#: dialog.js:303
+#: dialog.js:303 dialog.js:325
 msgid "Passphrase mismatch"
 msgstr ""
 
-#: dialog.js:306
+#: dialog.js:306 dialog.js:328
 msgid "Passphrase match"
 msgstr ""
 
@@ -145,17 +145,19 @@ msgstr ""
 
 #: prefs.js:150 prefs.js:154 prefs.js:162 prefs.js:189 prefs.js:201
 #: prefs.js:232 prefs.js:284 prefs.js:285 prefs.js:297 prefs.js:312
+#: prefs.js:319
 msgid "GPaste deamon restarted"
 msgstr ""
 
 #: prefs.js:156 prefs.js:160 prefs.js:168 prefs.js:195 prefs.js:207
 #: prefs.js:238 prefs.js:290 prefs.js:291 prefs.js:303 prefs.js:318
+#: prefs.js:325
 msgid "Launched gpaste-client ui"
 msgstr ""
 
 #: prefs.js:188 prefs.js:189 prefs.js:201 prefs.js:212 prefs.js:213
-#: prefs.js:216 prefs.js:225 prefs.js:236 prefs.js:237 prefs.js:240
-#: prefs.js:249 prefs.js:264
+#: prefs.js:216 prefs.js:223 prefs.js:225 prefs.js:236 prefs.js:237
+#: prefs.js:240 prefs.js:247 prefs.js:249 prefs.js:264 prefs.js:271
 msgid "<disabled>"
 msgstr ""
 
@@ -163,7 +165,7 @@ msgstr ""
 msgid "Select eClips folder"
 msgstr ""
 
-#: prefs.js:374
+#: prefs.js:374 prefs.js:381
 msgid "Select eclips folder"
 msgstr ""
 
@@ -180,43 +182,55 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:34
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:42
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:46
 msgid "Information to restore state after restart"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:38
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:38
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:46
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:50
 msgid "Support gpaste histories"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:42
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:42
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:50
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:54
 msgid "Enable keyboard shortcuts"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:46
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:46
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:54
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:58
 msgid "Keyboard shortcut for showing menu"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:50
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:50
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:58
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:62
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:54
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:54
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:62
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:66
 msgid "Keyboard shortcut next item"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
+msgid "Reuse the same password for the duration of the session"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:38
 msgid "Save encrypted clips to the specified folder"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:38
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:42
 msgid "Path where encrypted clips should be saved"
 msgstr ""

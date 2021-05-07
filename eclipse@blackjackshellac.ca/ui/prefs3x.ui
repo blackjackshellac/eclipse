@@ -352,6 +352,20 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
   </object>
 
   <!-- eclips controls -->
+  <object class="GtkLabel" id="cache_password_text">
+    <property name="label" translatable="yes" context="cache-password-text">Cache session password</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkSwitch" id="cache_password">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="active">False</property>
+    <property name="tooltip-text" translatable="yes" context="cache-password">Reuse the same password for the duration of the session</property>
+    <property name="hexpand">False</property>
+  </object>
   <object class="GtkLabel" id="save_eclips_text">
     <property name="label" translatable="yes" context="save-eclips-text">Save encrypted clips to disk</property>
     <property name="visible">True</property>

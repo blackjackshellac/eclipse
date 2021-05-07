@@ -64,9 +64,13 @@ function setInterval(func, delay, ...args) {
 }
 
 function spawn(command, callback) {
+  spawn_argv(['/usr/bin/env', 'bash', '-c', command], callback);
+}
+
+function spawn_argv(argv, callback=undefined) {
   var [status, pid] = GLib.spawn_async(
       null,
-      ['/usr/bin/env', 'bash', '-c', command],
+      argv,
       null,
       GLib.SpawnFlags.SEARCH_PATH | GLib.SpawnFlags.DO_NOT_REAP_CHILD,
       null
