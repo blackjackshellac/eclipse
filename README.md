@@ -4,52 +4,58 @@ _formerly clippie_
 
 ### Description
 
-Gnome shell extension to interface with gpaste-client output,
-and provide a means to _encrypt clipboard items_ with a pin/password
-or pass phrase.
+The **eclipse** gnome shell extension provides a ways to encrypt and 
+access *GPaste* histories. Currently, the password/passphrase/pin is only limited
+to greater than 4 characters. Of course, depending on the sensitivity
+of the entry being encrypted a secure password should be used to 
+encrypt your password entries.
 
-The purpose of this extension is to get some GPaste clipboard
-functionality back for Gnome 40. It has support for gpaste
+The original purpose of this extension was to get some *GPaste* clipboard
+functionality back for *Gnome 40*. It has support for *GPaste*
 histories, and a More submenu to show all items in the history.
-A search feature is available in the panel menu.
+A search feature is available in the main menu.
 
-There is a lock/unlock icon on the side of each item that can
-be used to hide sensitive information. The extension will now 
-encrypt entries with a password and are shown with a key icon. When
-an encrypted item is decrypted, its contents are saved as a GPaste
+There is a lock/unlock icon on the left side of each item that can
+be used to hide sensitive information. The extension will  
+encrypt entries with a password and once encrypted are preceded by a key icon.
+When an encrypted item is decrypted, its contents are saved as a GPaste
 password entry with the same label.
 
-The extension now uses dbus to communicate with the gpaste daemon 
-rather than spawning gpaste-client.
+An encrypted clipboard entry (**eclip**) is automatically saved to disk
+in the ~/.config/eclipse/eclips directory.  This behaviour can be changed
+or disabled in the preferences dialog box.
+
+The extension uses dbus to communicate with the gpaste daemon.
 
 ### Encryption
 
 eclipse uses openssl to encrypt entries and stores them back in the
-current GPaste history in base64.  Encrypted items are encoded as
-follows, with entries separated by `~~` characters,
+current GPaste history in base64 encoded format.  Encrypted items 
+are encoded as follows, with entries separated by `~~` delimiters,
 
 ```
 ~~eclipse~~Secret entry~~376f006d-6080-4d74-8606-8831cf5c5c69~~U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=~~
 
 type: eclipse
 label: Secret entry
-eclipsed_uuid: 376f006d-6080-4d74-8606-8831cf5c5c69
-enc_data: U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=
+uuid: 376f006d-6080-4d74-8606-8831cf5c5c69
+eclip: U2FsdGVkX181g3xGGkmuTdi90Orm7Wl30EXhHusS/vA0Xkhd50wqzNwttUHaZuys8ptDfvU4DqI7AuLbDsp0LCRvIcA2MBYBJ8KVgQyai9FYiMtX/Bhmn4Q2NDg7/C3fARnQNmYFoH6TyFnFk6PsbBdinimp/pdhzuh9JqlHR0E=
 ```
 
-When an item is encrypted, the original item is deleted using the eclipsed uuid
-stored in the encoded entry.
+When an item is encrypted, the original item is deleted using the *GPaste*
+uuid.
 
 When the encrypted item is selected a dialog requests the encryption pass
-phrase and deccrypts the result, duplicating it in a GPaste password entry with
+phrase and decrypts the result, duplicating it in a GPaste password entry with
 the same label as the encrypted item, in this example it would be `[Password] Secret entry`.
 The item is selected into the clipboard so once it has been used it can be
 deleted.
 
 ![image](https://user-images.githubusercontent.com/825403/117049654-6ca0dc80-ace2-11eb-8fa1-24f9ddf58b5a.png)
 
-One benefit to this approach is that encrypted items are securely persisted in the clipboard
-history when changing histories, or restarting one's session.
+One benefit to this approach is that **eclips** are securely persisted in the clipboard
+history when changing histories, or restarting one's session. Note that *GPaste Password*
+entries are not persisted when changing histories.
 
 The openssl command line utility must be installed to support encryption.  The extension
 uses the following openssh commands for encryption and decryption respectively,
@@ -77,8 +83,8 @@ and this is the secret that is being encrypted
 
 ### Requirements
 
-Make sure gpaste-client is installed, and the daemon is running. For encryption
-support you also need openssl to be install. For example, on Fedora,
+Make sure *gpaste-client* is installed, and the daemon is running. For encryption
+support you also need *openssl* to be installed. For example, on Fedora,
 
 ```
 $ sudo dnf install gpaste gpaste-ui gpaste-libs openssl
@@ -106,11 +112,11 @@ The extension is installed in `~/.local/share/gnome-shell/extensions/eclipse@bla
 
 Clicking the indicator icon brings down the main menu.  If there are more than 20 entries a More...
 menu is created for the remainder.  You can search by content or password name in the search box.
-The lock icon indicates a `[Password]` entry so it is hidden until selected and pasted.  Click on
+The lock icon indicates a *GPaste* `[Password]` entry so it is hidden until selected and pasted.  Click on
 an unlock icon to encrypt a clipboard item with a pin/password/passphrase.  Click on a key icon
-to decrypt the encrypted item with the password you used previously.  If you encrypt something and
-forget the password it's gone man, like 'keys in a lava flow'. When a clipboard icon is decrypted it
-is shown as a GPaste Password item. Click on lock icon to rename a password entry.  Click on the 'X'
+to decrypt the encrypted item with the password you used for its encryption.  If you encrypt something and
+forget the password it's gone man, like *keys in a lava flow*. When a clipboard icon is decrypted it
+is shown as a *GPaste* `[Password]` item. Click on lock icon to rename a password entry.  Click on the 'X'
 icon on the far right to delete the clipboard item.
 
 ![Screenshot from 2021-05-03 17-47-23](https://user-images.githubusercontent.com/825403/116938663-22175580-ac39-11eb-9815-262c38607465.png)
