@@ -284,11 +284,13 @@ var Clippie = class Clippie {
   }
 
   get cached_pass() {
+    //this.logger.debug('get cpass=%s', this._cached_pass);
     return this._cached_pass;
   }
 
   set cached_pass(pass) {
     this._cached_pass = pass;
+    //this.logger.debug('set cpass=%s', this._cached_pass);
   }
 
   save_state() {

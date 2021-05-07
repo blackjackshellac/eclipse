@@ -54,11 +54,8 @@ var DecryptModalDialog = GObject.registerClass({
     });
     this.contentLayout.add(box);
 
-    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
-    let icon = new St.Icon({
-      gicon: gicon,
-      icon_size: 20
-    });
+    let gkey = Gio.icon_new_for_string('dialog-password-symbolic');
+    let gclear = Gio.icon_new_for_string('edit-clear-symbolic');
 
     this._password_entry = new St.PasswordEntry({
       x_expand: true,
@@ -69,7 +66,8 @@ var DecryptModalDialog = GObject.registerClass({
       style_class: 'eclipse-decrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: icon,
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
       hint_text: _("Passphrase"),
       reactive: true
     });
@@ -78,6 +76,17 @@ var DecryptModalDialog = GObject.registerClass({
     let ptext = this._password_entry.get_clutter_text();
     ptext.set_activatable(true);
     ptext.set_editable(true);
+
+    this._password_entry.connect('primary-icon-clicked', (entry) => {
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_entry.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_entry.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_entry.set_text("");
+    // });
 
     this._msg = new St.Label({
       text: _("Enter the decryption passphrase"),
@@ -140,6 +149,10 @@ var DecryptModalDialog = GObject.registerClass({
       let msg=this.clip.decrypt(password, (ok, stderr) => {
         if (ok) {
           this.close(global.get_current_time());
+          if (this.clip.clippie.cached_pass !== undefined) {
+            this.clip.clippie.logger.debug('cached_pass submit=%s', password);
+            this.clip.clippie.cached_pass = password;
+          }
         } else {
           this._password_entry.add_style_class_name('eclipse-entry-red');
           this.set_msg(_('Decryption failed'));
@@ -197,8 +210,10 @@ var EncryptModalDialog = GObject.registerClass({
     });
     this.contentLayout.add(box);
 
-    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
-    //let icon = new St.Icon({ gicon: gicon, icon_size: 20 });
+    let gkey = Gio.icon_new_for_string('dialog-password-symbolic');
+    let gclear = Gio.icon_new_for_string('edit-clear-symbolic');
+
+    //let icon = new St.Icon({ gicon: gkey, icon_size: 20 });
     //box.add(icon);
 
     this._entry = new St.Entry({
@@ -227,10 +242,22 @@ var EncryptModalDialog = GObject.registerClass({
       style_class: 'eclipse-encrypt-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
       hint_text: _("Passphrase"),
       reactive: true
     });
+
+    this._password_entry.connect('primary-icon-clicked', (entry) => {
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_entry.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_entry.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_entry.set_text("");
+    // });
 
     this._password_entry.set_hover(true);
     let ptext = this._password_entry.get_clutter_text();
@@ -246,10 +273,22 @@ var EncryptModalDialog = GObject.registerClass({
       style_class: 'eclipse-confirm-entry',
       x_align: Clutter.ActorAlign.CENTER,
       y_align: Clutter.ActorAlign.CENTER,
-      primary_icon: new St.Icon({ gicon: gicon, icon_size: 20 }),
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
       hint_text: _("Confirm"),
       reactive: true
     });
+
+    this._password_confirm.connect('primary-icon-clicked', (entry) => {
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_confirm.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_confirm.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_confirm.set_text("");
+    // });
 
     this._password_confirm.set_hover(true);
     let ctext = this._password_confirm.get_clutter_text();
@@ -341,6 +380,10 @@ var EncryptModalDialog = GObject.registerClass({
           // success, delete from clipboard
           this.clip.delete();
           this.close(global.get_current_time());
+          if (this.clip.clippie.cached_pass !== undefined) {
+            this.clip.clippie.logger.debug('cached_pass submit=%s', password);
+            this.clip.clippie.cached_pass = password;
+          }
         } else {
           this.set_msg(stderr);
         }
@@ -394,12 +437,8 @@ var LockItemModalDialog = GObject.registerClass({
     });
     this.contentLayout.add(box);
 
-    let gicon = Gio.icon_new_for_string('dialog-password-symbolic');
-    let icon = new St.Icon({
-      gicon: gicon,
-      icon_size: 20
-    });
-    //box.add(icon);
+    let gkey = Gio.icon_new_for_string('dialog-password-symbolic');
+    let icon = new St.Icon({ gicon: gkey, icon_size: 20 });
 
     this._entry = new St.Entry({
       x_expand: true,

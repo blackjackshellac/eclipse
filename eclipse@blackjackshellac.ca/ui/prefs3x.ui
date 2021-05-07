@@ -71,6 +71,7 @@
         <property name="margin-top">0</property>
         <property name="margin-bottom">0</property>
         <property name="transition-type">crossfade</property>
+        <property name="hhomogeneous">True</property>
 
         <child> <!-- stack page: clippie_grid -->
           <object class="GtkGrid" id="clippie_grid">
@@ -387,6 +388,8 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="receives-default">False</property>
     <property name="hexpand">False</property>
     <property name="editable">False</property>
+    <property name="secondary_icon_name">folder-open-symbolic</property>
+    <property name="secondary_icon_activatable">True</property>
   </object>
 
   <!-- keyboard shortcut controls -->
