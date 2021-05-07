@@ -38,7 +38,9 @@ class ClippieIndicator extends PanelMenu.Button {
     super._init(0.0, 'eclipse');
 
     // settings lives in Clippie singleton
-    this._clippie = Clippie.attach(this);
+    this._clippie = new Clippie();
+
+    this._clippie.attach(this);
 
     this.logger = new Logger('cl_indicator', this.settings);
     this.logger.debug('Initializing extension');
@@ -62,7 +64,7 @@ class ClippieIndicator extends PanelMenu.Button {
 
     this.connect('destroy', () => {
       this.logger.debug("Panel indicator button being destroyed");
-      Clippie.detach();
+      this.clippie.detach();
     });
   }
 

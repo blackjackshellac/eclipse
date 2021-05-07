@@ -36,6 +36,8 @@ const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
 const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 
+var clippieInstance;
+
 var Clippie = class Clippie {
   constructor() {
     this._clips = [];
@@ -47,12 +49,14 @@ var Clippie = class Clippie {
 
     this._settings = new Settings();
     this._attached = false;
+    this.logger = new Logger('cl_ippie', this.settings);
     this._accel = new KeyboardShortcuts(this.settings);
 
-    this.logger = new Logger('cl_ippie', this.settings);
-
     this.logger.debug('Instantiating Clippie');
-
+    if (clippieInstance) {
+      this.logger.debug('Clippie is already instantiated');
+    }
+    clippieInstance = this;
     this.gpaste_client = Utils.exec_path('gpaste-client');
     if (this.gpaste_client === null) {
       this.notification('Error', this.logger.error('Failed to find gpaste-client program'),
@@ -79,48 +83,50 @@ var Clippie = class Clippie {
     source.showNotification(notification);
   }
 
-  static attach(indicator) {
+  attach(indicator) {
     // reload settings
-    if (clippieInstance.attached) {
-      return clippieInstance;
+    if (this.attached) {
+      return this;
     }
 
-    clippieInstance._settings = new Settings();
+    this._settings = new Settings();
 
-    clippieInstance.logger.settings = clippieInstance._settings;
+    this.logger.settings = this._settings;
 
-    clippieInstance.logger.debug("Attaching indicator, size=%d items", clippieInstance.clips.length);
+    this.logger.debug("Attaching indicator, size=%d items", this.clips.length);
 
-    clippieInstance._indicator = indicator;
+    this._indicator = indicator;
 
-    clippieInstance.attached = true;
+    this.attached = true;
 
-    clippieInstance.restore_state();
+    this.restore_state();
 
-    //clippieInstance.refresh();
+    //this.refresh();
 
-    clippieInstance.settings_changed_signals();
+    this.settings_changed_signals();
 
-    clippieInstance.enable_keyboard_shortcuts();
+    this.enable_keyboard_shortcuts();
 
-    return clippieInstance;
+    return this;
   }
 
-  static detach() {
-    if (clippieInstance.attached) {
-      clippieInstance.logger.debug("Detaching indicator from Clippie");
-      clippieInstance.attached = false;
-      clippieInstance._indicator = undefined;
-      clippieInstance._dbus_gpaste = undefined;
-      clippieInstance.disable_keyboard_shortcuts();
+  detach() {
+    if (this.attached) {
+      this.logger.debug("Detaching indicator from Clippie");
+      this.attached = false;
+      this._indicator = undefined;
+      this._dbus_gpaste = undefined;
+      this.disable_keyboard_shortcuts();
 
       // clear the clips
-      clippieInstance.logger.debug("Clearing %d clips", clippieInstance.clips.length);
-      for (let i=0; i < clippieInstance.clips.length; i++) {
-        clippieInstance.clips[i]=undefined;
+      this.logger.debug("Clearing %d clips", this.clips.length);
+      for (let i=0; i < this.clips.length; i++) {
+        this.clips[i]=undefined;
       }
-      clippieInstance.clips = [];
-      clippieInstance.cur_clip = 0;
+      this.clips = [];
+      this.cur_clip = 0;
+
+      clippieInstance = undefined;
     }
   }
 
@@ -188,7 +194,7 @@ var Clippie = class Clippie {
   }
 
   get clippie() {
-    return clippieInstance;
+    return this;
   }
 
   get clips() {
@@ -430,9 +436,6 @@ var Clippie = class Clippie {
 
 }
 
-// clippie is a singleton class
-var clippieInstance = new Clippie();
-
 const GPASTE_LINE_RE=/^([-0-9a-f]+):\s(.*$)/;
 const PASSWORD_NAME_RE=/\[.*?\](.*)$/
 
@@ -481,16 +484,16 @@ var Clip = class Clip {
   }
 
   get settings() {
-    return clippieInstance.settings;
+    return this.clippie.settings;
   }
 
   // Obsolete
   get gpaste_client() {
-    return clippieInstance.gpaste_client;
+    return this.clippie.gpaste_client;
   }
 
   get dbus_gpaste() {
-    return clippieInstance.dbus_gpaste;
+    return this.clippie.dbus_gpaste;
   }
 
   get uuid() {
@@ -591,7 +594,7 @@ var Clip = class Clip {
   // can't toggle lock any more
   // toggle_lock() {
   //   this._lock = !this._lock;
-  //   clippieInstance.save_state();
+  //   this.clippie.save_state();
   // }
 
   select() {
@@ -649,19 +652,19 @@ var Clip = class Clip {
       // unlocked, convert clipboard entry to password
 
       // get the index of the clip before setting as password
-      let idx = clippieInstance.clips.indexOf(this);
+      let idx = this.clippie.clips.indexOf(this);
 
-      clippieInstance.dbus_gpaste.setPassword(this.uuid, label);
+      this.clippie.dbus_gpaste.setPassword(this.uuid, label);
       this.menu_item.trash_self();
       this.lock = true;
 
       // seems to replace the item at the same index with a new uuid
       if (idx >= 0) {
-        let [uuid, content] = clippieInstance.dbus_gpaste.getElementAtIndex(idx);
+        let [uuid, content] = this.clippie.dbus_gpaste.getElementAtIndex(idx);
         if (uuid) {
           let clip=new Clip(uuid, content);
-          clippieInstance.clips.push(clip);
-          clippieInstance.dbus_gpaste.select(uuid);
+          this.clippie.clips.push(clip);
+          this.clippie.dbus_gpaste.select(uuid);
         }
       }
     }
@@ -697,19 +700,19 @@ var Clip = class Clip {
   */
   encrypt(label, passphrase, callback) {
     // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
-    if (!clippieInstance.openssl) {
+    if (!this.clippie.openssl) {
       return this.logger.error(_('openssl not found'));
     }
     if (!passphrase || passphrase.trim().length === 0) {
       return this.logger.error(_('will not encrypt without passphrase'));
     }
 
-    let cmdargs=clippieInstance.openssl_enc_args.join(' ');
+    let cmdargs=this.clippie.openssl_enc_args.join(' ');
     // passphrase is piped as first line of data to openssl
     let data=passphrase+"\n"+this.content;
     //this.logger.debug("%s | %s", data, );
     this.logger.debug("encrypt content | %s", cmdargs);
-    Utils.execCommandAsync(clippieInstance.openssl_enc_args, data).then((result) => {
+    Utils.execCommandAsync(this.clippie.openssl_enc_args, data).then((result) => {
       let ok = result[0];
       let stdout = result[1];
       let stderr = result[2];
@@ -719,8 +722,8 @@ var Clip = class Clip {
         // test decryption with same password
         let uuid = Utils.uuid();
         let eclip = this.eclipser(label, uuid, stdout.trimEnd());
-        clippieInstance.dbus_gpaste.add(eclip);
-        clippieInstance.save_eclip_async(uuid, eclip);
+        this.clippie.dbus_gpaste.add(eclip);
+        this.clippie.save_eclip_async(uuid, eclip);
       } else {
         ok = false;
         this.logger.error("%s failed status=%d: %s", cmdargs, status, stderr);
@@ -738,24 +741,24 @@ var Clip = class Clip {
     0
   */
   decrypt(passphrase, callback) {
-    if (!clippieInstance.openssl) {
+    if (!this.clippie.openssl) {
       return this.logger.error('openssl not found');
     }
     if (!passphrase || passphrase.trim().length === 0) {
       return this.logger.error('can not decrypt without passphrase');
     }
     // passphrase is piped as first line of data to openssl
-    let cmdargs = clippieInstance.openssl_dec_args.join(' ');
+    let cmdargs = this.clippie.openssl_dec_args.join(' ');
     let data=passphrase+"\n"+this.eclip+"\n";
     this.logger.debug("decrypt content | %s", cmdargs);
-    Utils.execCommandAsync(clippieInstance.openssl_dec_args, data).then((result) => {
+    Utils.execCommandAsync(this.clippie.openssl_dec_args, data).then((result) => {
       let ok = result[0];
       let stdout = result[1];
       let stderr = result[2].trimEnd();
       let status = result[3];
       if (ok && status == 0) {
         //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
-        clippieInstance.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
+        this.clippie.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
       } else {
         this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr);
         ok = false;
