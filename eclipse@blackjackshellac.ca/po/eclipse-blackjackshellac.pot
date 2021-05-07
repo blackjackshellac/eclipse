@@ -1,4 +1,4 @@
-# Clippie
+# eclipse GPaste interface with encryption
 # Copyright (C) 2021, Steeve McCauley
 # This file is distributed under the same license as the eclipse-blackjackshellac package.
 # Steeve McCauley <steeve.mccauley@gmail.com>, 2001
