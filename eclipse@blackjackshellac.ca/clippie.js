@@ -327,10 +327,8 @@ var Clippie = class Clippie {
         let clip = this.find_uuid(uuid);
         if (clip === undefined) {
           // clip not found in clips, create a new one
-          clip = Clip.unClip(content);
-          if (clip) {
-            clip.gpaste_uuid = uuid;
-          } else {
+          clip = Clip.unClip(content, uuid);
+          if (clip === undefined) {
             clip = new Clip(uuid, content);
           }
         }
@@ -469,13 +467,16 @@ var Clip = class Clip {
     return undefined;
   }
 
-  static unClip(content) {
+  static unClip(content, gpaste_uuid=undefined) {
     let [ label, uuid, eclip ] = Clip.declipser(content);
     if (uuid === undefined || eclip === undefined) {
       // invalid eclip
       return undefined;
     }
     let clip = new Clip(uuid, label, { kind: 'eClip', eclip: eclip });
+    clip.gpaste_uuid = gpaste_uuid;
+
+    clip.logger.debug('label=%s uuid=%s gpuuid=%s', label, uuid, gpaste_uuid)
     return clip;
   }
 
@@ -598,7 +599,8 @@ var Clip = class Clip {
   // }
 
   select() {
-    this.dbus_gpaste.select(this.uuid);
+    let uuid = this.gpaste_uuid ? this.gpaste_uuid : this.uuid;
+    this.dbus_gpaste.select(uuid);
     return true;
   }
 

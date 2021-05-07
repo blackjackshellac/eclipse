@@ -110,6 +110,17 @@ var DecryptModalDialog = GObject.registerClass({
     });
 
     ptext.grab_key_focus();
+
+    this.connect('key-press-event', (dialog, event) => {
+      this.clip.logger.debug('key pressed %s', event);
+      let symbol = event.get_key_symbol();
+      // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
+      if (symbol === Clutter.KEY_Escape) {
+        this.close(global.get_current_time());
+        return true;
+      }
+      return false;
+    });
   }
 
   confirm() {
@@ -275,6 +286,17 @@ var EncryptModalDialog = GObject.registerClass({
     ctext.connect('text-changed', (ctext) => {
       this.confirm_with_style();
     });
+
+    this.connect('key-press-event', (dialog, event) => {
+      this.clip.logger.debug('key pressed %s', event);
+      let symbol = event.get_key_symbol();
+      // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
+      if (symbol === Clutter.KEY_Escape) {
+        this.close(global.get_current_time());
+        return true;
+      }
+      return false;
+    });
   }
 
   confirm_with_style() {
@@ -428,6 +450,18 @@ var LockItemModalDialog = GObject.registerClass({
     // etext.connect('text-changed', (etext) => {
     //   log('text='+etext+getText());
     // });
+
+    this.connect('key-press-event', (dialog, event) => {
+      this.clip.logger.debug('key pressed %s', event);
+      let symbol = event.get_key_symbol();
+      // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
+      if (symbol === Clutter.KEY_Escape) {
+        this.close(global.get_current_time());
+        return true;
+      }
+      return false;
+    });
+
   }
 
   submit() {
@@ -437,6 +471,7 @@ var LockItemModalDialog = GObject.registerClass({
       this.close(global.get_current_time());
     }
   }
+
   _onOk(button, event) {
     this.submit();
   }
