@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-05 17:23-0400\n"
-"PO-Revision-Date: 2021-05-05 17:23-0400\n"
+"POT-Creation-Date: 2021-05-07 05:07-0400\n"
+"PO-Revision-Date: 2021-05-07 05:07-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: clippie.js:676 clippie.js:683 clippie.js:731
+#: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:731
 msgid "openssl not found"
 msgstr ""
 
-#: clippie.js:679 clippie.js:686 clippie.js:734
+#: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:734
 msgid "will not encrypt without passphrase"
 msgstr ""
 

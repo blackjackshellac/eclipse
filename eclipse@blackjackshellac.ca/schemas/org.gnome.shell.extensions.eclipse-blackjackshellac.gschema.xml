@@ -30,7 +30,7 @@
       <summary>Maximum number of clipboard entries to show on the main menu</summary>
     </key>
     <key name="save-eclips" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Save encrypted clips to the specified folder</summary>
     </key>
     <key name="save-eclips-path" type="s">
