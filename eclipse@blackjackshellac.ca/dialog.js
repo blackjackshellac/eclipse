@@ -79,7 +79,13 @@ var DecryptModalDialog = GObject.registerClass({
 
     this._password_entry.connect('primary-icon-clicked', (entry) => {
       if (this.clip.clippie.cached_pass !== undefined) {
-        this._password_entry.set_text(this.clip.clippie.cached_pass);
+        let cur_text = entry.get_text();
+        if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+          // if the value in the entry equals the value of the cached pass, clear it
+          this.set_msg(_("Cached password cleared"))
+          this.clip.clippie.cached_pass = "";
+        }
+        entry.set_text(this.clip.clippie.cached_pass);
       }
     });
 
@@ -249,6 +255,12 @@ var EncryptModalDialog = GObject.registerClass({
     });
 
     this._password_entry.connect('primary-icon-clicked', (entry) => {
+      let cur_text = entry.get_text();
+      if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+        // if the value in the entry equals the value of the cached pass, clear it
+        this.set_msg(_("Cached password cleared"))
+        this.clip.clippie.cached_pass = "";
+      }
       if (this.clip.clippie.cached_pass !== undefined) {
         this._password_entry.set_text(this.clip.clippie.cached_pass);
       }
@@ -280,6 +292,12 @@ var EncryptModalDialog = GObject.registerClass({
     });
 
     this._password_confirm.connect('primary-icon-clicked', (entry) => {
+        let cur_text = entry.get_text();
+        if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+          // if the value in the entry equals the value of the cached pass, clear it
+          this.set_msg(_("Cached password cleared"))
+          this.clip.clippie.cached_pass = "";
+        }
       if (this.clip.clippie.cached_pass !== undefined) {
         this._password_confirm.set_text(this.clip.clippie.cached_pass);
       }
