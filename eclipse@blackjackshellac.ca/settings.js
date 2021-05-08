@@ -127,6 +127,14 @@ var Settings = class Settings {
     this.settings.set_boolean('cache-password');
   }
 
+  get cache_password_timeout() {
+    return this.settings.get_int('cache-password-timeout');
+  }
+
+  set cache_password_timeout(val) {
+    this.settings.set_int('cache-password-timeout', val);
+  }
+
   get save_eclips() {
     return this.settings.get_boolean('save-eclips');
   }

@@ -366,7 +366,28 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="cache-password">Reuse the same password for the duration of the session</property>
     <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
   </object>
+  <object class="GtkLabel" id="cache_password_timeout_text">
+    <property name="label" translatable="yes" context="cache-password-text">Timeout cached passwords</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+  </object>
+  <object class="GtkEntry" id="cache_password_timeout">
+    <property name="text"></property>
+    <property name="placeholder-text">[hh:mm:]ss</property>
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="receives-default">False</property>
+    <property name="hexpand">False</property>
+    <property name="editable">True</property>
+    <property name="tooltip-text" translatable="yes" context="cache-password-timeout">Timeout for cached password in seconds, 0 is none</property>
+    <property name="secondary_icon_name">alarm-symbolic</property>
+    <property name="secondary_icon_activatable">True</property>
+  </object>
+
   <object class="GtkLabel" id="save_eclips_text">
     <property name="label" translatable="yes" context="save-eclips-text">Save encrypted clips to disk</property>
     <property name="visible">True</property>
@@ -380,6 +401,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="save-eclips-tooltip">Enable and select folder for eclips</property>
     <property name="hexpand">False</property>
+    <property name="halign">1</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkEntry" id="save_eclips_path">
     <property name="text"></property>
