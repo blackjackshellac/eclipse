@@ -108,7 +108,7 @@ var Clippie = class Clippie {
 
     this.enable_keyboard_shortcuts();
 
-    this.cached_pass = this.settings.cache_password ? '' : undefined;
+    this.cached_pass = this.settings.cache_password;
 
     return this;
   }
