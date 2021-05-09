@@ -124,7 +124,7 @@ var Settings = class Settings {
   }
 
   set cache_password(bool) {
-    this.settings.set_boolean('cache-password');
+    this.settings.set_boolean('cache-password', bool);
   }
 
   get cache_password_timeout() {
