@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-09 10:14-0400\n"
+"POT-Creation-Date: 2021-05-09 12:57-0400\n"
 "PO-Revision-Date: 2021-05-03 17:09-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -35,39 +35,43 @@ msgstr ""
 msgid "Timeout of cached passwords in seconds, 0 is no timeout"
 msgstr ""
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:44
-msgid "Timeout of GPaste passwords in seconds, 0 is no timeout"
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:43
+msgid "Cache encrypted clips in memory"
 msgstr ""
 
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
-msgid "Save encrypted clips to the specified folder"
+msgid "Timeout of GPaste passwords in seconds, 0 is no timeout"
 msgstr ""
 
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
-msgid "Path where encrypted clips should be saved"
+msgid "Save encrypted clips to the specified folder"
 msgstr ""
 
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:56
+msgid "Path where encrypted clips should be saved"
+msgstr ""
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
 msgid "Information to restore state after restart"
 msgstr "Informations pour restaurer l'état après le redémarrage"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
 msgid "Support gpaste histories"
 msgstr "Soutenir les historiques de gpaste"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
 msgid "Enable keyboard shortcuts"
 msgstr "Activer les raccourcis clavier"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 msgid "Keyboard shortcut for showing menu"
 msgstr "Raccourci clavier pour afficher le menu"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 msgid "Keyboard shortcut for showing history menu"
 msgstr "Raccourci clavier pour afficher le menu d'historique"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
 msgid "Keyboard shortcut next item"
 msgstr "Raccourci clavier pour sélectionner l'élément suivant"
 
@@ -80,138 +84,148 @@ msgid "Keyboard shortcut"
 msgstr "Le raccourci clavier"
 
 #: ../ui/kb_shortcuts_dialog3x.ui:72 ../dialog.js:43 ../dialog.js:204
-#: ../dialog.js:442 ../prefs.js:486
+#: ../dialog.js:442 ../prefs.js:488
 msgid "Cancel"
 msgstr "Annuler"
 
-#: ../ui/prefs40.ui:75 ../ui/prefs3x.ui:91
+#: ../ui/prefs40.ui:76 ../ui/prefs3x.ui:91
 msgid "Options"
 msgstr "Options"
 
-#: ../ui/prefs40.ui:113 ../ui/prefs3x.ui:125
+#: ../ui/prefs40.ui:114 ../ui/prefs3x.ui:125
 msgid "Shortcuts"
 msgstr "Raccourcis"
 
-#: ../ui/prefs40.ui:151
+#: ../ui/prefs40.ui:152
 msgid "About"
 msgstr "À propos"
 
-#: ../ui/prefs40.ui:317 ../ui/prefs3x.ui:331 ../prefs.ui:95
+#: ../ui/prefs40.ui:318 ../ui/prefs3x.ui:331 ../prefs.ui:95
 msgctxt "debug-text"
 msgid "Debug"
 msgstr "Déboguer"
 
-#: ../ui/prefs40.ui:327 ../ui/prefs3x.ui:341 ../prefs.ui:105
+#: ../ui/prefs40.ui:328 ../ui/prefs3x.ui:341 ../prefs.ui:105
 msgctxt "debug-tooltip"
 msgid "Enable debugging output"
 msgstr "Activer la sortie de débogage"
 
-#: ../ui/prefs40.ui:330 ../ui/prefs3x.ui:344 ../prefs.ui:108
+#: ../ui/prefs40.ui:331 ../ui/prefs3x.ui:344 ../prefs.ui:108
 msgctxt "show-histories-text"
 msgid "Show history menu"
 msgstr "Afficher le menu historique"
 
-#: ../ui/prefs40.ui:340 ../ui/prefs3x.ui:354 ../prefs.ui:118
+#: ../ui/prefs40.ui:341 ../ui/prefs3x.ui:354 ../prefs.ui:118
 msgctxt "show-histories-tooltip"
 msgid "Show history menu"
 msgstr "Afficher le menu historique"
 
-#: ../ui/prefs40.ui:345
+#: ../ui/prefs40.ui:346 ../ui/prefs3x.ui:359
 msgctxt "cache-password-text"
-msgid "Cache session password"
+msgid "Cache eclipse session password"
 msgstr ""
 
-#: ../ui/prefs40.ui:355
+#: ../ui/prefs40.ui:356 ../ui/prefs3x.ui:369
 msgctxt "cache-password"
-msgid "Reuse the same password for the duration of the session"
+msgid "Reuse the same eclipse password for the duration of the session"
 msgstr ""
 
-#: ../ui/prefs40.ui:360
+#: ../ui/prefs40.ui:361 ../ui/prefs3x.ui:374
 msgctxt "cache-password-text"
-msgid "Timeout cached passwords"
+msgid "Timeout cached eclipse password"
 msgstr ""
 
-#: ../ui/prefs40.ui:374
+#: ../ui/prefs40.ui:375 ../ui/prefs3x.ui:388
 msgctxt "cache-password-timeout"
-msgid "Timeout for cached password in seconds, 0 is none"
+msgid "Timeout for cached eclipse password in seconds, 0 is none"
 msgstr ""
 
-#: ../ui/prefs40.ui:380 ../ui/prefs3x.ui:414
+#: ../ui/prefs40.ui:381 ../ui/prefs3x.ui:394
+msgctxt "timeout-gpaste-password-text"
+msgid "Timeout GPaste passwords"
+msgstr ""
+
+#: ../ui/prefs40.ui:395 ../ui/prefs3x.ui:408
+msgctxt "cache-password-timeout"
+msgid "Timeout for GPaste Password entries in seconds, 0 is none"
+msgstr ""
+
+#: ../ui/prefs40.ui:401 ../ui/prefs3x.ui:430
 msgctxt "save-eclips-text"
 msgid "Save encrypted clips to disk"
 msgstr ""
 
-#: ../ui/prefs40.ui:390 ../ui/prefs3x.ui:424
+#: ../ui/prefs40.ui:411 ../ui/prefs3x.ui:440
 msgctxt "save-eclips-tooltip"
 msgid "Enable and select folder for eclips"
 msgstr ""
 
-#: ../ui/prefs40.ui:407 ../ui/prefs3x.ui:441 ../prefs.ui:121
+#: ../ui/prefs40.ui:428 ../ui/prefs3x.ui:457 ../prefs.ui:121
 msgctxt "accel-enable-text"
 msgid "Enable keyboard shortcuts"
 msgstr "Activer les raccourcis clavier"
 
-#: ../ui/prefs40.ui:417 ../ui/prefs3x.ui:451 ../prefs.ui:131
+#: ../ui/prefs40.ui:438 ../ui/prefs3x.ui:467 ../prefs.ui:131
 msgctxt "accel-enable"
 msgid "Enable keyboard shortcuts"
 msgstr "Activer les raccourcis clavier"
 
-#: ../ui/prefs40.ui:423 ../ui/prefs3x.ui:457
+#: ../ui/prefs40.ui:444 ../ui/prefs3x.ui:473
 msgctxt "accel-menu-text"
 msgid "Show clippie menu"
 msgstr "Afficher le menu clippie"
 
-#: ../ui/prefs40.ui:433 ../ui/prefs3x.ui:467
+#: ../ui/prefs40.ui:454 ../ui/prefs3x.ui:483
 msgctxt "accel-menu"
 msgid "Enable clippie menu keyboard shortcut"
 msgstr "Activer le raccourci clavier du menu clippie"
 
-#: ../ui/prefs40.ui:447 ../ui/prefs3x.ui:481
+#: ../ui/prefs40.ui:468 ../ui/prefs3x.ui:497
 msgctxt "accel-history-text"
 msgid "Show history menu"
 msgstr "Afficher le menu historique"
 
-#: ../ui/prefs40.ui:457 ../ui/prefs3x.ui:491
+#: ../ui/prefs40.ui:478 ../ui/prefs3x.ui:507
 msgctxt "accel-history"
 msgid "Enable clippie history menu keyboard shortcut"
 msgstr "Activer le raccourci clavier du menu d'historique de clippie"
 
-#: ../ui/prefs40.ui:471 ../ui/prefs3x.ui:505
+#: ../ui/prefs40.ui:492 ../ui/prefs3x.ui:521
 msgctxt "accel-history-text"
 msgid "Select next clipboard item"
 msgstr "Sélectionnez l'élément suivant du presse-papiers"
 
-#: ../ui/prefs40.ui:481 ../ui/prefs3x.ui:515
+#: ../ui/prefs40.ui:502 ../ui/prefs3x.ui:531
 msgctxt "accel-next"
 msgid "Enable clippie next keyboard shortcut"
 msgstr "Activer le raccourci clavier clippie suivant"
 
-#: ../ui/prefs40.ui:496 ../ui/prefs3x.ui:530 ../prefs.ui:141
+#: ../ui/prefs40.ui:517 ../ui/prefs3x.ui:546 ../prefs.ui:141
 msgctxt "track-changes-text"
 msgid "GPaste track changes"
 msgstr "Suivre les modifications dans le presse-papiers GPaste"
 
-#: ../ui/prefs40.ui:506 ../ui/prefs3x.ui:540 ../prefs.ui:151
+#: ../ui/prefs40.ui:527 ../ui/prefs3x.ui:556 ../prefs.ui:151
 msgctxt "track-changes-tooltip"
 msgid "Enable debugging output"
 msgstr "Activer la sortie de débogage"
 
-#: ../ui/prefs40.ui:511 ../ui/prefs3x.ui:545 ../prefs.ui:156
+#: ../ui/prefs40.ui:532 ../ui/prefs3x.ui:561 ../prefs.ui:156
 msgctxt "daemon-reexec"
 msgid "GPaste daemon restart"
 msgstr "Redémarrage du démon GPaste"
 
-#: ../ui/prefs40.ui:512 ../ui/prefs3x.ui:546 ../prefs.ui:157
+#: ../ui/prefs40.ui:533 ../ui/prefs3x.ui:562 ../prefs.ui:157
 msgctxt "daemon-reexec-tooltip"
 msgid "Restart the gpaste-client daemon"
 msgstr "Redémarrez le démon gpaste-client"
 
-#: ../ui/prefs40.ui:517 ../ui/prefs3x.ui:551 ../prefs.ui:162
+#: ../ui/prefs40.ui:538 ../ui/prefs3x.ui:567 ../prefs.ui:162
 msgctxt "daemon-reexec"
 msgid "GPaste Settings"
 msgstr "Paramètres GPaste"
 
-#: ../ui/prefs40.ui:518 ../ui/prefs3x.ui:552 ../prefs.ui:163
+#: ../ui/prefs40.ui:539 ../ui/prefs3x.ui:568 ../prefs.ui:163
 msgctxt "daemon-reexec-tooltip"
 msgid "Open the GPaste settings UI"
 msgstr "Ouvrez l'interface utilisateur des paramètres GPaste"
@@ -237,34 +251,14 @@ msgctxt "about"
 msgid "About"
 msgstr "À propos"
 
-#: ../ui/prefs3x.ui:359
-msgctxt "cache-password-text"
-msgid "Cache eclipse session password"
+#: ../ui/prefs3x.ui:414
+msgctxt "cache-eclips-text"
+msgid "Cache encripted eclips in memory"
 msgstr ""
 
-#: ../ui/prefs3x.ui:369
-msgctxt "cache-password"
-msgid "Reuse the same eclipse password for the duration of the session"
-msgstr ""
-
-#: ../ui/prefs3x.ui:374
-msgctxt "cache-password-text"
-msgid "Timeout cached eclipse password"
-msgstr ""
-
-#: ../ui/prefs3x.ui:388
-msgctxt "cache-password-timeout"
-msgid "Timeout for cached eclipse password in seconds, 0 is none"
-msgstr ""
-
-#: ../ui/prefs3x.ui:394
-msgctxt "timeout-gpaste-password-text"
-msgid "Timeout GPaste passwords"
-msgstr ""
-
-#: ../ui/prefs3x.ui:408
-msgctxt "cache-password-timeout"
-msgid "Timeout for GPaste Password entries in seconds, 0 is none"
+#: ../ui/prefs3x.ui:424
+msgctxt "cache-eclips-tooltip"
+msgid "Enable to keep eclips in memory"
 msgstr ""
 
 #: ../menus.js:80
@@ -375,7 +369,7 @@ msgstr "Non-concordance de la phrase secrète"
 msgid "Passphrase match"
 msgstr "Correspondance de la phrase secrète"
 
-#: ../dialog.js:438 ../prefs.js:487
+#: ../dialog.js:438 ../prefs.js:489
 msgid "Ok"
 msgstr "D'accord"
 
@@ -391,27 +385,27 @@ msgstr "Entrez le nom de l'entrée du mot de passe"
 msgid "Enter new name for the password entry"
 msgstr "Entrez un nouveau nom pour l'entrée du mot de passe"
 
-#: ../prefs.js:312 ../prefs.js:336 ../prefs.js:360
+#: ../prefs.js:314 ../prefs.js:338 ../prefs.js:362
 msgid "<disabled>"
 msgstr "<désactivé>"
 
-#: ../prefs.js:408
+#: ../prefs.js:410
 msgid "GPaste deamon restarted"
 msgstr "GPaste deamon redémarré"
 
-#: ../prefs.js:414
+#: ../prefs.js:416
 msgid "Launched gpaste-client ui"
 msgstr "Lancement de l'interface utilisateur gpaste-client"
 
-#: ../prefs.js:467
+#: ../prefs.js:469
 msgid "Select eclips folder"
 msgstr ""
 
-#: ../clippie.js:764
+#: ../clippie.js:793
 msgid "openssl not found"
 msgstr "openssl introuvable"
 
-#: ../clippie.js:767
+#: ../clippie.js:796
 msgid "will not encrypt without passphrase"
 msgstr "Ne cryptera pas sans phrase secrète"
 

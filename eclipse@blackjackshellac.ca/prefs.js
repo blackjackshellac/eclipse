@@ -144,9 +144,11 @@ class PreferencesBuilder {
     this._eclips_grid.attach(this._cache_password_timeout,            1, 1, 1, 1);
     this._eclips_grid.attach(this._bo('timeout_gpaste_password_text'),0, 2, 1, 1);
     this._eclips_grid.attach(this._timeout_gpaste_password,           1, 2, 1, 1);
-    this._eclips_grid.attach(this._bo('save_eclips_text'),            0, 3, 1, 1);
-    this._eclips_grid.attach(this._save_eclips,                       1, 3, 1, 1);
-    this._eclips_grid.attach(this._save_eclips_path,                  0, 4, 2, 1);
+    this._eclips_grid.attach(this._bo('cache_eclips_text'),           0, 3, 1, 1);
+    this._eclips_grid.attach(this._bo('cache_eclips'),                1, 3, 1, 1);
+    this._eclips_grid.attach(this._bo('save_eclips_text'),            0, 4, 1, 1);
+    this._eclips_grid.attach(this._save_eclips,                       1, 4, 1, 1);
+    this._eclips_grid.attach(this._save_eclips_path,                  0, 5, 2, 1);
 
     let hms = new HMS(this.settings.cache_password_timeout);
     this._cache_password_timeout.set_text(hms.toTimeString());
@@ -554,6 +556,7 @@ class PreferencesBuilder {
     this._bo_ssb('accel_enable', 'active');
     this._bo_ssb('cache_password', 'active');
     this._bo_ssb('save_eclips', 'active');
+    this._bo_ssb('cache_eclips', 'active');
   }
 
   get settings() {

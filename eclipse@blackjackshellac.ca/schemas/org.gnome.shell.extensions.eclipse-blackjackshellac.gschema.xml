@@ -38,6 +38,10 @@
       <range min="0" max="86400"/>
       <summary>Timeout of cached passwords in seconds, 0 is no timeout</summary>
     </key>
+    <key name="cache-eclips" type="b">
+      <default>false</default>
+      <summary>Cache encrypted clips in memory</summary>
+    </key>
     <key name="timeout-gpaste-password" type="i">
       <default>0</default>
       <range min="0" max="86400"/>

@@ -135,6 +135,14 @@ var Settings = class Settings {
     this.settings.set_int('cache-password-timeout', val);
   }
 
+  get cache_eclips() {
+    return this.settings.get_boolean('cache-eclips');
+  }
+
+  set cache_eclips(bool) {
+    this.settings.set_boolean('cache-eclips', bool);
+  }
+
   get timeout_gpaste_password() {
     return this.settings.get_int('timeout-gpaste-password');
   }

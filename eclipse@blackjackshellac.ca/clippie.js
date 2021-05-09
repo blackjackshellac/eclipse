@@ -41,6 +41,7 @@ var clippieInstance;
 var Clippie = class Clippie {
   constructor() {
     this._clips = [];
+    this._eclips = [];
     this._cur_clip = 0;
 
     // id => clip
@@ -127,6 +128,7 @@ var Clippie = class Clippie {
         this.clips[i]=undefined;
       }
       this.clips = [];
+      this.eclips = [];
       this.cur_clip = 0;
 
       clippieInstance = undefined;
@@ -156,6 +158,13 @@ var Clippie = class Clippie {
       let cache_password = this.settings.cache_password;
       this.logger.debug('cache password=%s', cache_password);
       this.cached_pass = cache_password ? '' : undefined;
+    });
+
+    this.settings.settings.connect('changed::cache-eclips', () => {
+      if (this.settings.cache_eclips === false) {
+        this.logger.debug('clearing eclips cache');
+        this.eclips = [];
+      }
     });
   }
 
@@ -213,6 +222,14 @@ var Clippie = class Clippie {
 
   set clips(clips) {
     this._clips = clips;
+  }
+
+  get eclips() {
+    return this._eclips;
+  }
+
+  set eclips(eclips) {
+    this._eclips = eclips;
   }
 
   get cur_clip() {
@@ -408,7 +425,17 @@ var Clippie = class Clippie {
         }
         let file_name = file_info.get_name();
         if (file_name.endsWith('.eclip')) {
-          this.logger.debug("eclip name=%s", file_name);
+          let uuid = file_name.replace(/\.[^/.]+$/, '');
+
+          let clip = this.eclips.find(c => c.uuid === uuid);
+          if (clip) {
+            this.logger.debug('eclip %s: %s', clip.content, clip.uuid)
+            if (this.menu) {
+              this.menu.add_item(clip);
+            }
+            continue;
+          }
+          this.logger.debug("eclip name=%s uuid=%s", file_name, uuid);
 
           let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
           try {
@@ -422,11 +449,13 @@ var Clippie = class Clippie {
             let clip = Clip.unClip(eclip);
             if (clip === undefined) {
               this.logger.error("Invalid eclip: %s", path);
-            } else if (this.menu) {
-              this.menu.add_item(clip);
             } else {
-              // just testing without menu
-              this.logger.debug("clip=%s", clip.toString());
+              if (this.menu) {
+                this.menu.add_item(clip);
+              }
+              if (this.settings.cache_eclips) {
+                this.eclips.push(clip);
+              }
             }
           } catch(e) {
             this.logger.error("Failed to read eclip %s [%s]", path, e.message);
