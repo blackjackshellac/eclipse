@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-08 10:07-0400\n"
-"PO-Revision-Date: 2021-05-08 10:07-0400\n"
+"POT-Creation-Date: 2021-05-09 01:47-0400\n"
+"PO-Revision-Date: 2021-05-09 01:47-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -18,18 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:706 clippie.js:725
-#: clippie.js:731
+#: clippie.js:731 clippie.js:747
 msgid "openssl not found"
 msgstr ""
 
 #: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:709 clippie.js:728
-#: clippie.js:734
+#: clippie.js:734 clippie.js:750
 msgid "will not encrypt without passphrase"
 msgstr ""
 
-#: dialog.js:38 dialog.js:40 dialog.js:357 dialog.js:379 dialog.js:440
-#: prefs.js:378 prefs.js:392 prefs.js:394 prefs.js:401 prefs.js:406
-#: prefs.js:443
+#: dialog.js:38 dialog.js:40 dialog.js:357 dialog.js:379 dialog.js:438
+#: dialog.js:440 prefs.js:378 prefs.js:392 prefs.js:394 prefs.js:401
+#: prefs.js:406 prefs.js:443
 msgid "Ok"
 msgstr ""
 
@@ -37,25 +37,30 @@ msgstr ""
 msgid "Decrypt"
 msgstr ""
 
-#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:205
-#: dialog.js:361 dialog.js:383 dialog.js:444 prefs.js:377 prefs.js:391
-#: prefs.js:393 prefs.js:400 prefs.js:405 prefs.js:442
+#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:204
+#: dialog.js:205 dialog.js:361 dialog.js:383 dialog.js:442 dialog.js:444
+#: prefs.js:377 prefs.js:391 prefs.js:393 prefs.js:400 prefs.js:405
+#: prefs.js:442
 msgid "Cancel"
 msgstr ""
 
-#: dialog.js:71 dialog.js:73 dialog.js:220 dialog.js:231 dialog.js:253
+#: dialog.js:71 dialog.js:73 dialog.js:220 dialog.js:231 dialog.js:252
+#: dialog.js:253
 msgid "Passphrase"
 msgstr ""
 
-#: dialog.js:72 dialog.js:74 dialog.js:391 dialog.js:413 dialog.js:470
+#: dialog.js:72 dialog.js:74 dialog.js:391 dialog.js:413 dialog.js:468
+#: dialog.js:470
 msgid "Password label"
 msgstr ""
 
-#: dialog.js:75 dialog.js:85 dialog.js:402 dialog.js:424 dialog.js:481
+#: dialog.js:75 dialog.js:85 dialog.js:402 dialog.js:424 dialog.js:479
+#: dialog.js:481
 msgid "Enter name for the password entry"
 msgstr ""
 
-#: dialog.js:79 dialog.js:89 dialog.js:406 dialog.js:428 dialog.js:485
+#: dialog.js:79 dialog.js:89 dialog.js:406 dialog.js:428 dialog.js:483
+#: dialog.js:485
 msgid "Enter new name for the password entry"
 msgstr ""
 
@@ -63,44 +68,44 @@ msgstr ""
 msgid "Enter the decryption passphrase"
 msgstr ""
 
-#: dialog.js:85 dialog.js:261 dialog.js:298
+#: dialog.js:85 dialog.js:260 dialog.js:261 dialog.js:297 dialog.js:298
 msgid "Cached password cleared"
 msgstr ""
 
 #: dialog.js:118 dialog.js:129 dialog.js:144 dialog.js:299 dialog.js:321
-#: dialog.js:378
+#: dialog.js:377 dialog.js:378
 msgid "Passphrase too short"
 msgstr ""
 
-#: dialog.js:134 dialog.js:145 dialog.js:164
+#: dialog.js:134 dialog.js:145 dialog.js:163 dialog.js:164
 msgid "Decryption failed"
 msgstr ""
 
-#: dialog.js:171 dialog.js:182 dialog.js:201
+#: dialog.js:171 dialog.js:182 dialog.js:200 dialog.js:201
 msgid "Encrypt"
 msgstr ""
 
-#: dialog.js:201 dialog.js:212 dialog.js:233
+#: dialog.js:201 dialog.js:212 dialog.js:232 dialog.js:233
 msgid "Label for encrypted entry"
 msgstr ""
 
-#: dialog.js:239 dialog.js:250 dialog.js:290
+#: dialog.js:239 dialog.js:250 dialog.js:289 dialog.js:290
 msgid "Confirm"
 msgstr ""
 
-#: dialog.js:249 dialog.js:260 dialog.js:317
+#: dialog.js:249 dialog.js:260 dialog.js:316 dialog.js:317
 msgid "Enter and confirm the encryption passphrase"
 msgstr ""
 
-#: dialog.js:293 dialog.js:315 dialog.js:372
+#: dialog.js:293 dialog.js:315 dialog.js:371 dialog.js:372
 msgid "Specify a label for the encrypted entry"
 msgstr ""
 
-#: dialog.js:303 dialog.js:325 dialog.js:382
+#: dialog.js:303 dialog.js:325 dialog.js:381 dialog.js:382
 msgid "Passphrase mismatch"
 msgstr ""
 
-#: dialog.js:306 dialog.js:328 dialog.js:385
+#: dialog.js:306 dialog.js:328 dialog.js:384 dialog.js:385
 msgid "Passphrase match"
 msgstr ""
 
