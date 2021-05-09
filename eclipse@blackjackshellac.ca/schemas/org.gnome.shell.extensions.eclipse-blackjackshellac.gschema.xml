@@ -38,6 +38,11 @@
       <range min="0" max="86400"/>
       <summary>Timeout of cached passwords in seconds, 0 is no timeout</summary>
     </key>
+    <key name="timeout-gpaste-password" type="i">
+      <default>0</default>
+      <range min="0" max="86400"/>
+      <summary>Timeout of GPaste passwords in seconds, 0 is no timeout</summary>
+    </key>
     <key name="save-eclips" type="b">
       <default>true</default>
       <summary>Save encrypted clips to the specified folder</summary>

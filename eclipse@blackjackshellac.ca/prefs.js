@@ -137,13 +137,16 @@ class PreferencesBuilder {
     this._save_eclips = this._bo('save_eclips');
     this._save_eclips_path = this._bo('save_eclips_path');
     this._cache_password_timeout = this._bo('cache_password_timeout');
+    this._timeout_gpaste_password = this._bo('timeout_gpaste_password');
     this._eclips_grid.attach(this._bo('cache_password_text'),         0, 0, 1, 1);
     this._eclips_grid.attach(this._bo('cache_password'),              1, 0, 1, 1);
     this._eclips_grid.attach(this._bo('cache_password_timeout_text'), 0, 1, 1, 1);
     this._eclips_grid.attach(this._cache_password_timeout,            1, 1, 1, 1);
-    this._eclips_grid.attach(this._bo('save_eclips_text'),            0, 2, 1, 1);
-    this._eclips_grid.attach(this._save_eclips,                       1, 2, 1, 1);
-    this._eclips_grid.attach(this._save_eclips_path,                  0, 3, 2, 1);
+    this._eclips_grid.attach(this._bo('timeout_gpaste_password_text'),0, 2, 1, 1);
+    this._eclips_grid.attach(this._timeout_gpaste_password,           1, 2, 1, 1);
+    this._eclips_grid.attach(this._bo('save_eclips_text'),            0, 3, 1, 1);
+    this._eclips_grid.attach(this._save_eclips,                       1, 3, 1, 1);
+    this._eclips_grid.attach(this._save_eclips_path,                  0, 4, 2, 1);
 
     let hms = new HMS(this.settings.cache_password_timeout);
     this._cache_password_timeout.set_text(hms.toTimeString());
@@ -155,9 +158,9 @@ class PreferencesBuilder {
       let secs;
       if (hms === undefined) {
         return;
-      } else {
-        secs = hms.toSeconds();
       }
+
+      secs = hms.toSeconds();
       // TODO parse
       if (secs === 0) {
         ctext.secondary_icon_name = 'appointment-missed-symbolic';
@@ -179,6 +182,47 @@ class PreferencesBuilder {
       }
       if (secs === undefined) {
         secs = this.settings.cache_password_timeout;
+      }
+      if (hms === undefined) {
+        hms = new HMS(secs);
+      }
+      ctext.set_text(hms.toTimeString());
+    });
+
+    hms = new HMS(this.settings.timeout_gpaste_password);
+    this._timeout_gpaste_password.set_text(hms.toTimeString());
+    this._timeout_gpaste_password.connect('notify::text', (ctext) => {
+      let text = ctext.get_text().trim();
+      if (text.length === 0) { return; }
+
+      let hms = HMS.fromString(text);
+      let secs;
+      if (hms === undefined) {
+        return;
+      }
+
+      secs = hms.toSeconds();
+      // TODO parse
+      if (secs === 0) {
+        ctext.secondary_icon_name = 'appointment-missed-symbolic';
+      } else {
+        ctext.secondary_icon_name = 'alarm-symbolic';
+      }
+      this.settings.timeout_gpaste_password = secs;
+    });
+
+    this._timeout_gpaste_password.connect('activate', (ctext) => {
+      let secs = undefined;
+      let hms = undefined;
+      let text = ctext.get_text().trim();
+      if (text.length > 0) {
+        hms = HMS.fromString(text);
+        if (hms !== undefined) {
+          secs = hms.toSeconds();
+        }
+      }
+      if (secs === undefined) {
+        secs = this.settings.timeout_gpaste_password;
       }
       if (hms === undefined) {
         hms = new HMS(secs);

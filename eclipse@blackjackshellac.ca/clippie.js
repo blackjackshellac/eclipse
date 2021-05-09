@@ -130,6 +130,7 @@ var Clippie = class Clippie {
       this.cur_clip = 0;
 
       clippieInstance = undefined;
+      this._settings = undefined;
     }
   }
 
@@ -288,7 +289,7 @@ var Clippie = class Clippie {
       let timeout = Date.now() + this.settings.cache_password_timeout * 1000;
       this.cached_pass_timeout = timeout;
       this.logger.debug('timeout cached password at %s', new Date(timeout).toString());
-      Utils.setInterval(this.timeout_callback, this.settings.cache_password_timeout * 1000, this);
+      Utils.setTimeout(this.timeout_callback, this.settings.cache_password_timeout * 1000, this);
     }
     this._cached_pass = pass;
   }
@@ -350,8 +351,8 @@ var Clippie = class Clippie {
   }
 
   // Asynchronous gpaste dbus GetHistory refresh
-  refresh_dbus(menu) {
-    this.menu = menu;
+  refresh_dbus(menu=undefined) {
+    if (menu !== undefined) { this.menu = menu; }
     this.dbus_gpaste.getHistoryRemote( (history) => {
       if (history.length === 0) {
         return;
@@ -384,7 +385,7 @@ var Clippie = class Clippie {
             clip.lock = false;
           }
         }
-        this.menu.add_item(clip);
+        if (menu !== undefined) { this.menu.add_item(clip); }
       }
       this.clips = clips;
     });
@@ -459,7 +460,7 @@ var Clippie = class Clippie {
   }
 
   find_uuid(uuid) {
-    this.clips.find(c => c.uuid === uuid);
+    return this.clips.find(c => c.uuid === uuid);
   }
 
   has(clip) {
@@ -496,6 +497,22 @@ var Clip = class Clip {
     if (this._lock) {
       this._password_name = this.get_password_name(content);
       this._content = "▷ "+content;
+      if (this.timeout_gpaste_password === undefined && this.settings.timeout_gpaste_password > 0) {
+        let timeout = Date.now() + this.settings.timeout_gpaste_password * 1000;
+        this.timeout_gpaste_password = timeout;
+        this.logger.debug('timeout GPaste password at %s', new Date(timeout).toString());
+        Utils.setTimeout(this.timeout_gpaste_callback, this.settings.timeout_gpaste_password * 1000, this);
+      }
+    }
+  }
+
+  timeout_gpaste_callback(clip) {
+    let now=Date.now();
+    clip.logger.debug('now-timeout=%d', now-clip.timeout_gpaste_password);
+    if (now >= clip.timeout_gpaste_password) {
+      clip.logger.debug('delete GPaste password entry at %s', new Date(now).toString());
+      clip.timeout_gpaste_password = 0;
+      clip.delete();
     }
   }
 
@@ -802,6 +819,7 @@ var Clip = class Clip {
       if (ok && status == 0) {
         //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
         this.clippie.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
+        this.clippie.refresh_dbus();
       } else {
         this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr);
         ok = false;
