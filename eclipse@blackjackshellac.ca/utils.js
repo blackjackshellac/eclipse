@@ -193,7 +193,7 @@ async function execCommandAsync(argv, input = null, cancellable = null) {
               resolve(result);
             }
           });
-        });
+        }).catch(logError);
 
         return result;
     } catch (e) {

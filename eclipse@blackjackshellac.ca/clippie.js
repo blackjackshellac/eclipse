@@ -272,10 +272,6 @@ var Clippie = class Clippie {
     return this._indicator;
   }
 
-  restore_state() {
-    this._state = JSON.parse(this.settings.state);
-  }
-
   get dbus_gpaste() {
     if (!this._dbus_gpaste) {
       this._dbus_gpaste = new DBusGPaste(this.settings);
@@ -284,13 +280,39 @@ var Clippie = class Clippie {
   }
 
   get cached_pass() {
-    //this.logger.debug('get cpass=%s', this._cached_pass);
     return this._cached_pass;
   }
 
   set cached_pass(pass) {
+    if (pass.length > 0 && this.settings.cache_password_timeout > 0) {
+      let timeout = Date.now() + this.settings.cache_password_timeout * 1000;
+      this.cached_pass_timeout = timeout;
+      this.logger.debug('timeout cached password at %s', new Date(timeout).toString());
+      Utils.setInterval(this.timeout_callback, this.settings.cache_password_timeout * 1000, this);
+    }
     this._cached_pass = pass;
-    //this.logger.debug('set cpass=%s', this._cached_pass);
+  }
+
+  get cached_pass_timeout() {
+    return this._cached_pass_timeout;
+  }
+
+  set cached_pass_timeout(t) {
+    this._cached_pass_timeout = t;
+  }
+
+  timeout_callback(clippie) {
+    let now=Date.now();
+    //clippie.logger.debug('now-timeout=%d', now-clippie.cached_pass_timeout);
+    if (now >= clippie.cached_pass_timeout) {
+      clippie.logger.debug('clearing cached password at %s', new Date(now).toString());
+      clippie.cached_pass_timeout = 0;
+      clippie.cached_pass = '';
+    }
+  }
+
+  restore_state() {
+    this._state = JSON.parse(this.settings.state);
   }
 
   save_state() {

@@ -127,7 +127,7 @@ var DecryptModalDialog = GObject.registerClass({
     ptext.grab_key_focus();
 
     this.connect('key-press-event', (dialog, event) => {
-      this.clip.logger.debug('key pressed %s', event);
+      //this.clip.logger.debug('key pressed %s', event);
       let symbol = event.get_key_symbol();
       // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
       if (symbol === Clutter.KEY_Escape) {
@@ -156,7 +156,6 @@ var DecryptModalDialog = GObject.registerClass({
         if (ok) {
           this.close(global.get_current_time());
           if (this.clip.clippie.cached_pass !== undefined) {
-            this.clip.clippie.logger.debug('cached_pass submit=%s', password);
             this.clip.clippie.cached_pass = password;
           }
         } else {
@@ -345,7 +344,7 @@ var EncryptModalDialog = GObject.registerClass({
     });
 
     this.connect('key-press-event', (dialog, event) => {
-      this.clip.logger.debug('key pressed %s', event);
+      //this.clip.logger.debug('key pressed %s', event);
       let symbol = event.get_key_symbol();
       // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
       if (symbol === Clutter.KEY_Escape) {
@@ -399,7 +398,6 @@ var EncryptModalDialog = GObject.registerClass({
           this.clip.delete();
           this.close(global.get_current_time());
           if (this.clip.clippie.cached_pass !== undefined) {
-            this.clip.clippie.logger.debug('cached_pass submit=%s', password);
             this.clip.clippie.cached_pass = password;
           }
         } else {
@@ -509,7 +507,7 @@ var LockItemModalDialog = GObject.registerClass({
     // });
 
     this.connect('key-press-event', (dialog, event) => {
-      this.clip.logger.debug('key pressed %s', event);
+      //this.clip.logger.debug('key pressed %s', event);
       let symbol = event.get_key_symbol();
       // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
       if (symbol === Clutter.KEY_Escape) {
