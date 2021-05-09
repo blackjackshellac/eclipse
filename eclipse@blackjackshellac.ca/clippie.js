@@ -730,10 +730,10 @@ var Clip = class Clip {
         return true;
       }
 
-      let cmdargs = [ this.gpaste_client, 'rename-password', this.password_name, label ];
-      let [ exit_status , stdout, stderr ] = Utils.execute(cmdargs);
-      if (exit_status === 0) {
+      let ok = this.clippie.dbus_gpaste.renamePassword(this.password_name, label);
+      if (ok) {
         this.logger.debug("Renamed password [%s] to [%s]", this.password_name, label);
+        this.clippie.delete(this);
       } else {
         this.logger.error("Failed to rename password %s to %s", this.password_name, label)
       }
