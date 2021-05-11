@@ -37,6 +37,7 @@ const DBusGPaste = Me.imports.dbus.DBusGPaste;
 const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
 
 var clippieInstance;
+var timedOutGpastePasswords = {};
 
 var Clippie = class Clippie {
   constructor() {
@@ -84,7 +85,7 @@ var Clippie = class Clippie {
     source.showNotification(notification);
   }
 
-  attach(indicator) {
+  attach(indicator, refresh=false) {
     // reload settings
     if (this.attached) {
       return this;
@@ -102,7 +103,9 @@ var Clippie = class Clippie {
 
     this.restore_state();
 
-    //this.refresh();
+    if (refresh) {
+      this.refresh_dbus();
+    }
 
     this.settings_changed_signals();
 
@@ -302,7 +305,7 @@ var Clippie = class Clippie {
   }
 
   set cached_pass(pass) {
-    if (pass.length > 0 && this.settings.cache_password_timeout > 0) {
+    if (pass && pass.length > 0 && this.settings.cache_password_timeout > 0) {
       let timeout = Date.now() + this.settings.cache_password_timeout * 1000;
       this.cached_pass_timeout = timeout;
       this.logger.debug('timeout cached password at %s', new Date(timeout).toString());
@@ -370,6 +373,7 @@ var Clippie = class Clippie {
   // Asynchronous gpaste dbus GetHistory refresh
   refresh_dbus(menu=undefined) {
     if (menu !== undefined) { this.menu = menu; }
+    Utils.logObjectPretty(timedOutGpastePasswords);
     this.dbus_gpaste.getHistoryRemote( (history) => {
       if (history.length === 0) {
         return;
@@ -380,15 +384,24 @@ var Clippie = class Clippie {
       for (let i=0; i < history.length; i++) {
         let [uuid, content]=history[i];
 
-        //this.logger.debug('uuid=%s', uuid);
-
+        //this.logger.debug('uuid=%s %s', uuid, timedOutGpastePasswords[uuid]);
         // find clip with this uuid (if any)
         let clip = this.find_uuid(uuid);
         if (clip === undefined) {
           // clip not found in clips, create a new one
           clip = Clip.unClip(content, uuid);
           if (clip === undefined) {
+            //this.logger.debug('create new eclip %s', uuid);
             clip = new Clip(uuid, content);
+          } else {
+            this.logger.debug('created eclip %s', uuid);
+          }
+        } else if (timedOutGpastePasswords[uuid] !== undefined) {
+          this.logger.debug('test clip uuid=%s %d', timedOutGpastePasswords[uuid]);
+          if (clip.timeout_gpaste_password(timedOutGpastePasswords[uuid])) {
+            // clip has expired and has been deleted
+            this.logger.debug('deleted expired GPaste password clip %s', clip.content);
+            continue;
           }
         }
         clips.push(clip);
@@ -396,7 +409,7 @@ var Clippie = class Clippie {
           clip.lock = this._state[clip.uuid].lock;
         }
         if (clip.lock) {
-          this.logger.debug('Found lock entry %s', clip.toString());
+          this.logger.debug('Found password entry %s', clip.toString());
           if (!clip.isPassword()) {
             this.logger.warn('Found locked entry %s that it not saved as a password, unlocking', clip.uuid)
             clip.lock = false;
@@ -489,7 +502,7 @@ var Clippie = class Clippie {
   }
 
   find_uuid(uuid) {
-    return this.clips.find(c => c.uuid === uuid);
+    return this.clips.find(c => (c.uuid === uuid || c.gpaste_uuid === uuid));
   }
 
   has(clip) {
@@ -522,27 +535,44 @@ var Clip = class Clip {
     this._kind = params.kind ? params.kind : this.dbus_gpaste.getElementKind(this.uuid);
     this._eclip = params.eclip;
 
-    this._lock = this.isPassword();
-    if (this._lock) {
+    this._password = this.isPassword();
+    if (this._password) {
       this._password_name = this.get_password_name(content);
       this._content = "▷ "+content;
-      if (this.timeout_gpaste_password === undefined && this.settings.timeout_gpaste_password > 0) {
+      if (this._timeout_gpaste_password === undefined && this.settings.timeout_gpaste_password > 0) {
         let timeout = Date.now() + this.settings.timeout_gpaste_password * 1000;
-        this.timeout_gpaste_password = timeout;
+        this._timeout_gpaste_password = timeout;
         this.logger.debug('timeout GPaste password at %s', new Date(timeout).toString());
         Utils.setTimeout(this.timeout_gpaste_callback, this.settings.timeout_gpaste_password * 1000, this);
+
+        timedOutGpastePasswords[this.uuid] = this._timeout_gpaste_password;
       }
     }
   }
 
-  timeout_gpaste_callback(clip) {
-    let now=Date.now();
-    clip.logger.debug('now-timeout=%d', now-clip.timeout_gpaste_password);
-    if (now >= clip.timeout_gpaste_password) {
-      clip.logger.debug('delete GPaste password entry at %s', new Date(now).toString());
-      clip.timeout_gpaste_password = 0;
-      clip.delete();
+  timeout_gpaste_password(timeout=undefined) {
+    if (this._timeout_gpaste_password === undefined) {
+      return false;
     }
+    if (!this.isPassword()) {
+      return false;
+    }
+    if (timeout === undefined) {
+      timeout = this._timeout_gpaste_password;
+    }
+    let now=Date.now();
+    if (now >= timeout) {
+      this._timeout_gpaste_password = undefined;
+      this.logger.debug('delete GPaste password entry at %s %d ms', new Date(now).toString(), (now-timeout));
+      this.delete();
+      delete timedOutGpastePasswords[this.uuid];
+      return true;
+    }
+    return false;
+  }
+
+  timeout_gpaste_callback(clip) {
+    clip.timeout_gpaste_password();
   }
 
   static parse(line) {
@@ -656,11 +686,11 @@ var Clip = class Clip {
   }
 
   get lock() {
-    return this._lock;
+    return this._password;
   }
 
   set lock(b) {
-    this._lock = b;
+    this._password = b;
   }
 
   get menu_item() {
@@ -678,12 +708,6 @@ var Clip = class Clip {
     label = this.lock ? label.trim() : label.trim();
     return label;
   }
-
-  // can't toggle lock any more
-  // toggle_lock() {
-  //   this._lock = !this._lock;
-  //   this.clippie.save_state();
-  // }
 
   select() {
     let uuid = this.gpaste_uuid ? this.gpaste_uuid : this.uuid;
