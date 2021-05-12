@@ -36,6 +36,12 @@ const Utils = Me.imports.utils;
 
 const logger = new Logger('cl_menus');
 
+const ICON_SIZE = {
+  DEFAULT: 16,
+  LARGE:   24,
+  HOVER:   28
+};
+
 var ClippieMenu = class ClippieMenu {
   constructor(menu, clippie) {
     log("");
@@ -44,6 +50,9 @@ var ClippieMenu = class ClippieMenu {
 
     this._clippie = clippie;
     this._show_eclips = false;
+
+    this._search_item_index = 0;
+    this._item_index = 1;
 
     logger.settings = clippie.settings;
 
@@ -85,7 +94,7 @@ var ClippieMenu = class ClippieMenu {
     } else {
       this.more = undefined;
     }
-    let item = new ClipMenuItem(clip, menu);
+    let item = new ClipMenuItem(clip, menu, this);
     this.items.push(item);
   }
 
@@ -94,18 +103,16 @@ var ClippieMenu = class ClippieMenu {
 
     if (history && this.clippie.settings.show_histories) {
       this._historyMenu = new ClippieHistoryMenu(this);
+      this.search_item_index = 1;
     }
     this._searchItem = new ClippieSearchItem(this);
+    this.item_index = this.search_item_index + 1;
 
     this.items = [];
     if (load) {
       logger.debug('Refreshing all menu items');
       this.menu.open();
-      if (this.show_eclips) {
-        this.clippie.refresh_eclips_async(this);
-      } else {
-        this.clippie.refresh_dbus(this);
-      }
+      this.clippie.refresh_dbus(this);
     }
   }
 
@@ -147,6 +154,22 @@ var ClippieMenu = class ClippieMenu {
     this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
   }
 
+  get search_item_index() {
+    return this._search_item_index;
+  }
+
+  set search_item_index(idx) {
+    this._search_item_index = idx;
+  }
+
+  get item_index() {
+    return this._item_index;
+  }
+
+  set item_index(idx) {
+    this._item_index = idx;
+  }
+
   get items() {
     return this._items;
   }
@@ -179,6 +202,20 @@ var ClippieMenu = class ClippieMenu {
     return this._historyMenu;
   }
 
+  toggle_eclips() {
+    this.show_eclips = !this.show_eclips;
+    if (this.clippie.settings.save_eclips) {
+      if (this.show_eclips) {
+        this._eclipsItem = new EclipsMenu(this);
+        this.item_index = this.item_search+2;
+      } else if (this._eclipsItem) {
+        this._eclipsItem.destroy();
+        this._eclipsItem = undefined;
+        this.item_index = this.item_search+1;
+      }
+    }
+  }
+
   trash(item) {
     var index = this.items.indexOf(item);
     if (index !== -1) {
@@ -206,18 +243,19 @@ var ClippieMenu = class ClippieMenu {
 
   select(item) {
     if (this.items.includes(item)) {
-      this.menu.moveMenuItem(item, 2);
+      this.menu.moveMenuItem(item, this._item_index);
     }
   }
 }
 
 var ClipMenuItem = GObject.registerClass(
 class ClipMenuItem extends PopupMenu.PopupMenuItem {
-  _init(clip, menu) {
+  _init(clip, menu, clippie_menu) {
       super._init("", { reactive: true });
 
       this._clip = clip;
       this._menu = menu;
+      this._clippie_menu = clippie_menu;
 
       clip.menu_item = this;
 
@@ -251,8 +289,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.connect('activate', (mi) => {
         logger.debug("Selected %s", mi.clip.uuid);
         if (mi.clip.select()) {
-          let cm = mi.clip.clippie.indicator.clippie_menu.menu;
-          cm.moveMenuItem(mi, 1);
+          mi.menu.moveMenuItem(mi, mi.clippie_menu.item_index);
           if (mi.clip.isEclipsed()) {
             // decrypt as password entry
             let dialog = new DecryptModalDialog(mi.clip);
@@ -267,6 +304,14 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
 
   get clip() {
     return this._clip;
+  }
+
+  get menu() {
+    return this._menu;
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
   }
 
   trash_self() {
@@ -309,7 +354,7 @@ class ClipItemControlButton extends St.Button {
           icon_name: CICBTypes[type].icon,
           style_class: CICBTypes[type].style
       });
-      icon.set_icon_size(16);
+      icon.set_icon_size(ICON_SIZE.DEFAULT);
       return icon;
     }
 
@@ -405,7 +450,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-find-symbolic',
-      icon_size: 16,
+      icon_size: ICON_SIZE.DEFAULT,
       style_class: 'eclipse-search-icon'
     });
 
@@ -431,7 +476,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
         x_expand: false,
         y_align: Clutter.ActorAlign.CENTER,
         icon_name: 'dialog-password-symbolic',
-        icon_size: 20,
+        icon_size: ICON_SIZE.LARGE,
       });
 
       this._eclips = new St.Button( {
@@ -446,22 +491,17 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
       this._eclips.connect('clicked', (btn, clicked_button) => {
         logger.debug("mouse button pressed %d", clicked_button);
-
-        this.clippie_menu.show_eclips = !this.clippie_menu.show_eclips;
-        this.clippie_menu.build();
-
-        //this.clippie_menu.menu.close();
-        //global.stage.set_key_focus(null);
+        this.clippie_menu.toggle_eclips();
       });
 
       this._eclips.connect('enter_event', (btn, event) => {
         //btn.get_child().icon_name = 'preferences-system-symbolic';
-        btn.get_child().icon_size = 28;
+        btn.get_child().icon_size = ICON_SIZE.HOVER;
       });
 
       this._eclips.connect('leave_event', (btn, event) => {
         //btn.get_child().icon_name = 'open-menu-symbolic';
-        btn.get_child().icon_size = 20;
+        btn.get_child().icon_size = ICON_SIZE.LARGE;
       });
     }
 
@@ -469,7 +509,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       x_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'preferences-system-symbolic',
-      icon_size: 20,
+      icon_size: ICON_SIZE.LARGE,
     });
 
     this._prefs = new St.Button( {
@@ -491,12 +531,12 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
     this._prefs.connect('enter_event', (btn, event) => {
       //btn.get_child().icon_name = 'preferences-system-symbolic';
-      btn.get_child().icon_size = 28;
+      btn.get_child().icon_size = ICON_SIZE.HOVER;
     })
 
     this._prefs.connect('leave_event', (btn, event) => {
       //btn.get_child().icon_name = 'open-menu-symbolic';
-      btn.get_child().icon_size = 20;
+      btn.get_child().icon_size = ICON_SIZE.LARGE;
     })
 
     //this._prefs.set_child(this._icon);
@@ -540,6 +580,47 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
 
   get entry() {
     return this._entry;
+  }
+
+});
+
+var EclipsMenu = GObject.registerClass(
+class EclipsMenu extends PopupMenu.PopupSubMenuMenuItem {
+  _init(clippie_menu) {
+    super._init("eclips", true);
+
+    this.icon.set_icon_name('dialog-password-symbolic');
+    this.icon.set_icon_size(ICON_SIZE.LARGE);
+
+    this.setOrnament(PopupMenu.Ornament.NONE);
+
+    logger.debug("Creating eclips SubMenu popup");
+
+    this._clippie_menu = clippie_menu;
+
+    clippie_menu.menu.addMenuItem(this, this.clippie_menu.search_item_index+1);
+
+    this.menu.connect('open-state-changed', (self, open) => {
+      if (open) {
+        logger.debug("eclips menu open");
+      } else {
+        logger.debug("eclips menu closed");
+      }
+    });
+
+    this.clippie.refresh_eclips_async(this);
+  }
+
+  get clippie_menu() {
+    return this._clippie_menu;
+  }
+
+  get clippie() {
+    return this.clippie_menu.clippie;
+  }
+
+  add_item(clip) {
+    new ClipMenuItem(clip, this.menu, this.clippie_menu);
   }
 
 });
@@ -709,7 +790,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-clear-symbolic',
-      icon_size: 20
+      icon_size: ICON_SIZE.LARGE
     });
 
     this._clear = new St.Button( {
@@ -750,7 +831,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       y_expand: false,
       y_align: Clutter.ActorAlign.CENTER,
       icon_name: 'edit-delete-symbolic',
-      icon_size: 20
+      icon_size: ICON_SIZE.LARGE
     });
 
     this._delete = new St.Button( {
@@ -801,7 +882,6 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
         this.clippie.dbus_gpaste.switchHistory(name);
         this.clippie.indicator.clippie_menu.history_menu_open(false);
         this.clippie.indicator.clippie_menu.rebuild();
-        //this.clippie_menu.history_menu_open(false);
       } else {
         // don't switch histories if there is no change
         // mostly to avoid deleting password
