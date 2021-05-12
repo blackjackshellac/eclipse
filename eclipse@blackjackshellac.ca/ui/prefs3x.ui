@@ -356,7 +356,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
 
   <!-- eclips controls -->
   <object class="GtkLabel" id="cache_password_text">
-    <property name="label" translatable="yes" context="cache-password-text">Cache eclipse session password</property>
+    <property name="label" translatable="yes" context="cache-password-text">Cache encryption password</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="receives-default">False</property>
@@ -371,7 +371,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="halign">1</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkLabel" id="cache_password_timeout_text">
-    <property name="label" translatable="yes" context="cache-password-text">Timeout cached eclipse password</property>
+    <property name="label" translatable="yes" context="cache-password-text">Timeout eclipse password</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="receives-default">False</property>

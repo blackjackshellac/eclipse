@@ -31,29 +31,29 @@
     </key>
     <key name="cache-password" type="b">
       <default>false</default>
-      <summary>Reuse the same password for the duration of the session</summary>
+      <summary>Reuse the same eclipse password for the duration of the session</summary>
     </key>
     <key name="cache-password-timeout" type="i">
       <default>600</default>
       <range min="0" max="86400"/>
-      <summary>Timeout of cached passwords in seconds, 0 is no timeout</summary>
+      <summary>Timeout for cached eclipse password in seconds, 0 is none</summary>
     </key>
     <key name="cache-eclips" type="b">
       <default>false</default>
-      <summary>Cache encrypted clips in memory</summary>
+      <summary>Cache encripted eclips in memory</summary>
     </key>
     <key name="timeout-gpaste-password" type="i">
       <default>0</default>
       <range min="0" max="86400"/>
-      <summary>Timeout of GPaste passwords in seconds, 0 is no timeout</summary>
+      <summary>Timeout for GPaste Password entries in seconds, 0 is none</summary>
     </key>
     <key name="save-eclips" type="b">
       <default>true</default>
-      <summary>Save encrypted clips to the specified folder</summary>
+      <summary>Save encrypted clips to disk</summary>
     </key>
     <key name="save-eclips-path" type="s">
       <default>''</default>
-      <summary>Path where encrypted clips should be saved</summary>
+      <summary>Folder where encrypted clips should be saved</summary>
     </key>
     <key name="state" type="s">
       <default>'{}'</default>
