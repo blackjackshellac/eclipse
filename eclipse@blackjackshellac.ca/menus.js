@@ -38,6 +38,7 @@ const logger = new Logger('cl_menus');
 
 const ICON_SIZE = {
   DEFAULT: 16,
+  MEDIUM:  20,
   LARGE:   24,
   HOVER:   28
 };
@@ -590,7 +591,7 @@ class EclipsMenu extends PopupMenu.PopupSubMenuMenuItem {
     super._init("eclips", true);
 
     this.icon.set_icon_name('dialog-password-symbolic');
-    this.icon.set_icon_size(ICON_SIZE.LARGE);
+    this.icon.set_icon_size(ICON_SIZE.MEDIUM);
 
     this.setOrnament(PopupMenu.Ornament.NONE);
 
@@ -621,6 +622,7 @@ class EclipsMenu extends PopupMenu.PopupSubMenuMenuItem {
 
   add_item(clip) {
     new ClipMenuItem(clip, this.menu, this.clippie_menu);
+    this.setSubmenuShown(true);
   }
 
 });
