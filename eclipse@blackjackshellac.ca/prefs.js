@@ -256,20 +256,6 @@ class PreferencesBuilder {
       Utils.spawn_argv(['nautilus', path]);
     });
 
-    //this._clippie_grid.attach(this._test,                      0, 3, 2, 1);
-
-    // this._test.connect('clicked', (btn) => {
-    //   let dialog = new KeyboardShortcutDialog(( {binding, mask, keycode, keyval } ) => {
-    //     this.logger.debug('binding=%s mask=0x%x keycode=%s keyval=%s', binding, mask, keycode, keyval);
-    //     this._test.set_label(binding ? binding : _("No shortcut chosen"));
-    //   });
-
-    //   let toplevel = Utils.isGnome3x() ? this._widget.get_toplevel() : this._widget.get_root();
-    //   dialog.set_transient_for(toplevel);
-    //   dialog.present();
-    //   this.logger.debug('top level=%s', toplevel);
-    // });
-
     this._accel_enable = this._bo('accel_enable');
     // keyboard shortcut buttons
     this._accel_menu = this._bo('accel_menu');
@@ -388,19 +374,26 @@ class PreferencesBuilder {
     this._gpaste_grid.attach(this._daemon_reexec,             0, 1, 2, 1);
     this._gpaste_grid.attach(this._gpaste_ui,                 0, 2, 2, 1);
 
-    let [ exit_status, stdout, stderr ] = Utils.execute(this.command_args.get_track_changes);
-    if (exit_status === 0) {
-      let active = stdout.trim() === 'true';
-      this.logger.debug('gsettings get org.gnome.GPaste track-changes => %s', stdout);
-      this._track_changes.set_active(active);
-    }
     this._track_changes.connect('notify::active', (sw) => {
       let active = sw.get_active();
-      let cmdargs = active ? this.command_args.set_track_changes_true : this.command_args.set_track_changes_false;
-      this.logger.debug(cmdargs.join(' '));
-      let [ exit_status, stdout, stderr ] = Utils.execute(cmdargs);
-      if (exit_status !== 0) {
-        this.logger.debug('set track-changes failed: %d - %s', exit_status, stderr);
+      this._gpaste_track_changes(active);
+    });
+
+    Utils.execCommandAsync(this.command_args.get_track_changes).then((result) => {
+      let [ ok, stdout, stderr, exit_status ] = result;
+      if (exit_status === 0) {
+        let active = stdout.trim() === 'true';
+        this.logger.debug('gsettings get org.gnome.GPaste track-changes => %s', stdout);
+        if (this.settings.track_changes) {
+          if (active === false) {
+            this._gpaste_track_changes(true);
+          }
+        } else {
+          this._msg_text.set_label('Warning: not tracking changes');
+        }
+      } else {
+        let msg = this.logger.error(_("failed to get track changes state from gpaste: %d"), exit_status);
+        this._msg_text.set_label(msg);
       }
     });
 
@@ -412,8 +405,15 @@ class PreferencesBuilder {
 
     this._gpaste_ui.connect('clicked', (btn) => {
       this.logger.debug('Launch the GPaste preferences UI');
-      Utils.execCommandAsync([this._gpaste_client, "ui"]);
-      this._msg_text.set_label(_("Launched gpaste-client ui"));
+      Utils.execCommandAsync([this._gpaste_client, "ui"]).then((result) => {
+        let [ok, stdout, stderr, exit_status ] = result;
+        if (ok) {
+          this._msg_text.set_label(_("Launched gpaste-client ui"));
+        } else {
+          let msg = this.logger.error(_("gpaste-client ui returned %d: make sure gpaste-ui is installed"), exit_status);
+          this._msg_text.set_label(msg);
+        }
+      });
     });
 
     this._accel_enable.connect('notify::active', (sw) => {
@@ -448,6 +448,21 @@ class PreferencesBuilder {
       this._bo('link_bmac').set_child(bmac);
     }
     return this._widget;
+  }
+
+  _gpaste_track_changes(active=true) {
+    let cmdargs = active ? this.command_args.set_track_changes_true : this.command_args.set_track_changes_false;
+    this.logger.debug(cmdargs.join(' '));
+    Utils.execCommandAsync(cmdargs).then((result) => {
+      let msg;
+      let [ ok, stdout, stderr, exit_status ] = result;
+      if (exit_status !== 0) {
+        msg = this.logger.debug('failed to set track-changes: %d - %s', exit_status, stderr);
+      } else {
+        msg = active ? 'GPaste tracking clipboard changes' : 'GPaste not tracking clipboard updates';
+      }
+      this._msg_text.set_label(msg);
+    });
   }
 
   _spawn_dconf_config(clicks) {
@@ -554,9 +569,10 @@ class PreferencesBuilder {
     this._bo_ssb('debug', 'active');
     this._bo_ssb('show_histories', 'active');
     this._bo_ssb('accel_enable', 'active');
+    this._bo_ssb('cache_eclips', 'active');
     this._bo_ssb('cache_password', 'active');
     this._bo_ssb('save_eclips', 'active');
-    this._bo_ssb('cache_eclips', 'active');
+    this._bo_ssb('track_changes', 'active');
   }
 
   get settings() {

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-11 17:23-0400\n"
-"PO-Revision-Date: 2021-05-11 17:23-0400\n"
+"POT-Creation-Date: 2021-05-12 15:38-0400\n"
+"PO-Revision-Date: 2021-05-12 15:38-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,19 +19,20 @@ msgstr ""
 
 #: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:706 clippie.js:725
 #: clippie.js:731 clippie.js:747 clippie.js:748 clippie.js:764 clippie.js:783
-#: clippie.js:793 clippie.js:817 clippie.js:821
+#: clippie.js:789 clippie.js:793 clippie.js:817 clippie.js:821
 msgid "openssl not found"
 msgstr ""
 
 #: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:709 clippie.js:728
 #: clippie.js:734 clippie.js:750 clippie.js:751 clippie.js:767 clippie.js:786
-#: clippie.js:796 clippie.js:820 clippie.js:824
+#: clippie.js:792 clippie.js:796 clippie.js:820 clippie.js:824
 msgid "will not encrypt without passphrase"
 msgstr ""
 
 #: dialog.js:38 dialog.js:40 dialog.js:357 dialog.js:379 dialog.js:438
 #: dialog.js:440 prefs.js:378 prefs.js:392 prefs.js:394 prefs.js:401
 #: prefs.js:406 prefs.js:443 prefs.js:446 prefs.js:487 prefs.js:489
+#: prefs.js:498 prefs.js:504
 msgid "Ok"
 msgstr ""
 
@@ -42,7 +43,8 @@ msgstr ""
 #: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:204
 #: dialog.js:205 dialog.js:361 dialog.js:383 dialog.js:442 dialog.js:444
 #: prefs.js:377 prefs.js:391 prefs.js:393 prefs.js:400 prefs.js:405
-#: prefs.js:442 prefs.js:445 prefs.js:486 prefs.js:488
+#: prefs.js:442 prefs.js:445 prefs.js:486 prefs.js:488 prefs.js:497
+#: prefs.js:503
 msgid "Cancel"
 msgstr ""
 
@@ -132,13 +134,14 @@ msgid "eclipse"
 msgstr ""
 
 #: menus.js:67 menus.js:68 menus.js:73 menus.js:75 menus.js:76 menus.js:78
-#: menus.js:80 menus.js:91 menus.js:96
+#: menus.js:80 menus.js:90 menus.js:91 menus.js:96
 msgid "More…"
 msgstr ""
 
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
 #: menus.js:313 menus.js:333 menus.js:334 menus.js:335 menus.js:346
 #: menus.js:352 menus.js:357 menus.js:377 menus.js:397 menus.js:421
+#: menus.js:467
 msgid "Search"
 msgstr ""
 
@@ -147,23 +150,25 @@ msgid "Histories"
 msgstr ""
 
 #: menus.js:432 menus.js:433 menus.js:445 menus.js:451 menus.js:456
-#: menus.js:476 menus.js:496 menus.js:548 menus.js:550
+#: menus.js:476 menus.js:496 menus.js:548 menus.js:550 menus.js:633
 msgid "History ["
 msgstr ""
 
 #: menus.js:504 menus.js:506 menus.js:507 menus.js:509 menus.js:510
 #: menus.js:511 menus.js:518 menus.js:524 menus.js:529 menus.js:549
-#: menus.js:569 menus.js:621 menus.js:623
+#: menus.js:569 menus.js:621 menus.js:623 menus.js:706
 msgid "Create history"
 msgstr ""
 
 #: menus.js:606 menus.js:621 menus.js:623 menus.js:624 menus.js:627
 #: menus.js:632 menus.js:652 menus.js:672 menus.js:724 menus.js:726
+#: menus.js:809
 msgid "Clear"
 msgstr ""
 
 #: menus.js:647 menus.js:662 menus.js:664 menus.js:665 menus.js:668
 #: menus.js:673 menus.js:693 menus.js:713 menus.js:765 menus.js:767
+#: menus.js:850
 msgid "Delete"
 msgstr ""
 
@@ -173,15 +178,15 @@ msgstr ""
 
 #: prefs.js:150 prefs.js:154 prefs.js:162 prefs.js:189 prefs.js:201
 #: prefs.js:232 prefs.js:284 prefs.js:285 prefs.js:297 prefs.js:312
-#: prefs.js:319 prefs.js:324 prefs.js:364 prefs.js:367 prefs.js:408
-#: prefs.js:410
+#: prefs.js:319 prefs.js:324 prefs.js:364 prefs.js:367 prefs.js:403
+#: prefs.js:408 prefs.js:410 prefs.js:412
 msgid "GPaste deamon restarted"
 msgstr ""
 
 #: prefs.js:156 prefs.js:160 prefs.js:168 prefs.js:195 prefs.js:207
 #: prefs.js:238 prefs.js:290 prefs.js:291 prefs.js:303 prefs.js:318
-#: prefs.js:325 prefs.js:330 prefs.js:370 prefs.js:373 prefs.js:414
-#: prefs.js:416
+#: prefs.js:325 prefs.js:330 prefs.js:370 prefs.js:373 prefs.js:411
+#: prefs.js:414 prefs.js:416 prefs.js:420
 msgid "Launched gpaste-client ui"
 msgstr ""
 
@@ -189,8 +194,9 @@ msgstr ""
 #: prefs.js:216 prefs.js:223 prefs.js:225 prefs.js:228 prefs.js:236
 #: prefs.js:237 prefs.js:240 prefs.js:247 prefs.js:249 prefs.js:252
 #: prefs.js:264 prefs.js:268 prefs.js:271 prefs.js:276 prefs.js:292
-#: prefs.js:295 prefs.js:312 prefs.js:314 prefs.js:316 prefs.js:319
-#: prefs.js:336 prefs.js:338 prefs.js:360 prefs.js:362
+#: prefs.js:295 prefs.js:300 prefs.js:312 prefs.js:314 prefs.js:316
+#: prefs.js:319 prefs.js:324 prefs.js:336 prefs.js:338 prefs.js:348
+#: prefs.js:360 prefs.js:362
 msgid "<disabled>"
 msgstr ""
 
@@ -199,8 +205,18 @@ msgid "Select eClips folder"
 msgstr ""
 
 #: prefs.js:374 prefs.js:381 prefs.js:386 prefs.js:423 prefs.js:426
-#: prefs.js:467 prefs.js:469
+#: prefs.js:467 prefs.js:469 prefs.js:478 prefs.js:484
 msgid "Select eclips folder"
+msgstr ""
+
+#: prefs.js:395
+#, javascript-format
+msgid "failed to get track changes state from gpaste: %d"
+msgstr ""
+
+#: prefs.js:413 prefs.js:422
+#, javascript-format
+msgid "gpaste-client ui returned %d: make sure gpaste-ui is installed"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.clippie-blackjackshellac.gschema.xml:26
@@ -240,6 +256,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:59
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 msgid "Enable keyboard shortcuts"
 msgstr ""
 
@@ -250,6 +267,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:63
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 msgid "Keyboard shortcut for showing menu"
 msgstr ""
 
@@ -260,6 +278,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:67
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
@@ -270,6 +289,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:71
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
 msgid "Keyboard shortcut next item"
 msgstr ""
 
@@ -304,4 +324,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:44
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
 msgid "Timeout of GPaste passwords in seconds, 0 is no timeout"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
+msgid "Have gpaste track changes"
 msgstr ""

@@ -798,10 +798,7 @@ var Clip = class Clip {
     //this.logger.debug("%s | %s", data, );
     this.logger.debug("encrypt content | %s", cmdargs);
     Utils.execCommandAsync(this.clippie.openssl_enc_args, data).then((result) => {
-      let ok = result[0];
-      let stdout = result[1];
-      let stderr = result[2];
-      let status = result[3];
+      let [ ok, stdout, stderr, status ] = result;
       if (ok && status === 0) {
         this.logger.debug("Encrypted %s [%s]", label, stdout);
         // test decryption with same password
@@ -837,16 +834,13 @@ var Clip = class Clip {
     let data=passphrase+"\n"+this.eclip+"\n";
     this.logger.debug("decrypt content | %s", cmdargs);
     Utils.execCommandAsync(this.clippie.openssl_dec_args, data).then((result) => {
-      let ok = result[0];
-      let stdout = result[1];
-      let stderr = result[2].trimEnd();
-      let status = result[3];
+      let [ ok, stdout, stderr, status ] = result;
       if (ok && status == 0) {
         //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
         this.clippie.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
         this.clippie.refresh_dbus();
       } else {
-        this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr);
+        this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr.trimEnd());
         ok = false;
       }
       callback(ok, stderr);

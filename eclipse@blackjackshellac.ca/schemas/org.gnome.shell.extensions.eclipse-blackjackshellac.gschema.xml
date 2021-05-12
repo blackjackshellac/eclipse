@@ -63,6 +63,10 @@
       <default>true</default>
       <summary>Support gpaste histories</summary>
     </key>
+    <key name="track-changes" type="b">
+      <default>true</default>
+      <summary>Have gpaste track changes</summary>
+    </key>
     <key name="accel-enable" type="b">
       <default>false</default>
       <summary>Enable keyboard shortcuts</summary>

@@ -192,6 +192,14 @@ var Settings = class Settings {
     this.settings.set_boolean('show-histories', bool);
   }
 
+  get track_changes() {
+    return this.settings.get_boolean('track-changes');
+  }
+
+  set track_changes(bool) {
+    this.settings.set_boolean('track-changes', bool);
+  }
+
   get accel_enable() {
     return this.settings.get_boolean('accel-enable');
   }
