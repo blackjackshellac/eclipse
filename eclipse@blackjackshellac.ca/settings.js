@@ -167,6 +167,7 @@ var Settings = class Settings {
     this.settings.set_string('save-eclips-path', val);
   }
 
+  // state is not currently used
   get state() {
     return this.settings.get_string('state');
   }

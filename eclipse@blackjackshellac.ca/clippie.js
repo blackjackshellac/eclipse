@@ -47,7 +47,6 @@ var Clippie = class Clippie {
 
     // id => clip
     this._lookup = {};
-    this._state = {};
 
     this._settings = new Settings();
     this._attached = false;
@@ -100,8 +99,6 @@ var Clippie = class Clippie {
     this._indicator = indicator;
 
     this.attached = true;
-
-    this.restore_state();
 
     if (refresh) {
       this.refresh_dbus();
@@ -332,21 +329,6 @@ var Clippie = class Clippie {
     }
   }
 
-  restore_state() {
-    this._state = JSON.parse(this.settings.state);
-  }
-
-  save_state() {
-    this._state={};
-    // for (let i=0; i < this.clips.length; i++) {
-    //   let clip = this.clips[i];
-    //   if (clip.lock) {
-    //     this._state[clip.uuid] = { lock: true }
-    //   }
-    // }
-    this.settings.state = JSON.stringify(this._state);
-  }
-
   escapeRegex(string) {
     let escaped=string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     this.logger.debug("regex excaped "+escaped);
@@ -373,7 +355,7 @@ var Clippie = class Clippie {
   // Asynchronous gpaste dbus GetHistory refresh
   refresh_dbus(menu=undefined) {
     if (menu !== undefined) { this.menu = menu; }
-    Utils.logObjectPretty(timedOutGpastePasswords);
+    //Utils.logObjectPretty(timedOutGpastePasswords);
     this.dbus_gpaste.getHistoryRemote( (history) => {
       if (history.length === 0) {
         return;
@@ -394,10 +376,10 @@ var Clippie = class Clippie {
             //this.logger.debug('create new eclip %s', uuid);
             clip = new Clip(uuid, content);
           } else {
-            this.logger.debug('created eclip %s', uuid);
+            //this.logger.debug('created eclip %s', uuid);
           }
         } else if (timedOutGpastePasswords[uuid] !== undefined) {
-          this.logger.debug('test clip uuid=%s %d', timedOutGpastePasswords[uuid]);
+          //this.logger.debug('test clip uuid=%s %d', timedOutGpastePasswords[uuid]);
           if (clip.timeout_gpaste_password(timedOutGpastePasswords[uuid])) {
             // clip has expired and has been deleted
             this.logger.debug('deleted expired GPaste password clip %s', clip.content);
@@ -405,16 +387,6 @@ var Clippie = class Clippie {
           }
         }
         clips.push(clip);
-        if (this._state[clip.uuid]) {
-          clip.lock = this._state[clip.uuid].lock;
-        }
-        if (clip.lock) {
-          this.logger.debug('Found password entry %s', clip.toString());
-          if (!clip.isPassword()) {
-            this.logger.warn('Found locked entry %s that it not saved as a password, unlocking', clip.uuid)
-            clip.lock = false;
-          }
-        }
         if (menu !== undefined) { this.menu.add_item(clip); }
       }
       this.clips = clips;
