@@ -22,7 +22,7 @@ gsv=$(cat metadata.json | ruby -rjson -e 'puts JSON.parse(STDIN.read)["shell-ver
 ver=$(cat metadata.json | ruby -rjson -e 'puts JSON.parse(STDIN.read)["version"]')
 ver=$(echo -n $ver)
 
-msg="Clippie ver$ver for Gnome Shell $gsv"
+msg="eclipse ver$ver for Gnome Shell $gsv"
 tag_name=$(echo -n $msg | sed 's/[ \.]/_/g')
 info git tag -a $tag_name -m "$msg"
 
