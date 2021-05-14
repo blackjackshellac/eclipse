@@ -104,6 +104,10 @@ var Clippie = class Clippie {
       this.refresh_dbus();
     }
 
+    if (this.settings.cache_eclips) {
+      this.refresh_eclips_async();
+    }
+
     this.settings_changed_signals();
 
     this.enable_keyboard_shortcuts();
@@ -452,6 +456,14 @@ var Clippie = class Clippie {
         }
       } while(true);
     });
+  }
+
+  has_eclip(label) {
+    if (this.settings.cache_eclips) {
+      return this.eclips.some(c => c.content === label);
+    }
+    // only check for duplicates if the eclps are cached
+    return false;
   }
 
   save_eclip_async(uuid, eclip) {

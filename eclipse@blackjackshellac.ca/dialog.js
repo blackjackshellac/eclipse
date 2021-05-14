@@ -335,6 +335,15 @@ var EncryptModalDialog = GObject.registerClass({
       this.submit();
     });
 
+    etext.connect('text-changed', (etext) => {
+      let label = etext.get_text().trim();
+      let msg='';
+      if (this.clip.clippie.has_eclip(label)) {
+        msg=_('Label already exists');
+      }
+      this.set_msg(msg);
+    });
+
     ptext.connect('text-changed', (ptext) => {
       this.confirm_with_style();
     });
@@ -371,6 +380,10 @@ var EncryptModalDialog = GObject.registerClass({
       this.set_msg(_('Specify a label for the encrypted entry'));
       return undefined;
     }
+    if (this.clip.clippie.has_eclip(label)) {
+      this.set_msg(_('Label already exists'));
+      return undefined;
+    }
     let ptext = this._password_entry.get_text().trim();
     let ctext = this._password_confirm.get_text().trim();
     if (ptext.length < 4) {
@@ -392,7 +405,6 @@ var EncryptModalDialog = GObject.registerClass({
     let password = this.confirm();
     if (password) {
       this.clip.encrypt(this._entry.get_text(), password, (ok, stderr) => {
-        //this.clip.logger.debug("ok=%s stderr=[%s]", ok, stderr);
         if (ok) {
           // success, delete from clipboard
           this.clip.delete();
