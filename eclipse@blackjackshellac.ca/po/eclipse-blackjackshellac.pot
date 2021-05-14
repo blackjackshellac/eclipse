@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-12 15:38-0400\n"
-"PO-Revision-Date: 2021-05-12 15:38-0400\n"
+"POT-Creation-Date: 2021-05-14 09:19-0400\n"
+"PO-Revision-Date: 2021-05-14 09:19-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -236,6 +236,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:51
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:56
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:63
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
 msgid "Information to restore state after restart"
 msgstr ""
 
@@ -246,6 +248,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:55
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:67
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
 msgid "Support gpaste histories"
 msgstr ""
 
@@ -257,6 +261,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
 msgid "Enable keyboard shortcuts"
 msgstr ""
 
@@ -268,6 +274,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
 msgid "Keyboard shortcut for showing menu"
 msgstr ""
 
@@ -279,6 +287,8 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:88
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
@@ -290,7 +300,13 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:92
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
 msgid "Keyboard shortcut next item"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
+msgid "Reuse the same eclipse password for the duration of the session"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:34
@@ -314,6 +330,10 @@ msgid "Path where encrypted clips should be saved"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:39
+msgid "Timeout for cached eclipse password in seconds, 0 is none"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:39
 msgid "Timeout of cached passwords in seconds, 0 is no timeout"
 msgstr ""
 
@@ -321,11 +341,55 @@ msgstr ""
 msgid "Cache encrypted clips in memory"
 msgstr ""
 
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:43
+msgid "Cache encrypted eclips in memory"
+msgstr ""
+
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:44
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
 msgid "Timeout of GPaste passwords in seconds, 0 is no timeout"
 msgstr ""
 
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:47
+msgid "openssl command line encryption options"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:53
+msgid ""
+"Ensure encryption and decryption options are complementary, previous eclips "
+"will be unavailble if this is changed"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:53
+msgid ""
+"Ensure encryption and decryption options are complementary. Use -A for "
+"single line output. Previous eclips will be unavailble if this is changed"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:51
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+msgid "openssl command line decryption options"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:55
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
+msgid "Save encrypted clips to disk"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:59
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
+msgid "Folder where encrypted clips should be saved"
+msgstr ""
+
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
 msgid "Have gpaste track changes"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:74
+msgid "Timeout for GPaste Password entries in seconds, 0 is none"
 msgstr ""

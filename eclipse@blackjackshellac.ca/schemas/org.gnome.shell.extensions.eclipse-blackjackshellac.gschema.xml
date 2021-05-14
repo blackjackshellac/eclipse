@@ -42,10 +42,15 @@
       <default>false</default>
       <summary>Cache encrypted eclips in memory</summary>
     </key>
-    <key name="timeout-gpaste-password" type="i">
-      <default>0</default>
-      <range min="0" max="86400"/>
-      <summary>Timeout for GPaste Password entries in seconds, 0 is none</summary>
+    <key name="openssl-encrypt-opts" type="s">
+      <default>'enc -aes-256-cbc -pbkdf2 -A -a -pass stdin'</default>
+      <summary>openssl command line encryption options</summary>
+      <description>Ensure encryption and decryption options are complementary. Use -A for single line output. Previous eclips will be unavailable if this is changed</description>
+    </key>
+    <key name="openssl-decrypt-opts" type="s">
+      <default>'enc -aes-256-cbc -pbkdf2 -A -a -pass stdin -d'</default>
+      <summary>openssl command line decryption options</summary>
+      <description>Ensure encryption and decryption options are complementary. Use -A for single line output. Previous eclips will be unavailable if this is changed</description>
     </key>
     <key name="save-eclips" type="b">
       <default>true</default>
@@ -62,6 +67,11 @@
     <key name="show-histories" type="b">
       <default>true</default>
       <summary>Support gpaste histories</summary>
+    </key>
+    <key name="timeout-gpaste-password" type="i">
+      <default>0</default>
+      <range min="0" max="86400"/>
+      <summary>Timeout for GPaste Password entries in seconds, 0 is none</summary>
     </key>
     <key name="track-changes" type="b">
       <default>true</default>

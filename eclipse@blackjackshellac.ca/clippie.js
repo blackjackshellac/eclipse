@@ -270,9 +270,13 @@ var Clippie = class Clippie {
       if (this._openssl === null) {
         this.logger.error('openssl not found');
       } else {
-        // use -A -a for oneline ascii armoured output
-        this.openssl_enc_args = (this._openssl+' enc -aes-256-cbc -pbkdf2 -A -a -pass stdin').trim().split(/\s+/);
-        this.openssl_dec_args = (this._openssl+' enc -aes-256-cbc -pbkdf2 -d -A -a -pass stdin').trim().split(/\s+/);
+        // defaults, use -A -a for oneline base64 output
+        // enc -aes-256-cbc -pbkdf2 -A -a -pass stdin
+        // enc -aes-256-cbc -pbkdf2 -A -a -pass stdin -d
+        this.openssl_enc_args = [ this._openssl ];
+        this.openssl_dec_args = [ this._openssl ];
+        this.openssl_enc_args.push(...this.settings.openssl_encrypt_opts.trim().split(/\s+/));
+        this.openssl_dec_args.push(...this.settings.openssl_decrypt_opts.trim().split(/\s+/));
       }
     }
     return this._openssl;

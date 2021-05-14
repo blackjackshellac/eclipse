@@ -143,14 +143,6 @@ var Settings = class Settings {
     this.settings.set_boolean('cache-eclips', bool);
   }
 
-  get timeout_gpaste_password() {
-    return this.settings.get_int('timeout-gpaste-password');
-  }
-
-  set timeout_gpaste_password(val) {
-    this.settings.set_int('timeout-gpaste-password', val);
-  }
-
   get save_eclips() {
     return this.settings.get_boolean('save-eclips');
   }
@@ -190,6 +182,30 @@ var Settings = class Settings {
 
   set show_histories(bool) {
     this.settings.set_boolean('show-histories', bool);
+  }
+
+  get timeout_gpaste_password() {
+    return this.settings.get_int('timeout-gpaste-password');
+  }
+
+  set timeout_gpaste_password(val) {
+    this.settings.set_int('timeout-gpaste-password', val);
+  }
+
+  get openssl_encrypt_opts() {
+    return this.settings.get_string('openssl-encrypt-opts');
+  }
+
+  set openssl_encrypt_opts(val) {
+    this.settings.set_string('openssl-encrypt-opts', val);
+  }
+
+  get openssl_decrypt_opts() {
+    return this.settings.get_string('openssl-decrypt-opts');
+  }
+
+  set openssl_decrypt_opts(val) {
+    this.settings.set_string('openssl-decrypt-opts', val);
   }
 
   get track_changes() {

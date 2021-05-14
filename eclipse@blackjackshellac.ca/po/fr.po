@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-12 17:33-0400\n"
-"PO-Revision-Date: 2021-05-12 17:32-0400\n"
+"POT-Creation-Date: 2021-05-14 09:27-0400\n"
+"PO-Revision-Date: 2021-05-14 09:27-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
 "Language: fr\n"
@@ -49,48 +49,66 @@ msgstr ""
 "Délai d'expiration du mot de passe eclipse en secondes, 0 signifie aucun"
 
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:43
-msgid "Cache encripted eclips in memory"
+msgid "Cache encrypted eclips in memory"
 msgstr "Mettre en cache les eclips en mémoire"
 
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:47
+msgid "openssl command line encryption options"
+msgstr "options de déchiffrement de la ligne de commande openssl"
+
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:53
+msgid ""
+"Ensure encryption and decryption options are complementary. Use -A for "
+"single line output. Previous eclips will be unavailable if this is changed"
+msgstr ""
+"Assurez-vous que les options de chiffrement et de déchiffrement sont "
+"complémentaires. Utilisez -A pour une sortie sur une seule ligne. Les éclips "
+"précédents ne seront pas disponibles si cela est modifié."
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+msgid "openssl command line decryption options"
+msgstr "options de déchiffrement de la ligne de commande openssl"
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
+msgid "Save encrypted clips to disk"
+msgstr "Enregistrer les clips cryptés sur le disque"
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
+msgid "Folder where encrypted clips should be saved"
+msgstr "Dossier dans lequel les clips cryptés doivent être enregistrés"
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
+msgid "Information to restore state after restart"
+msgstr "Informations pour restaurer l'état après le redémarrage"
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
+msgid "Support gpaste histories"
+msgstr "Soutenir les historiques de gpaste"
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:74
 msgid "Timeout for GPaste Password entries in seconds, 0 is none"
 msgstr ""
 "Délai d'expiration des éléments de mot de passe GPaste en secondes, 0 "
 "signifie aucun"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
-msgid "Save encrypted clips to disk"
-msgstr "Enregistrer les clips cryptés sur le disque"
-
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:56
-msgid "Folder where encrypted clips should be saved"
-msgstr "Dossier dans lequel les clips cryptés doivent être enregistrés"
-
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
-msgid "Information to restore state after restart"
-msgstr "Informations pour restaurer l'état après le redémarrage"
-
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
-msgid "Support gpaste histories"
-msgstr "Soutenir les historiques de gpaste"
-
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
 msgid "Have gpaste track changes"
 msgstr "gpaste suivre les modifications"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
 msgid "Enable keyboard shortcuts"
 msgstr "Activer les raccourcis clavier"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
 msgid "Keyboard shortcut for showing menu"
 msgstr "Raccourci clavier pour afficher le menu"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
 msgid "Keyboard shortcut for showing history menu"
 msgstr "Raccourci clavier pour afficher le menu d'historique"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
 msgid "Keyboard shortcut next item"
 msgstr "Raccourci clavier pour sélectionner l'élément suivant"
 
@@ -371,14 +389,6 @@ msgstr "Entrez le nom de l'entrée du mot de passe"
 msgid "Enter new name for the password entry"
 msgstr "Entrez un nouveau nom pour l'entrée du mot de passe"
 
-#: ../clippie.js:789
-msgid "openssl not found"
-msgstr "openssl introuvable"
-
-#: ../clippie.js:792
-msgid "will not encrypt without passphrase"
-msgstr "Ne cryptera pas sans phrase secrète"
-
 #: ../menus.js:90
 msgid "More…"
 msgstr "Plus…"
@@ -428,6 +438,17 @@ msgstr "gpaste-client ui a renvoyé %d: assurez-vous que gpaste-ui est installé
 #: ../prefs.js:484
 msgid "Select eclips folder"
 msgstr "Sélectionnez le dossier eclips"
+
+#: ../clippie.js:793
+msgid "openssl not found"
+msgstr "openssl introuvable"
+
+#: ../clippie.js:796
+msgid "will not encrypt without passphrase"
+msgstr "Ne cryptera pas sans phrase secrète"
+
+#~ msgid "Cache encripted eclips in memory"
+#~ msgstr "Mettre en cache les eclips en mémoire"
 
 #~ msgid "Cache encrypted clips in memory"
 #~ msgstr "Mettre en cache les clips en mémoire"
