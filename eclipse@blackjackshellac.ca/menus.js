@@ -31,6 +31,7 @@ const PopupMenu = imports.ui.popupMenu;
 const LockItemModalDialog = Me.imports.dialog.LockItemModalDialog;
 const EncryptModalDialog = Me.imports.dialog.EncryptModalDialog;
 const DecryptModalDialog = Me.imports.dialog.DecryptModalDialog;
+const ReEncryptModalDialog = Me.imports.dialog.ReEncryptModalDialog;
 const Logger = Me.imports.logger.Logger;
 const Utils = Me.imports.utils;
 
@@ -208,6 +209,7 @@ var ClippieMenu = class ClippieMenu {
     if (this.clippie.settings.save_eclips) {
       if (this.show_eclips) {
         this._eclipsItem = new EclipsMenu(this);
+        //this._addSeparator();
         this.item_index = this.item_search+2;
       } else if (this._eclipsItem) {
         this._eclipsItem.destroy();
@@ -372,7 +374,7 @@ class ClipItemControlButton extends St.Button {
           break;
         case 'decrypt':
           this.connect('clicked', (cb) => {
-            let dialog = new DecryptModalDialog(this.clip);
+            let dialog = new ReEncryptModalDialog(this.clip);
             dialog.open(global.get_current_time());
           });
           break;

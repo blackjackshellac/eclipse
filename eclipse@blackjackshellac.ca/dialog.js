@@ -152,7 +152,7 @@ var DecryptModalDialog = GObject.registerClass({
   submit() {
     let password = this.confirm();
     if (password) {
-      let msg=this.clip.decrypt(password, (ok, stderr) => {
+      this.clip.decrypt(password, (ok, stderr) => {
         if (ok) {
           this.close(global.get_current_time());
           if (this.clip.clippie.cached_pass !== undefined) {
@@ -163,9 +163,6 @@ var DecryptModalDialog = GObject.registerClass({
           this.set_msg(_('Decryption failed'));
         }
       });
-      if (msg) {
-        this.set_msg(msg);
-      }
     }
   }
 
@@ -386,7 +383,7 @@ var EncryptModalDialog = GObject.registerClass({
     }
     let ptext = this._password_entry.get_text().trim();
     let ctext = this._password_confirm.get_text().trim();
-    if (ptext.length < 4) {
+    if (ptext.length < this.clip.clippie.settings.minimum_password_length) {
       this.set_msg(_('Passphrase too short'));
       return undefined;
     }
@@ -417,6 +414,326 @@ var EncryptModalDialog = GObject.registerClass({
         }
       });
     }
+  }
+
+  _onOk(button, event) {
+    this.submit();
+  }
+
+  _onCancel(button, event) {
+    this.close(global.get_current_time());
+  }
+
+  get clip() {
+    return this._clip;
+  }
+
+  set_msg(msg) {
+    this._msg.set_text(msg);
+  }
+});
+
+var ReEncryptModalDialog = GObject.registerClass({
+}, class ReEncryptModalDialog extends ModalDialog.ModalDialog {
+
+  _init(clip) {
+    super._init({
+      styleClass: 'extension-dialog'
+    });
+
+    this._clip = clip;
+
+    this.set_buttons(_("ReEncrypt"));
+
+    let box = new St.BoxLayout({
+      x_expand: true,
+      y_expand: true,
+      vertical: true,
+      style_class: 'eclipse-password-box'
+    });
+    this.contentLayout.add(box);
+
+    let gkey = Gio.icon_new_for_string('dialog-password-symbolic');
+    let gclear = Gio.icon_new_for_string('edit-clear-symbolic');
+
+    //let icon = new St.Icon({ gicon: gkey, icon_size: 20 });
+    //box.add(icon);
+
+    this._entry = new St.Entry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      style_class: 'eclipse-encrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      hint_text: _("Label for encrypted entry"),
+      reactive: true
+    });
+
+    this._entry.set_hover(true);
+    let etext = this._entry.get_clutter_text();
+    etext.set_activatable(false);
+    etext.set_editable(true);
+    etext.set_text(clip.content);
+
+    this._password_old = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'eclipse-encrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
+      hint_text: _("Original passphrase"),
+      reactive: true
+    });
+
+    this._password_old.connect('primary-icon-clicked', (entry) => {
+      let cur_text = entry.get_text();
+      if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+        // if the value in the entry equals the value of the cached pass, clear it
+        this.set_msg(_("Cached password cleared"))
+        this.clip.clippie.cached_pass = "";
+      }
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_old.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_entry.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_entry.set_text("");
+    // });
+
+    this._password_old.set_hover(true);
+    let otext = this._password_old.get_clutter_text();
+    otext.set_activatable(false);
+    otext.set_editable(true);
+
+    this._password_entry = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'eclipse-encrypt-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
+      hint_text: _("Passphrase"),
+      reactive: true
+    });
+
+    this._password_entry.connect('primary-icon-clicked', (entry) => {
+      let cur_text = entry.get_text();
+      if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+        // if the value in the entry equals the value of the cached pass, clear it
+        this.set_msg(_("Cached password cleared"))
+        this.clip.clippie.cached_pass = "";
+      }
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_entry.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_entry.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_entry.set_text("");
+    // });
+
+    this._password_entry.set_hover(true);
+    let ptext = this._password_entry.get_clutter_text();
+    ptext.set_activatable(false);
+    ptext.set_editable(true);
+
+    this._password_confirm = new St.PasswordEntry({
+      x_expand: true,
+      y_expand: false,
+      can_focus: true,
+      track_hover: true,
+      show_peek_icon: true,
+      style_class: 'eclipse-confirm-entry',
+      x_align: Clutter.ActorAlign.CENTER,
+      y_align: Clutter.ActorAlign.CENTER,
+      primary_icon: new St.Icon({ gicon: gkey, icon_size: 20 }),
+      //secondary_icon: new St.Icon({ gicon: gclear, icon_size: 20 }),
+      hint_text: _("Confirm"),
+      reactive: true
+    });
+
+    this._password_confirm.connect('primary-icon-clicked', (entry) => {
+        let cur_text = entry.get_text();
+        if (cur_text.length > 0 && cur_text === this.clip.clippie.cached_pass) {
+          // if the value in the entry equals the value of the cached pass, clear it
+          this.set_msg(_("Cached password cleared"))
+          this.clip.clippie.cached_pass = "";
+        }
+      if (this.clip.clippie.cached_pass !== undefined) {
+        this._password_confirm.set_text(this.clip.clippie.cached_pass);
+      }
+    });
+
+    // this._password_confirm.connect('secondary-icon-clicked', (entry) => {
+    //     this.clip.clippie.cached_pass = '';
+    //     this._password_confirm.set_text("");
+    // });
+
+    this._password_confirm.set_hover(true);
+    let ctext = this._password_confirm.get_clutter_text();
+    ctext.set_activatable(true);
+    ctext.set_editable(true);
+
+    this._msg = new St.Label({
+      text: _("Enter and confirm the encryption passphrase"),
+      x_align: Clutter.ActorAlign.CENTER,
+      style_class: 'eclipse-label-text'
+    });
+
+    box.add(this._entry);
+    box.add(this._password_old);
+    box.add(this._password_entry);
+    box.add(this._password_confirm);
+    box.add(this._msg);
+
+    this.connect('opened', (dialog) => {
+      global.stage.set_key_focus(this._entry);
+    });
+
+    this.connect('closed', (dialog) => {
+      global.stage.set_key_focus(null);
+    });
+
+    ctext.connect('activate', (ctext) => {
+      this.submit();
+    });
+
+    etext.connect('text-changed', (etext) => {
+      this.test_buttons();
+    });
+
+    ptext.connect('text-changed', (ptext) => {
+      this.confirm_with_style();
+    });
+
+    ctext.connect('text-changed', (ctext) => {
+      this.confirm_with_style();
+    });
+
+    this.connect('key-press-event', (dialog, event) => {
+      //this.clip.logger.debug('key pressed %s', event);
+      let symbol = event.get_key_symbol();
+      // https://lazka.github.io/pgi-docs/Clutter-1.0/constants.html
+      if (symbol === Clutter.KEY_Escape) {
+        this.close(global.get_current_time());
+        return true;
+      }
+      return false;
+    });
+  }
+
+  set_buttons(actionOk) {
+    this.setButtons([
+      { label: actionOk,
+        action: this._onOk.bind(this)
+      },
+      {
+        label: _("Cancel"),
+        action: this._onCancel.bind(this),
+        key:    Clutter.Escape // doesn't work
+      }
+    ]);
+  }
+
+  test_buttons() {
+    let label = this._entry.get_text().trim();
+    let otext = this._password_old.get_text().trim();
+    let ptext = this._password_entry.get_text().trim();
+    let ctext = this._password_confirm.get_text().trim();
+    if (label !== this.clip.content && (otext.length === 0 && ptext.length === 0 && ctext.length === 0)) {
+      this.set_buttons(_("Rename"));
+    } else {
+      this.set_buttons(_("ReEncrypt"));
+    }
+  }
+
+  confirm_with_style() {
+    if (this.confirm()) {
+      this._password_entry.add_style_class_name('eclipse-entry-green');
+      this._password_confirm.add_style_class_name('eclipse-entry-green');
+    } else {
+      this._password_entry.remove_style_class_name('eclipse-entry-green');
+      this._password_confirm.remove_style_class_name('eclipse-entry-green');
+    }
+    this.test_buttons();
+  }
+
+  confirm() {
+    let label = this._entry.get_text().trim();
+    if (label.length === 0) {
+      this.set_msg(_('Specify a label for the encrypted entry'));
+      return undefined;
+    }
+
+    let opass = this._password_old.get_text().trim();
+    let renaming = (this.clip.content !== label && opass.length === 0);
+    if (renaming) {
+      // no encryption change, just rename
+      this.rename(label);
+      return undefined;
+    }
+    if (opass.length === 0 && this.clip.clippie.has_eclip(label)) {
+      this.set_msg(_('Label already exists'));
+      return undefined;
+    }
+    let ptext = this._password_entry.get_text().trim();
+    let ctext = this._password_confirm.get_text().trim();
+    if (!renaming && ptext.length < this.clip.clippie.settings.minimum_password_length) {
+      this.set_msg(_('Passphrase too short'));
+      return undefined;
+    }
+    if (ptext !== ctext) {
+      this.set_msg(_('Passphrase mismatch'));
+      return undefined;
+    }
+    this.set_msg(_('Passphrase match'));
+    this._entry.set_text(label);
+    this._password_old.set_text(opass);
+    this._password_entry.set_text(ptext);
+    this._password_confirm.set_text(ctext);
+    return ptext;
+  }
+
+  submit() {
+    let label = this._entry.get_text();
+    let password = this.confirm();
+    if (password) {
+      let opass = this._password_old.get_text().trim();
+      this.clip.reencrypt(label, opass, password, (ok, stderr) => {
+        this.clip.logger('reencrypt: %s label=%s: %s', ok, label, stderr);
+        if (ok) {
+          this.clip.delete();
+          this.clip.content = label;
+          this.clip.save_eclip();
+          this.close(global.get_current_time());
+        } else {
+          this.set_msg(stderr);
+        }
+      });
+    }
+  }
+
+  rename(label) {
+    // renaming
+    this.clip.delete();
+    this.clip.content = label;
+    this.clip.save_eclip();
+    this.clip.logger.debug("renamed clip %s: %s [%s]", this.clip.uuid, this.clip.content, this.clip.eclip);
+    this.close(global.get_current_time());
   }
 
   _onOk(button, event) {

@@ -472,6 +472,7 @@ var Clippie = class Clippie {
     }
 
     let file_name = uuid+".eclip";
+    this.logger.debug("writing %s", file_name);
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
     let gfile = Gio.file_new_for_path(path);
     gfile.create_readwrite_async(Gio.FileCreateFlags.PRIVATE, GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
@@ -520,7 +521,7 @@ var Clip = class Clip {
 
     //this.logger.debug('%s: %s', uuid, content);
 
-    this._kind = params.kind ? params.kind : this.dbus_gpaste.getElementKind(this.uuid);
+    this.kind = params.kind;
     this._eclip = params.eclip;
 
     this._password = this.isPassword();
@@ -631,6 +632,9 @@ var Clip = class Clip {
   }
 
   set kind(k) {
+    if (k === undefined) {
+      k = this.dbus_gpaste.getElementKind(this.uuid);
+    }
     this._kind = k;
   }
 
@@ -772,9 +776,14 @@ var Clip = class Clip {
     return true;
   }
 
+  save_eclip() {
+    let eclipse = this.eclipser(this.content, this.uuid, this.eclip);
+    this.clippie.save_eclip_async(this.uuid, eclipse);
+  }
+
   // add gpaste entry with ~~eclipse~~label~~this.uuid~~eclipse~~
-  eclipser(label, uuid, eclipse) {
-    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, uuid, eclipse);
+  eclipser(label, uuid, eclip) {
+    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, uuid, eclip);
     return str;
   }
 
@@ -802,24 +811,27 @@ var Clip = class Clip {
   encrypt(label, passphrase, callback) {
     // openssl enc -aes-256-cbc -pbkdf2 -a -pass stdin
     if (!this.clippie.openssl) {
-      return this.logger.error(_('openssl not found'));
+      callback(false, this.logger.error(_('openssl not found')));
+      return;
     }
     if (!passphrase || passphrase.trim().length === 0) {
-      return this.logger.error(_('will not encrypt without passphrase'));
+      callback(false, this.logger.error(_('will not encrypt without passphrase')));
+      return;
     }
 
     let cmdargs=this.clippie.openssl_enc_args.join(' ');
     // passphrase is piped as first line of data to openssl
-    let data=passphrase+"\n"+this.content;
+
     //this.logger.debug("%s | %s", data, );
     this.logger.debug("encrypt content | %s", cmdargs);
+    let data=passphrase+"\n"+this.content;
     Utils.execCommandAsync(this.clippie.openssl_enc_args, data).then((result) => {
       let [ ok, stdout, stderr, status ] = result;
       if (ok && status === 0) {
         this.logger.debug("Encrypted %s [%s]", label, stdout);
         // test decryption with same password
         let uuid = Utils.uuid();
-        let eclip = this.eclipser(label, uuid, stdout.trimEnd());
+        let eclip = this.eclipser(label, uuid, stdout.replace(/\r?\n$/, ''));
         this.clippie.dbus_gpaste.add(eclip);
         this.clippie.save_eclip_async(uuid, eclip);
       } else {
@@ -828,7 +840,6 @@ var Clip = class Clip {
       }
       callback(ok, stderr);
     });
-    return undefined;
   }
 
   /*
@@ -840,10 +851,16 @@ var Clip = class Clip {
   */
   decrypt(passphrase, callback) {
     if (!this.clippie.openssl) {
-      return this.logger.error('openssl not found');
+      callback(false, this.logger.error(_('openssl not found')));
+      return;
     }
     if (!passphrase || passphrase.trim().length === 0) {
-      return this.logger.error('can not decrypt without passphrase');
+      callback(false, this.logger.error('can not decrypt without passphrase'));
+      return;
+    }
+    if (this.eclip === undefined) {
+      callback(false, this.logger.error('clip is not encrypted'));
+      return;
     }
     // passphrase is piped as first line of data to openssl
     let cmdargs = this.clippie.openssl_dec_args.join(' ');
@@ -851,9 +868,8 @@ var Clip = class Clip {
     this.logger.debug("decrypt content | %s", cmdargs);
     Utils.execCommandAsync(this.clippie.openssl_dec_args, data).then((result) => {
       let [ ok, stdout, stderr, status ] = result;
-      if (ok && status == 0) {
-        //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
-        this.clippie.dbus_gpaste.addPassword(this.content, stdout.trimEnd());
+      if (ok && status === 0) {
+        this.clippie.dbus_gpaste.addPassword(this.content, stdout);
         this.clippie.refresh_dbus();
       } else {
         this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr.trimEnd());
@@ -861,7 +877,41 @@ var Clip = class Clip {
       }
       callback(ok, stderr);
     });
-    return undefined;
+  }
+
+  reencrypt(label, passphrase_old, passphrase_new, callback) {
+    if (!this.clippie.openssl) {
+      callback(false, this.logger.error(_('openssl not found')));
+      return;
+    }
+    if (!passphrase_old || passphrase_old.trim().length < this.settings.minimum_password_length) {
+      callback(false, this.logger.error('can not decrypt without passphrase'));
+      return;
+    }
+    if (this.eclip === undefined) {
+      callback(false, this.logger.error('clip is not encrypted'));
+      return;
+    }
+    let cmdargs = this.clippie.openssl_dec_args.join(' ');
+    let data=passphrase_old+"\n"+this.eclip+"\n";
+    this.logger.debug("reecrypt content | %s", cmdargs);
+    Utils.execCommandAsync(this.clippie.openssl_dec_args, data).then((result) => {
+      let [ ok, stdout, stderr, status ] = result;
+      if (ok && status === 0) {
+        //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
+        // this is now decrypted
+        this.content = stdout;
+        this.kind = 'Text';
+        this.eclip = undefined;
+        this.encrypt(label, passphrase_new, (ok, stderr) => {
+          this.logger.debug("encrypted clip %s: %s [%s]", this.clip.uuid, this.clip.content, this.clip.eclip);
+          callback(ok, stderr);
+        });
+      } else {
+        this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr.trimEnd());
+        callback(false, stderr);
+      }
+    });
   }
 }
 

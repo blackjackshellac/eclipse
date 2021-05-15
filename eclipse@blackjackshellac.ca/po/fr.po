@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-14 09:27-0400\n"
+"POT-Creation-Date: 2021-05-15 13:56-0400\n"
 "PO-Revision-Date: 2021-05-14 09:27-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: French <steeve.mccauley@gmail.com>\n"
@@ -53,11 +53,15 @@ msgid "Cache encrypted eclips in memory"
 msgstr "Mettre en cache les eclips en mémoire"
 
 #: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:47
+msgid "Minimum length of encryption password"
+msgstr ""
+
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:51
 msgid "openssl command line encryption options"
 msgstr "options de déchiffrement de la ligne de commande openssl"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:48
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:53
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
 msgid ""
 "Ensure encryption and decryption options are complementary. Use -A for "
 "single line output. Previous eclips will be unavailable if this is changed"
@@ -66,49 +70,49 @@ msgstr ""
 "complémentaires. Utilisez -A pour une sortie sur une seule ligne. Les éclips "
 "précédents ne seront pas disponibles si cela est modifié."
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:56
 msgid "openssl command line decryption options"
 msgstr "options de déchiffrement de la ligne de commande openssl"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
 msgid "Save encrypted clips to disk"
 msgstr "Enregistrer les clips cryptés sur le disque"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
 msgid "Folder where encrypted clips should be saved"
 msgstr "Dossier dans lequel les clips cryptés doivent être enregistrés"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
 msgid "Information to restore state after restart"
 msgstr "Informations pour restaurer l'état après le redémarrage"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:73
 msgid "Support gpaste histories"
 msgstr "Soutenir les historiques de gpaste"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:74
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
 msgid "Timeout for GPaste Password entries in seconds, 0 is none"
 msgstr ""
 "Délai d'expiration des éléments de mot de passe GPaste en secondes, 0 "
 "signifie aucun"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
 msgid "Have gpaste track changes"
 msgstr "gpaste suivre les modifications"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
 msgid "Enable keyboard shortcuts"
 msgstr "Activer les raccourcis clavier"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
 msgid "Keyboard shortcut for showing menu"
 msgstr "Raccourci clavier pour afficher le menu"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
 msgid "Keyboard shortcut for showing history menu"
 msgstr "Raccourci clavier pour afficher le menu d'historique"
 
-#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
+#: ../schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:98
 msgid "Keyboard shortcut next item"
 msgstr "Raccourci clavier pour sélectionner l'élément suivant"
 
@@ -200,8 +204,8 @@ msgstr "Entrez le raccourci clavier"
 msgid "Keyboard shortcut"
 msgstr "Le raccourci clavier"
 
-#: ../ui/kb_shortcuts_dialog3x.ui:72 ../dialog.js:43 ../dialog.js:204
-#: ../dialog.js:442 ../prefs.js:503
+#: ../ui/kb_shortcuts_dialog3x.ui:72 ../prefs.js:503 ../dialog.js:43
+#: ../dialog.js:201 ../dialog.js:645 ../dialog.js:771
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -321,98 +325,6 @@ msgstr "Activer le raccourci clavier clippie suivant"
 msgid "About"
 msgstr "À propos"
 
-#: ../dialog.js:39
-msgid "Decrypt"
-msgstr "Décrypter"
-
-#: ../dialog.js:71 ../dialog.js:252
-msgid "Passphrase"
-msgstr "Phrase secrète"
-
-#: ../dialog.js:85 ../dialog.js:260 ../dialog.js:297
-msgid "Cached password cleared"
-msgstr "Mot de passe enregistré effacé"
-
-#: ../dialog.js:98
-msgid "Enter the decryption passphrase"
-msgstr "Entrez la phrase secrète de déchiffrement"
-
-#: ../dialog.js:144 ../dialog.js:377
-msgid "Passphrase too short"
-msgstr "Phrase secrète trop courte"
-
-#: ../dialog.js:163
-msgid "Decryption failed"
-msgstr "Le déchiffrement a échoué"
-
-#: ../dialog.js:200
-msgid "Encrypt"
-msgstr "Crypter"
-
-#: ../dialog.js:232
-msgid "Label for encrypted entry"
-msgstr "Étiquette d'entrée cryptée"
-
-#: ../dialog.js:289
-msgid "Confirm"
-msgstr "Confirmer"
-
-#: ../dialog.js:316
-msgid "Enter and confirm the encryption passphrase"
-msgstr "Entrez et confirmez la phrase secrète de chiffrement"
-
-#: ../dialog.js:371
-msgid "Specify a label for the encrypted entry"
-msgstr "Spécifiez une étiquette pour l'entrée chiffrée"
-
-#: ../dialog.js:381
-msgid "Passphrase mismatch"
-msgstr "Non-concordance de la phrase secrète"
-
-#: ../dialog.js:384
-msgid "Passphrase match"
-msgstr "Correspondance de la phrase secrète"
-
-#: ../dialog.js:438 ../prefs.js:504
-msgid "Ok"
-msgstr "D'accord"
-
-#: ../dialog.js:468
-msgid "Password label"
-msgstr "L'étiquette de mot de passe"
-
-#: ../dialog.js:479
-msgid "Enter name for the password entry"
-msgstr "Entrez le nom de l'entrée du mot de passe"
-
-#: ../dialog.js:483
-msgid "Enter new name for the password entry"
-msgstr "Entrez un nouveau nom pour l'entrée du mot de passe"
-
-#: ../menus.js:90
-msgid "More…"
-msgstr "Plus…"
-
-#: ../menus.js:467
-msgid "Search"
-msgstr "Rechercher"
-
-#: ../menus.js:633
-msgid "History ["
-msgstr "Histoire ["
-
-#: ../menus.js:706
-msgid "Create history"
-msgstr "Créer une histoire"
-
-#: ../menus.js:809
-msgid "Clear"
-msgstr "Vider"
-
-#: ../menus.js:850
-msgid "Delete"
-msgstr "Effacer"
-
 #: ../prefs.js:300 ../prefs.js:324 ../prefs.js:348
 msgid "<disabled>"
 msgstr "<désactivé>"
@@ -439,13 +351,122 @@ msgstr "gpaste-client ui a renvoyé %d: assurez-vous que gpaste-ui est installé
 msgid "Select eclips folder"
 msgstr "Sélectionnez le dossier eclips"
 
-#: ../clippie.js:793
+#: ../prefs.js:504 ../dialog.js:767
+msgid "Ok"
+msgstr "D'accord"
+
+#: ../dialog.js:39
+msgid "Decrypt"
+msgstr "Décrypter"
+
+#: ../dialog.js:71 ../dialog.js:249 ../dialog.js:528
+msgid "Passphrase"
+msgstr "Phrase secrète"
+
+#: ../dialog.js:85 ../dialog.js:257 ../dialog.js:294 ../dialog.js:499
+#: ../dialog.js:536 ../dialog.js:573
+msgid "Cached password cleared"
+msgstr "Mot de passe enregistré effacé"
+
+#: ../dialog.js:98
+msgid "Enter the decryption passphrase"
+msgstr "Entrez la phrase secrète de déchiffrement"
+
+#: ../dialog.js:144 ../dialog.js:387 ../dialog.js:696
+msgid "Passphrase too short"
+msgstr "Phrase secrète trop courte"
+
+#: ../dialog.js:163
+msgid "Decryption failed"
+msgstr "Le déchiffrement a échoué"
+
+#: ../dialog.js:197
+msgid "Encrypt"
+msgstr "Crypter"
+
+#: ../dialog.js:229 ../dialog.js:470
+msgid "Label for encrypted entry"
+msgstr "Étiquette d'entrée cryptée"
+
+#: ../dialog.js:286 ../dialog.js:565
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: ../dialog.js:313 ../dialog.js:592
+msgid "Enter and confirm the encryption passphrase"
+msgstr "Entrez et confirmez la phrase secrète de chiffrement"
+
+#: ../dialog.js:339 ../dialog.js:381 ../dialog.js:690
+msgid "Label already exists"
+msgstr ""
+
+#: ../dialog.js:377 ../dialog.js:678
+msgid "Specify a label for the encrypted entry"
+msgstr "Spécifiez une étiquette pour l'entrée chiffrée"
+
+#: ../dialog.js:391 ../dialog.js:700
+msgid "Passphrase mismatch"
+msgstr "Non-concordance de la phrase secrète"
+
+#: ../dialog.js:394 ../dialog.js:703
+msgid "Passphrase match"
+msgstr "Correspondance de la phrase secrète"
+
+#: ../dialog.js:446 ../dialog.js:660
+msgid "ReEncrypt"
+msgstr ""
+
+#: ../dialog.js:491
+msgid "Original passphrase"
+msgstr ""
+
+#: ../dialog.js:658
+msgid "Rename"
+msgstr ""
+
+#: ../dialog.js:797
+msgid "Password label"
+msgstr "L'étiquette de mot de passe"
+
+#: ../dialog.js:808
+msgid "Enter name for the password entry"
+msgstr "Entrez le nom de l'entrée du mot de passe"
+
+#: ../dialog.js:812
+msgid "Enter new name for the password entry"
+msgstr "Entrez un nouveau nom pour l'entrée du mot de passe"
+
+#: ../clippie.js:814 ../clippie.js:854 ../clippie.js:884
 msgid "openssl not found"
 msgstr "openssl introuvable"
 
-#: ../clippie.js:796
+#: ../clippie.js:818
 msgid "will not encrypt without passphrase"
 msgstr "Ne cryptera pas sans phrase secrète"
+
+#: ../menus.js:91
+msgid "More…"
+msgstr "Plus…"
+
+#: ../menus.js:469
+msgid "Search"
+msgstr "Rechercher"
+
+#: ../menus.js:635
+msgid "History ["
+msgstr "Histoire ["
+
+#: ../menus.js:708
+msgid "Create history"
+msgstr "Créer une histoire"
+
+#: ../menus.js:811
+msgid "Clear"
+msgstr "Vider"
+
+#: ../menus.js:852
+msgid "Delete"
+msgstr "Effacer"
 
 #~ msgid "Cache encripted eclips in memory"
 #~ msgstr "Mettre en cache les eclips en mémoire"

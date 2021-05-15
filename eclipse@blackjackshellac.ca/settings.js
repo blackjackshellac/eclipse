@@ -143,6 +143,14 @@ var Settings = class Settings {
     this.settings.set_boolean('cache-eclips', bool);
   }
 
+  get minimum_password_length() {
+    return this.settings.get_int('minimum-password-length');
+  }
+
+  set minimum_password_length(val) {
+    this.settings.set_int('minimum-password-length', val);
+  }
+
   get save_eclips() {
     return this.settings.get_boolean('save-eclips');
   }

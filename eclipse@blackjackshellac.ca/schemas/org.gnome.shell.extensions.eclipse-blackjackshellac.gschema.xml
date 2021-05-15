@@ -42,6 +42,10 @@
       <default>false</default>
       <summary>Cache encrypted eclips in memory</summary>
     </key>
+    <key name="minimum-password-length" type="i">
+      <default>4</default>
+      <summary>Minimum length of encryption password</summary>
+    </key>
     <key name="openssl-encrypt-opts" type="s">
       <default>'enc -aes-256-cbc -pbkdf2 -A -a -pass stdin'</default>
       <summary>openssl command line encryption options</summary>

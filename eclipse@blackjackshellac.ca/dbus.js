@@ -60,6 +60,7 @@ var DBusGPaste = class DBusGPaste {
       return kind[0];
     } catch (e) {
       this.logger.error('getElementKind failed uuid=%s: %s', uuid, e.toString());
+      this.logger.debug(e.stack);
     }
     return undefined;
   }

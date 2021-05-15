@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eclipse-blackjackshellac\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-14 09:19-0400\n"
-"PO-Revision-Date: 2021-05-14 09:19-0400\n"
+"POT-Creation-Date: 2021-05-15 13:56-0400\n"
+"PO-Revision-Date: 2021-05-15 13:56-0400\n"
 "Last-Translator: Steeve McCauley <steeve.mccauley@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,20 +19,22 @@ msgstr ""
 
 #: clippie.js:676 clippie.js:683 clippie.js:701 clippie.js:706 clippie.js:725
 #: clippie.js:731 clippie.js:747 clippie.js:748 clippie.js:764 clippie.js:783
-#: clippie.js:789 clippie.js:793 clippie.js:817 clippie.js:821
+#: clippie.js:789 clippie.js:793 clippie.js:805 clippie.js:814 clippie.js:817
+#: clippie.js:821 clippie.js:854 clippie.js:884
 msgid "openssl not found"
 msgstr ""
 
 #: clippie.js:679 clippie.js:686 clippie.js:704 clippie.js:709 clippie.js:728
 #: clippie.js:734 clippie.js:750 clippie.js:751 clippie.js:767 clippie.js:786
-#: clippie.js:792 clippie.js:796 clippie.js:820 clippie.js:824
+#: clippie.js:792 clippie.js:796 clippie.js:808 clippie.js:818 clippie.js:820
+#: clippie.js:824
 msgid "will not encrypt without passphrase"
 msgstr ""
 
 #: dialog.js:38 dialog.js:40 dialog.js:357 dialog.js:379 dialog.js:438
-#: dialog.js:440 prefs.js:378 prefs.js:392 prefs.js:394 prefs.js:401
-#: prefs.js:406 prefs.js:443 prefs.js:446 prefs.js:487 prefs.js:489
-#: prefs.js:498 prefs.js:504
+#: dialog.js:440 dialog.js:743 dialog.js:767 prefs.js:378 prefs.js:392
+#: prefs.js:394 prefs.js:401 prefs.js:406 prefs.js:443 prefs.js:446
+#: prefs.js:487 prefs.js:489 prefs.js:498 prefs.js:504
 msgid "Ok"
 msgstr ""
 
@@ -40,31 +42,32 @@ msgstr ""
 msgid "Decrypt"
 msgstr ""
 
-#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:204
-#: dialog.js:205 dialog.js:361 dialog.js:383 dialog.js:442 dialog.js:444
+#: dialog.js:43 dialog.js:44 dialog.js:175 dialog.js:186 dialog.js:201
+#: dialog.js:204 dialog.js:205 dialog.js:361 dialog.js:383 dialog.js:442
+#: dialog.js:444 dialog.js:457 dialog.js:645 dialog.js:747 dialog.js:771
 #: prefs.js:377 prefs.js:391 prefs.js:393 prefs.js:400 prefs.js:405
 #: prefs.js:442 prefs.js:445 prefs.js:486 prefs.js:488 prefs.js:497
 #: prefs.js:503
 msgid "Cancel"
 msgstr ""
 
-#: dialog.js:71 dialog.js:73 dialog.js:220 dialog.js:231 dialog.js:252
-#: dialog.js:253
+#: dialog.js:71 dialog.js:73 dialog.js:220 dialog.js:231 dialog.js:249
+#: dialog.js:252 dialog.js:253 dialog.js:528 dialog.js:543
 msgid "Passphrase"
 msgstr ""
 
 #: dialog.js:72 dialog.js:74 dialog.js:391 dialog.js:413 dialog.js:468
-#: dialog.js:470
+#: dialog.js:470 dialog.js:773 dialog.js:797
 msgid "Password label"
 msgstr ""
 
 #: dialog.js:75 dialog.js:85 dialog.js:402 dialog.js:424 dialog.js:479
-#: dialog.js:481
+#: dialog.js:481 dialog.js:784 dialog.js:808
 msgid "Enter name for the password entry"
 msgstr ""
 
 #: dialog.js:79 dialog.js:89 dialog.js:406 dialog.js:428 dialog.js:483
-#: dialog.js:485
+#: dialog.js:485 dialog.js:788 dialog.js:812
 msgid "Enter new name for the password entry"
 msgstr ""
 
@@ -72,12 +75,15 @@ msgstr ""
 msgid "Enter the decryption passphrase"
 msgstr ""
 
-#: dialog.js:85 dialog.js:260 dialog.js:261 dialog.js:297 dialog.js:298
+#: dialog.js:85 dialog.js:257 dialog.js:260 dialog.js:261 dialog.js:294
+#: dialog.js:297 dialog.js:298 dialog.js:499 dialog.js:514 dialog.js:536
+#: dialog.js:551 dialog.js:573 dialog.js:588
 msgid "Cached password cleared"
 msgstr ""
 
 #: dialog.js:118 dialog.js:129 dialog.js:144 dialog.js:299 dialog.js:321
-#: dialog.js:377 dialog.js:378
+#: dialog.js:377 dialog.js:378 dialog.js:387 dialog.js:390 dialog.js:682
+#: dialog.js:696
 msgid "Passphrase too short"
 msgstr ""
 
@@ -85,32 +91,55 @@ msgstr ""
 msgid "Decryption failed"
 msgstr ""
 
-#: dialog.js:171 dialog.js:182 dialog.js:200 dialog.js:201
+#: dialog.js:171 dialog.js:182 dialog.js:197 dialog.js:200 dialog.js:201
 msgid "Encrypt"
 msgstr ""
 
-#: dialog.js:201 dialog.js:212 dialog.js:232 dialog.js:233
+#: dialog.js:201 dialog.js:212 dialog.js:229 dialog.js:232 dialog.js:233
+#: dialog.js:470 dialog.js:485
 msgid "Label for encrypted entry"
 msgstr ""
 
-#: dialog.js:239 dialog.js:250 dialog.js:289 dialog.js:290
+#: dialog.js:239 dialog.js:250 dialog.js:286 dialog.js:289 dialog.js:290
+#: dialog.js:565 dialog.js:580
 msgid "Confirm"
 msgstr ""
 
-#: dialog.js:249 dialog.js:260 dialog.js:316 dialog.js:317
+#: dialog.js:249 dialog.js:260 dialog.js:313 dialog.js:316 dialog.js:317
+#: dialog.js:592 dialog.js:607
 msgid "Enter and confirm the encryption passphrase"
 msgstr ""
 
-#: dialog.js:293 dialog.js:315 dialog.js:371 dialog.js:372
+#: dialog.js:293 dialog.js:315 dialog.js:371 dialog.js:372 dialog.js:377
+#: dialog.js:380 dialog.js:672 dialog.js:678
 msgid "Specify a label for the encrypted entry"
 msgstr ""
 
-#: dialog.js:303 dialog.js:325 dialog.js:381 dialog.js:382
+#: dialog.js:303 dialog.js:325 dialog.js:381 dialog.js:382 dialog.js:391
+#: dialog.js:394 dialog.js:686 dialog.js:700
 msgid "Passphrase mismatch"
 msgstr ""
 
-#: dialog.js:306 dialog.js:328 dialog.js:384 dialog.js:385
+#: dialog.js:306 dialog.js:328 dialog.js:384 dialog.js:385 dialog.js:394
+#: dialog.js:397 dialog.js:689 dialog.js:703
 msgid "Passphrase match"
+msgstr ""
+
+#: dialog.js:339 dialog.js:342 dialog.js:381 dialog.js:384 dialog.js:634
+#: dialog.js:676 dialog.js:690
+msgid "Label already exists"
+msgstr ""
+
+#: dialog.js:446 dialog.js:453 dialog.js:660
+msgid "ReEncrypt"
+msgstr ""
+
+#: dialog.js:491 dialog.js:506
+msgid "Original passphrase"
+msgstr ""
+
+#: dialog.js:658
+msgid "Rename"
 msgstr ""
 
 #: hms.js:141
@@ -141,7 +170,7 @@ msgstr ""
 #: menus.js:260 menus.js:263 menus.js:299 menus.js:304 menus.js:305
 #: menus.js:313 menus.js:333 menus.js:334 menus.js:335 menus.js:346
 #: menus.js:352 menus.js:357 menus.js:377 menus.js:397 menus.js:421
-#: menus.js:467
+#: menus.js:467 menus.js:468 menus.js:469
 msgid "Search"
 msgstr ""
 
@@ -151,24 +180,26 @@ msgstr ""
 
 #: menus.js:432 menus.js:433 menus.js:445 menus.js:451 menus.js:456
 #: menus.js:476 menus.js:496 menus.js:548 menus.js:550 menus.js:633
+#: menus.js:634 menus.js:635
 msgid "History ["
 msgstr ""
 
 #: menus.js:504 menus.js:506 menus.js:507 menus.js:509 menus.js:510
 #: menus.js:511 menus.js:518 menus.js:524 menus.js:529 menus.js:549
-#: menus.js:569 menus.js:621 menus.js:623 menus.js:706
+#: menus.js:569 menus.js:621 menus.js:623 menus.js:706 menus.js:707
+#: menus.js:708
 msgid "Create history"
 msgstr ""
 
 #: menus.js:606 menus.js:621 menus.js:623 menus.js:624 menus.js:627
 #: menus.js:632 menus.js:652 menus.js:672 menus.js:724 menus.js:726
-#: menus.js:809
+#: menus.js:809 menus.js:810 menus.js:811
 msgid "Clear"
 msgstr ""
 
 #: menus.js:647 menus.js:662 menus.js:664 menus.js:665 menus.js:668
 #: menus.js:673 menus.js:693 menus.js:713 menus.js:765 menus.js:767
-#: menus.js:850
+#: menus.js:850 menus.js:851 menus.js:852
 msgid "Delete"
 msgstr ""
 
@@ -238,6 +269,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:60
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:63
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
 msgid "Information to restore state after restart"
 msgstr ""
 
@@ -250,6 +282,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:64
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:67
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:69
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:73
 msgid "Support gpaste histories"
 msgstr ""
 
@@ -263,6 +296,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
 msgid "Enable keyboard shortcuts"
 msgstr ""
 
@@ -276,6 +310,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:86
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
 msgid "Keyboard shortcut for showing menu"
 msgstr ""
 
@@ -289,6 +324,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:80
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:88
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:90
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
 msgid "Keyboard shortcut for showing history menu"
 msgstr ""
 
@@ -302,6 +338,7 @@ msgstr ""
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:84
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:92
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:94
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:98
 msgid "Keyboard shortcut next item"
 msgstr ""
 
@@ -351,6 +388,11 @@ msgid "Timeout of GPaste passwords in seconds, 0 is no timeout"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:47
+msgid "Minimum length of encryption password"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:47
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:51
 msgid "openssl command line encryption options"
 msgstr ""
 
@@ -370,26 +412,38 @@ msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:51
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:56
 msgid "openssl command line decryption options"
+msgstr ""
+
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:52
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
+msgid ""
+"Ensure encryption and decryption options are complementary. Use -A for "
+"single line output. Previous eclips will be unavailable if this is changed"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:55
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:57
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
 msgid "Save encrypted clips to disk"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:59
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:61
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:65
 msgid "Folder where encrypted clips should be saved"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:68
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:76
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:82
 msgid "Have gpaste track changes"
 msgstr ""
 
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:72
 #: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:74
+#: schemas/org.gnome.shell.extensions.eclipse-blackjackshellac.gschema.xml:78
 msgid "Timeout for GPaste Password entries in seconds, 0 is none"
 msgstr ""
