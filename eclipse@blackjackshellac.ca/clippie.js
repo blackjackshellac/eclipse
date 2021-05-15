@@ -472,10 +472,9 @@ var Clippie = class Clippie {
     }
 
     let file_name = uuid+".eclip";
-    this.logger.debug("writing %s", file_name);
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
     let gfile = Gio.file_new_for_path(path);
-    gfile.create_readwrite_async(Gio.FileCreateFlags.PRIVATE, GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
+    gfile.create_readwrite_async(Gio.FileCreateFlags.PRIVATE | Gio.FileCreateFlags.REPLACE_DESTINATION, GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
       try {
         let stream = gfile.create_readwrite_finish(res);
         let bytes = stream.get_output_stream().write(eclip, null);
@@ -484,6 +483,7 @@ var Clippie = class Clippie {
         this.logger.error("Failed to write to %s: [%s] - %s", path, eclip, e.message);
       }
     });
+    this.logger.debug("async writing %s", file_name);
   }
 
   find(clip) {
@@ -707,17 +707,21 @@ var Clip = class Clip {
     return true;
   }
 
+  delete_eclip() {
+    // deleting the eclip on disk
+    let file_name = this.uuid+".eclip";
+    let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
+    this.logger.debug('delete eclip %s', path);
+    GLib.unlink(path);
+  }
+
   delete() {
     if (this.iseClip()) {
       /* if the gpaste_uuid is set we delete the gpaste entry but leave our eclip on disk */
       if (this.gpaste_uuid) {
         this.dbus_gpaste.delete(this.gpaste_uuid);
       } else {
-        // deleting the eclip on disk
-        let file_name = this.uuid+".eclip";
-        let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
-        this.logger.debug('delete eclip %s', path);
-        GLib.unlink(path);
+        this.delete_eclip();
       }
     } else {
       this.dbus_gpaste.delete(this.uuid);
@@ -783,8 +787,7 @@ var Clip = class Clip {
 
   // add gpaste entry with ~~eclipse~~label~~this.uuid~~eclipse~~
   eclipser(label, uuid, eclip) {
-    let str= "~~eclipse~~%s~~%s~~%s~~".format(label, uuid, eclip);
-    return str;
+    return "~~eclipse~~%s~~%s~~%s~~".format(label, uuid, eclip.replace(/\r?\n$/, ''));
   }
 
   static declipser(content) {
@@ -823,7 +826,7 @@ var Clip = class Clip {
     // passphrase is piped as first line of data to openssl
 
     //this.logger.debug("%s | %s", data, );
-    this.logger.debug("encrypt content | %s", cmdargs);
+    //this.logger.debug("encrypt content | %s", cmdargs);
     let data=passphrase+"\n"+this.content;
     Utils.execCommandAsync(this.clippie.openssl_enc_args, data).then((result) => {
       let [ ok, stdout, stderr, status ] = result;
@@ -831,13 +834,14 @@ var Clip = class Clip {
         this.logger.debug("Encrypted %s [%s]", label, stdout);
         // test decryption with same password
         let uuid = Utils.uuid();
-        let eclip = this.eclipser(label, uuid, stdout.replace(/\r?\n$/, ''));
+        let eclip = this.eclipser(label, uuid, stdout);
         this.clippie.dbus_gpaste.add(eclip);
         this.clippie.save_eclip_async(uuid, eclip);
       } else {
         ok = false;
         this.logger.error("%s failed status=%d: %s", cmdargs, status, stderr);
       }
+      //this.logger.debug('encrypt return %s %s', ok, callback)
       callback(ok, stderr);
     });
   }
@@ -894,23 +898,22 @@ var Clip = class Clip {
     }
     let cmdargs = this.clippie.openssl_dec_args.join(' ');
     let data=passphrase_old+"\n"+this.eclip+"\n";
-    this.logger.debug("reecrypt content | %s", cmdargs);
+    this.logger.debug("reecrypt decrypt content | %s", this.eclip);
     Utils.execCommandAsync(this.clippie.openssl_dec_args, data).then((result) => {
       let [ ok, stdout, stderr, status ] = result;
       if (ok && status === 0) {
         //this.logger.debug("ok=%s stdout=[%s] stderr=[%s] status=[%d]", ok, stdout, stderr, status);
         // this is now decrypted
         this.content = stdout;
-        this.kind = 'Text';
-        this.eclip = undefined;
-        this.encrypt(label, passphrase_new, (ok, stderr) => {
-          this.logger.debug("encrypted clip %s: %s [%s]", this.clip.uuid, this.clip.content, this.clip.eclip);
-          callback(ok, stderr);
-        });
+        //this.kind = 'Text';
+        //this.eclip = undefined;
+        //this.logger.debug('reencrypt encrypt this with label %s', label);
+        this.encrypt(label, passphrase_new, callback);
       } else {
         this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr.trimEnd());
-        callback(false, stderr);
+        ok = false;
       }
+      callback(ok, stderr);
     });
   }
 }
