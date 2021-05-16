@@ -279,6 +279,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.label.set_text(clip.label_text());
 
       if (clip.eclip) {
+        box.add_child(new ClipItemControlButton(clip, 'edit'));
         box.add_child(new ClipItemControlButton(clip, 'decrypt'));
       } else if (clip.lock) {
         box.add_child(new ClipItemControlButton(clip, clip.lock ? 'lock' : 'unlock'));
@@ -364,7 +365,12 @@ class ClipItemControlButton extends St.Button {
     connect_type() {
         switch(this.type) {
         case 'edit':
-          // TODO
+          if (this.clip.eclip) {
+            this.connect('clicked', (cb) => {
+              let dialog = new ReEncryptModalDialog(this.clip);
+              dialog.open(global.get_current_time());
+            });
+          }
           break;
         case 'encrypt':
           this.connect('clicked', (cb) => {
@@ -374,7 +380,8 @@ class ClipItemControlButton extends St.Button {
           break;
         case 'decrypt':
           this.connect('clicked', (cb) => {
-            let dialog = new ReEncryptModalDialog(this.clip);
+            //let dialog = new ReEncryptModalDialog(this.clip);
+            let dialog = new DecryptModalDialog(this.clip);
             dialog.open(global.get_current_time());
           });
           break;

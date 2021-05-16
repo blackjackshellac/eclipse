@@ -39,6 +39,8 @@ class PreferencesBuilder {
     this._builder = new Gtk.Builder();
     this.logger = new Logger('cl_prefs', this._settings);
 
+    this.logger.debug('PreferencesBuilder');
+
     this._gsettings = Utils.exec_path('gsettings');
     this._gpaste_client = Utils.exec_path('gpaste-client');
 
@@ -611,9 +613,12 @@ function buildPrefsWidget() {
     if (Utils.isGnome3x()) {
       window.set_position(Gtk.WindowPosition.CENTER);
     } else {
-      window.set_transient_for(null);
+      //window.set_transient_for(null);
+      //window.set_halign(Gtk.Align.CENTER);
+      //window.add_css_class('center-me');
+      //let classes = window.get_css_classes();
+      window.default_width *= 1.1;
     }
-    //window.resize(700, 900);
   });
   return widget;
 }
