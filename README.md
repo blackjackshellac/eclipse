@@ -125,6 +125,5 @@ icon on the far right to delete the clipboard item.
 
 Preferences button can be found to the right of the search entry in the main menu.
 
-![image](https://user-images.githubusercontent.com/825403/117047625-1af75280-ace0-11eb-88ef-e221cdab8db6.png)
-
+![Screenshot-20210517090520-764x504](https://user-images.githubusercontent.com/825403/118493723-6867bc80-b6ef-11eb-9dcd-5277b513d0df.png)
 
