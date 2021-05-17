@@ -37,18 +37,6 @@
     <property name="hexpand">True</property>
     <property name="halign">0</property>
 
-    <!--
-    <child>
-      <object class="GtkLabel" id="title">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="margin-top">5</property>
-        <property name="margin-start">5</property>
-        <property name="label" translatable="yes" context="prefs-title">Preferences</property>
-      </object>
-    </child>
-    -->
-
     <child> <!-- stack_switcher -->
       <object class="GtkStackSwitcher" id="stack_switcher">
         <property name="visible">True</property>
@@ -71,8 +59,10 @@
         <property name="hhomogeneous">True</property>
         <property name="hexpand">True</property>
 
-        <child> <!-- stack page: clippie_grid -->
-          <object class="GtkStackPage"><!-- options -->
+        <!-- stack page: clippie_grid -->
+        <!--
+        <child>
+          <object class="GtkStackPage">
             <property name="name">options</property>
             <property name="title" translatable="yes">Options</property>
             <property name="child">
@@ -88,12 +78,14 @@
               </object>
             </property>
           </object>
-        </child> <!-- stack page: clippie_grid -->
+        </child>
+        -->
+        <!-- stack page: clippie_grid -->
 
         <child> <!-- stack page: eclips_grid -->
           <object class="GtkStackPage">
-            <property name="name">eclips</property>
-            <property name="title" translatable="no">eclips</property>
+            <property name="name">options</property>
+            <property name="title" translatable="no">Options</property>
             <property name="child">
               <object class="GtkGrid" id="eclips_grid">
                 <property name="visible">True</property>
@@ -326,6 +318,8 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="visible">True</property>
     <property name="can-focus">True</property>
     <property name="active">False</property>
+    <property name="hexpand">False</property>
+    <property name="halign">2</property>
     <property name="tooltip-text" translatable="yes" context="debug-tooltip">Enable debugging output</property>
   </object>
   <object class="GtkLabel" id="show_histories_text">
@@ -339,6 +333,8 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="visible">True</property>
     <property name="can-focus">True</property>
     <property name="active">False</property>
+    <property name="hexpand">False</property>
+    <property name="halign">2</property>
     <property name="tooltip-text" translatable="yes" context="show-histories-tooltip">Show history menu</property>
   </object>
 
@@ -354,12 +350,12 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="visible">True</property>
     <property name="can-focus">True</property>
     <property name="active">False</property>
-    <property name="tooltip-text" translatable="yes" context="cache-password">Reuse the same eclipse password for the duration of the session</property>
+    <property name="tooltip-text" translatable="yes" context="cache-password">Reuse the same encryption password for the duration of the session</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkLabel" id="cache_password_timeout_text">
-    <property name="label" translatable="yes" context="cache-password-text">Timeout eclipse password</property>
+    <property name="label" translatable="yes" context="cache-password-text">Timeout encryption password</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="receives-default">False</property>
@@ -373,7 +369,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="receives-default">False</property>
     <property name="hexpand">False</property>
     <property name="editable">True</property>
-    <property name="tooltip-text" translatable="yes" context="cache-password-timeout">Timeout for cached eclipse password in seconds, 0 is none</property>
+    <property name="tooltip-text" translatable="yes" context="cache-password-timeout">Timeout for cached encryption password in seconds, 0 is none</property>
     <property name="secondary_icon_name">alarm-symbolic</property>
     <property name="secondary_icon_activatable">True</property>
   </object>
@@ -411,7 +407,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="cache-eclips-tooltip">Enable to keep eclips in memory</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 END=2 -->
   </object>
 
   <object class="GtkLabel" id="save_eclips_text">
@@ -427,7 +423,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="save-eclips-tooltip">Enable and select folder for eclips</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkEntry" id="save_eclips_path">
     <property name="text"></property>
@@ -454,7 +450,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-enable">Enable keyboard shortcuts</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
 
   <object class="GtkLabel" id="accel_menu_text">
@@ -470,7 +466,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-menu">Enable clippie menu keyboard shortcut</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkLabel" id="accel_menu_value">
     <property name="label" translatable="no"></property>
@@ -494,7 +490,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-history">Enable clippie history menu keyboard shortcut</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkLabel" id="accel_history_value">
     <property name="label" translatable="no"></property>
@@ -518,7 +514,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU GPL 3 Lice
     <property name="active">False</property>
     <property name="tooltip-text" translatable="yes" context="accel-next">Enable clippie next keyboard shortcut</property>
     <property name="hexpand">False</property>
-    <property name="halign">1</property> <!--GtkAlign.START=1 -->
+    <property name="halign">2</property> <!--GtkAlign.START=1 -->
   </object>
   <object class="GtkLabel" id="accel_next_value">
     <property name="label" translatable="no"></property>

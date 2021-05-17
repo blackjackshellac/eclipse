@@ -105,7 +105,7 @@ class PreferencesBuilder {
     //   return false;
     // });
 
-    this._clippie_grid = this._bo('clippie_grid');
+    //this._clippie_grid = this._bo('clippie_grid');
     this._eclips_grid = this._bo('eclips_grid');
     this._shortcuts_grid = this._bo('shortcuts_grid');
     this._gpaste_grid = this._bo('gpaste_grid');
@@ -130,16 +130,18 @@ class PreferencesBuilder {
     }
 
     // col, row, col_span, row_span
-    this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1); // row 0
-    this._clippie_grid.attach(this._bo('show_histories'),      1, 0, 1, 1);
+    //this._clippie_grid.attach(this._bo('show_histories_text'), 0, 0, 1, 1); // row 0
+    //this._clippie_grid.attach(this._bo('show_histories'),      1, 0, 1, 1);
 
-    this._clippie_grid.attach(this._bo('debug_text'),          0, 1, 1, 1); // row 1
-    this._clippie_grid.attach(this._bo('debug'),               1, 1, 1, 1);
+    //this._clippie_grid.attach(this._bo('debug_text'),          0, 1, 1, 1); // row 1
+    //this._clippie_grid.attach(this._bo('debug'),               1, 1, 1, 1);
 
     this._save_eclips = this._bo('save_eclips');
     this._save_eclips_path = this._bo('save_eclips_path');
     this._cache_password_timeout = this._bo('cache_password_timeout');
     this._timeout_gpaste_password = this._bo('timeout_gpaste_password');
+
+    // col, row, col_span, row_span
     this._eclips_grid.attach(this._bo('cache_password_text'),         0, 0, 1, 1);
     this._eclips_grid.attach(this._bo('cache_password'),              1, 0, 1, 1);
     this._eclips_grid.attach(this._bo('cache_password_timeout_text'), 0, 1, 1, 1);
@@ -151,6 +153,13 @@ class PreferencesBuilder {
     this._eclips_grid.attach(this._bo('save_eclips_text'),            0, 4, 1, 1);
     this._eclips_grid.attach(this._save_eclips,                       1, 4, 1, 1);
     this._eclips_grid.attach(this._save_eclips_path,                  0, 5, 2, 1);
+
+    this._eclips_grid.attach(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL}), 0, 6, 2, 1);
+    this._eclips_grid.attach(this._bo('show_histories_text'),               0, 7, 1, 1); // row 0
+    this._eclips_grid.attach(this._bo('show_histories'),                    1, 7, 1, 1);
+
+    this._eclips_grid.attach(this._bo('debug_text'),                        0, 8, 1, 1); // row 1
+    this._eclips_grid.attach(this._bo('debug'),                             1, 8, 1, 1);
 
     let hms = new HMS(this.settings.cache_password_timeout);
     this._cache_password_timeout.set_text(hms.toTimeString());
@@ -617,7 +626,7 @@ function buildPrefsWidget() {
       //window.set_halign(Gtk.Align.CENTER);
       //window.add_css_class('center-me');
       //let classes = window.get_css_classes();
-      window.default_width *= 1.1;
+      //window.default_width *= 1.1;
     }
   });
   return widget;

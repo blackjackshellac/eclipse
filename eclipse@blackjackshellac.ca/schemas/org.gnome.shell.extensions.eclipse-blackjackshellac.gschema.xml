@@ -31,12 +31,12 @@
     </key>
     <key name="cache-password" type="b">
       <default>false</default>
-      <summary>Reuse the same eclipse password for the duration of the session</summary>
+      <summary>Reuse the same encryption password for the duration of the session</summary>
     </key>
     <key name="cache-password-timeout" type="i">
       <default>600</default>
       <range min="0" max="86400"/>
-      <summary>Timeout for cached eclipse password in seconds, 0 is none</summary>
+      <summary>Timeout for cached encryption password in seconds, 0 is none</summary>
     </key>
     <key name="cache-eclips" type="b">
       <default>false</default>
