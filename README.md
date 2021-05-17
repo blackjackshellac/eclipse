@@ -1,3 +1,4 @@
+
 # eclipse
 
 _formerly clippie_
@@ -119,12 +120,11 @@ forget the password it's gone man, like *keys in a lava flow*. When a clipboard 
 is shown as a *GPaste* `[Password]` item. Click on lock icon to rename a password entry.  Click on the 'X'
 icon on the far right to delete the clipboard item.
 
-![Screenshot from 2021-05-03 17-47-23](https://user-images.githubusercontent.com/825403/116938663-22175580-ac39-11eb-9815-262c38607465.png)
+![Screenshot from 2021-05-17 09-10-11](https://user-images.githubusercontent.com/825403/118495178-f3958200-b6f0-11eb-830b-a7383a186d08.png)
 
 ### Preferences
 
 Preferences button can be found to the right of the search entry in the main menu.
 
-![image](https://user-images.githubusercontent.com/825403/117047625-1af75280-ace0-11eb-88ef-e221cdab8db6.png)
-
+![Screenshot-20210517090520-764x504](https://user-images.githubusercontent.com/825403/118493723-6867bc80-b6ef-11eb-9dcd-5277b513d0df.png)
 
