@@ -1,6 +1,6 @@
 {
   "name": "eclipse",
-  "description": "eclipse clipboard interface with item encryption\\n\\nAdded encryption of clipboard items. Encrypted items can be\\nsaved to disk in a folder of your choice. These items are persisted\\nbetween sessions using openssl to encrypt the content.\\n\\nEclipse uses dbus to communicate with the gpaste daemon.\\n\\nThe following utilities are required,\\n\\n# for example, on fedora\\n$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl\\n\\nIf updating the extension reports an ERROR it should work after the next reboot or if you logout and login again. If you're not running on Wayland you should be able to just restart the shell (Alt+F2,r).\\n\\nPlease report issues on github.\\n",
+  "description": "eclipse clipboard interface with item encryption\n\nAdded encryption of clipboard items. Encrypted items can be\nsaved to disk in a folder of your choice. These items are persisted\nbetween sessions using openssl to encrypt the content.\n\nEclipse uses dbus to communicate with the gpaste daemon.\n\nThe following utilities are required,\n\n# for example, on fedora\n$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl\n\nIf updating the extension reports an ERROR it should work after the next reboot or if you logout and login again. If you're not running on Wayland you should be able to just restart the shell (Alt+F2,r).\n\nPlease report issues on github.\n",
   "gettext-domain": "eclipse-blackjackshellac",
   "uuid": "eclipse@blackjackshellac.ca",
   "shell-version": [
