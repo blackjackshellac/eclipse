@@ -1,0 +1,16 @@
+eclipse clipboard interface with item encryption
+
+Added encryption of clipboard items. Encrypted items can be
+saved to disk in a folder of your choice. These items are persisted
+between sessions using openssl to encrypt the content.
+
+Eclipse uses dbus to communicate with the gpaste daemon.
+
+The following utilities are required,
+
+# for example, on fedora
+$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl
+
+If updating the extension reports an ERROR it should work after the next reboot or if you logout and login again. If you're not running on Wayland you should be able to just restart the shell (Alt+F2,r).
+
+Please report issues on github.
