@@ -35,34 +35,43 @@ function detect_GPasteIface() {
       null);
   let result0=result.get_child_value(0);
   let DBusGPasteIface = result0.get_string()[0].trim();
-  if (DBusGPasteIface.match('name="org.gnome.GPaste2"')) {
+  if (DBusGPasteIface.match('"org.gnome.GPaste2"')) {
     return 2;
-  } else if (DBusGPasteIface.match('name="org.gnome.GPaste1"')) {
+  } else if (DBusGPasteIface.match('"org.gnome.GPaste1"')) {
     return 1;
   } else {
     return 0;
   }
 }
 
-var DBusGPasteVersion = detect_GPasteIface();
 var DBusGPasteVersions = {
   2: DBusGpaste.DBusGPasteIface,
   1: DBusGpaste.DBusGPaste1Iface,
   0: DBusGpaste.DBusGPasteIface
 }
 
-var DBusGPasteIface = DBusGPasteVersions[DBusGPasteVersion];
-
-var DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGPasteIface);
+var DBusGPasteVersion = undefined;
+var DBusGPasteIface = undefined;
+var DBusGPasteProxy = undefined;
 
 var DBusGPaste = class DBusGPaste {
   constructor(settings) {
     this._settings = settings;
     this._elements = {};
-    this._version = DBusGPasteVersion;
+
+    if (DBusGPasteProxy === undefined) {
+      DBusGPasteVersion = detect_GPasteIface();
+
+      DBusGPasteIface = DBusGPasteVersions[DBusGPasteVersion];
+
+      DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGPasteIface);
+
+      this._version = DBusGPasteVersion;
+    }
 
     this.logger = new Logger('cl_dbus', settings);
-    this.logger.debug('Detected interface org.gnome.%s', DBusGPasteVersion);
+    this.logger.debug('Detected interface org.gnome.GPaste%s', DBusGPasteVersion);
+
     this._gpaste_proxy = new DBusGPasteProxy(Gio.DBus.session,
                                              'org.gnome.GPaste',
                                              '/org/gnome/GPaste');
