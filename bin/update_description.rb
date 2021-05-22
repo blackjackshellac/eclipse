@@ -11,21 +11,13 @@ puts "desc=#{desc}"
 
 begin
 	puts "Reading from #{desc}"
-	description=File.read(desc)
 
 	metadata_file=File.join(MD, "..", "eclipse@blackjackshellac.ca", "metadata.json")
 	puts "Updating #{metadata_file}"
 
 	metadata_json=File.read(metadata_file)
 	metadata=JSON.parse(metadata_json)
-	puts "BEFORE metadata[description]=#{metadata["description"]}"
-
-	description=%x[cat #{desc} | perl -pe 's/\n/\\n/g']
-	#description.gsub!(/\n/, '\n')
-
-	puts "AFTER metadata[description]=#{metadata["description"]}"
-
-	metadata["description"]=description
+	metadata["description"]=File.read(desc)
 
 	metadata_json=JSON.pretty_generate(metadata)
 	puts metadata_json
@@ -36,7 +28,7 @@ begin
 	}
 
 	puts "--- Final description ---"
-	puts metadata["description"]
+	puts metadata_json
 rescue => e
 	puts "ERROR: "+e.to_s
 	exit 1
