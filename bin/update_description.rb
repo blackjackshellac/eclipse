@@ -18,17 +18,21 @@ begin
 
 	metadata_json=File.read(metadata_file)
 	metadata=JSON.parse(metadata_json)
-	puts "metadata[description]=#{metadata["description"]}"
+	puts "BEFORE metadata[description]=#{metadata["description"]}"
 
-	description.gsub!(/\n/, '\n')
+	description=%x[cat #{desc} | perl -pe 's/\n/\\n/g']
+	#description.gsub!(/\n/, '\n')
+
+	puts "AFTER metadata[description]=#{metadata["description"]}"
 
 	metadata["description"]=description
 
-	puts JSON.pretty_generate(metadata)
+	metadata_json=JSON.pretty_generate(metadata)
+	puts metadata_json
 
 	File.open(metadata_file, "w") { |fd|
 	  puts "Writing #{metadata_file}"
-	  fd.puts JSON.pretty_generate(metadata)
+	  fd.puts metadata_json
 	}
 
 	puts "--- Final description ---"

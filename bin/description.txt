@@ -8,8 +8,10 @@ Eclipse uses dbus to communicate with the gpaste daemon.
 
 The following utilities are required,
 
-# for example, on fedora
-$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl
+# for example, on fedora (add gpaste-ui for gpaste settings gui)
+$ sudo dnf install gpaste openssl
+# ubuntu
+$ sudo apt install gpaste openssl
 
 If updating the extension reports an ERROR it should work after the next reboot or if you logout and login again. If you're not running on Wayland you should be able to just restart the shell (Alt+F2,r).
 
