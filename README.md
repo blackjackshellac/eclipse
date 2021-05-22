@@ -88,7 +88,9 @@ Make sure *gpaste-client* is installed, and the daemon is running. For encryptio
 support you also need *openssl* to be installed. For example, on Fedora,
 
 ```
-$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl [dconf-editor]
+# ubuntu sudo apt install gpaste openssl
+# optional dconf-editor
+$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl
 ...
 $ gpaste-client daemon-reexec
 ```
