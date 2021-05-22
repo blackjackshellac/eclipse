@@ -30,6 +30,9 @@ begin
 	  puts "Writing #{metadata_file}"
 	  fd.puts JSON.pretty_generate(metadata)
 	}
+
+	puts "--- Final description ---"
+	puts metadata["description"]
 rescue => e
 	puts "ERROR: "+e.to_s
 	exit 1
