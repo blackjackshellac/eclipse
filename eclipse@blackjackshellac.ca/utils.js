@@ -39,8 +39,11 @@ function isGnome40() {
   return (shellVersion >= 40);
 }
 
+function prettyPrint(obj) {
+  return JSON.stringify(obj, null, 2)
+}
 function logObjectPretty(obj) {
-  log(JSON.stringify(obj, null, 2));
+  log(prettyPrint(obj));
 }
 
 var clearTimeout, clearInterval;

@@ -29,6 +29,7 @@ const ByteArray = imports.byteArray;
 const Main = imports.ui.main;
 const MessageTray = imports.ui.messageTray;
 const PopupMenu = imports.ui.popupMenu;
+const Params = imports.misc.params;
 
 const Utils = Me.imports.utils;
 const Settings = Me.imports.settings.Settings;
@@ -47,6 +48,7 @@ var Clippie = class Clippie {
 
     // id => clip
     this._lookup = {};
+    this._gp1_map = {};
 
     this._settings = new Settings();
     this._attached = false;
@@ -134,6 +136,7 @@ var Clippie = class Clippie {
       this.clips = [];
       this.eclips = [];
       this.cur_clip = 0;
+      this._gp1_map = {};
 
       clippieInstance = undefined;
       this._settings = undefined;
@@ -214,6 +217,10 @@ var Clippie = class Clippie {
     this._accel.remove('accel-show-menu');
     this._accel.remove('accel-show-history');
     this._accel.remove('accel-next');
+  }
+
+  get gp1_map() {
+    return this._gp1_map;
   }
 
   get clippie() {
@@ -301,6 +308,8 @@ var Clippie = class Clippie {
   get dbus_gpaste() {
     if (!this._dbus_gpaste) {
       this._dbus_gpaste = new DBusGPaste(this.settings);
+      this.gp2 = this._dbus_gpaste.version === 2;
+      this.gp1 = !this.gp2;
     }
     return this._dbus_gpaste;
   }
@@ -360,6 +369,32 @@ var Clippie = class Clippie {
     return entries;
   }
 
+  get_uuid_content(i, history) {
+    history=history[i];
+    //this.logger.debug('i=%d [%s]', i, history);
+    let map = {};
+    if (this.gp2) {
+      map.uuid = history[0];
+      map.content = history[1];
+      map.index = undefined;
+    } else {
+      // uuid is a 64bit hash of the content
+      let uuid=Clip.hash64(history);
+      //let uuid=Utils.uuid();
+      map = undefined; //this.gp1_map[hash];
+      if (!map) {
+        map = {};
+        map.uuid = uuid;
+        map.content = history;
+        //this.gp1_map[hash] = map;
+      }
+      // update index
+      map.index = i;
+      //Utils.logObjectPretty(map);
+    }
+    return map;
+  }
+
   // Asynchronous gpaste dbus GetHistory refresh
   refresh_dbus(menu=undefined) {
     if (menu !== undefined) { this.menu = menu; }
@@ -372,19 +407,23 @@ var Clippie = class Clippie {
       let clips = [];
       this.logger.debug("history %d", history.length);
       for (let i=0; i < history.length; i++) {
-        let [uuid, content]=history[i];
+        let map = this.get_uuid_content(i, history);
+        let uuid = map.uuid;
+        let content = map.content;
+        map.content = undefined;
 
-        //this.logger.debug('uuid=%s %s', uuid, timedOutGpastePasswords[uuid]);
+        let params = { index: map.index };
         // find clip with this uuid (if any)
         let clip = this.find_uuid(uuid);
         if (clip === undefined) {
           // clip not found in clips, create a new one
-          clip = Clip.unClip(content, uuid);
+          clip = Clip.unClip(content, uuid, params);
           if (clip === undefined) {
-            //this.logger.debug('create new eclip %s', uuid);
-            clip = new Clip(uuid, content);
+            //this.logger.debug('create new clip %s', uuid);
+            clip = new Clip(uuid, content, params);
           } else {
             //this.logger.debug('created eclip %s', uuid);
+            clip.save_eclip();
           }
         } else if (timedOutGpastePasswords[uuid] !== undefined) {
           //this.logger.debug('test clip uuid=%s %d', timedOutGpastePasswords[uuid]);
@@ -393,9 +432,16 @@ var Clippie = class Clippie {
             this.logger.debug('deleted expired GPaste password clip %s', clip.content);
             continue;
           }
+        } else {
+          // update index for gp1
+          clip.index = map.index;
         }
+
         clips.push(clip);
-        if (menu !== undefined) { this.menu.add_item(clip); }
+        if (menu !== undefined) {
+          //this.logger.debug('Adding to menu clip=%s', clip.toString())
+          this.menu.add_item(clip);
+        }
       }
       this.clips = clips;
     });
@@ -405,7 +451,7 @@ var Clippie = class Clippie {
     if (this.settings.save_eclips === false) {
       return;
     }
-    this.menu = menu;
+    this.eclips_popup = menu;
     // use async version in refresh
     let dir = Gio.file_new_for_path(this.settings.save_eclips_path);
     dir.enumerate_children_async("standard::*", Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, GLib.PRIORITY_DEFAULT, null, (dir, res) => {
@@ -422,9 +468,9 @@ var Clippie = class Clippie {
 
           let clip = this.eclips.find(c => c.uuid === uuid);
           if (clip) {
-            this.logger.debug('eclip %s: %s', clip.content, clip.uuid)
-            if (this.menu) {
-              this.menu.add_item(clip);
+            this.logger.debug('cached eclip %s: %s', clip.content, clip.uuid)
+            if (this.eclips_popup) {
+              this.eclips_popup.add_eclip_item(clip);
             }
             continue;
           }
@@ -443,27 +489,21 @@ var Clippie = class Clippie {
             if (clip === undefined) {
               this.logger.error("Invalid eclip: %s", path);
             } else {
-              if (this.menu) {
-                this.menu.add_item(clip);
+              if (this.eclips_popup) {
+                this.logger.debug('Adding eclip %s to eclip popup menu', clip.content);
+                this.eclips_popup.add_eclip_item(clip);
               }
-              if (this.settings.cache_eclips) {
-                this.eclips.push(clip);
-              }
+              this.eclips.push(clip);
             }
           } catch(e) {
             this.logger.error("Failed to read eclip %s [%s]", path, e.message);
           }
         }
       } while(true);
+      if (this.eclips.length === 0 && this.eclips_popup) {
+        this.eclips_popup.destroy();
+      }
     });
-  }
-
-  has_eclip(label) {
-    if (this.settings.cache_eclips) {
-      return this.eclips.some(c => c.content === label);
-    }
-    // only check for duplicates if the eclps are cached
-    return false;
   }
 
   save_eclip_async(uuid, eclip) {
@@ -474,9 +514,12 @@ var Clippie = class Clippie {
     let file_name = uuid+".eclip";
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
     let gfile = Gio.file_new_for_path(path);
-    gfile.create_readwrite_async(Gio.FileCreateFlags.PRIVATE | Gio.FileCreateFlags.REPLACE_DESTINATION, GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
+
+    gfile.replace_readwrite_async(null, false,
+        Gio.FileCreateFlags.PRIVATE | Gio.FileCreateFlags.REPLACE_DESTINATION,
+        GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
       try {
-        let stream = gfile.create_readwrite_finish(res);
+        let stream = gfile.replace_readwrite_finish(res);
         let bytes = stream.get_output_stream().write(eclip, null);
         this.logger.debug("wrote %d bytes to %s", bytes, path);
       } catch (e) {
@@ -491,18 +534,47 @@ var Clippie = class Clippie {
   }
 
   find_uuid(uuid) {
-    return this.clips.find(c => (c.uuid === uuid || c.gpaste_uuid === uuid));
+    return this.clips.find(c => (c.uuid === uuid || (c.gpaste_uuid !== undefined && c.gpaste_uuid === uuid)));
   }
 
   has(clip) {
     return this.clips.some(c => c.uuid === clip.uuid);
   }
 
+  delete_eclip(clip) {
+    if (clip.iseClip()) {
+      let label=clip.content;
+      let idx = this.eclips.indexOf(label);
+      if (idx > -1) {
+        this.eclips.splice(idx, 1);
+      }
+    }
+  }
+
+  has_eclip(label) {
+    if (this.settings.cache_eclips) {
+      return this.eclips.some(c => c.content === label);
+    }
+    // only check for duplicates if the eclps are cached
+    return false;
+  }
+
   delete(clip) {
     let idx = this.find(clip);
-    if (idx >= -1) {
+    if (idx > -1) {
       this.clips.splice(idx, 1);
+      if (this.gp1) {
+        // adjust indices for cached clips
+        for (let i=idx; i < this.clips.length; i++) {
+          if (this.clips[i]) {
+            this.clips[i].index = i;
+          } else {
+            this.logger.debug('failed to adjust clips at index %d', i);
+          }
+        }
+      }
     }
+    this.delete_eclip(clip);
   }
 
 }
@@ -512,17 +584,25 @@ const PASSWORD_NAME_RE=/\[.*?\](.*)$/
 
 var Clip = class Clip {
 
-  constructor(uuid, content, params={kind: undefined, eclip: undefined}) {
+  constructor(uuid, content, params={}) {
+    params = Params.parse(params, {
+      kind: null,
+      eclip: null,
+      index: null
+    });
+
     this.logger = clippieInstance.logger;
     this._uuid = uuid;
     this._content = content;
 
     this._menu_item = undefined; // clippie menu
 
-    //this.logger.debug('%s: %s', uuid, content);
+    //this.logger.debug('new Clip %s: %s', uuid, content);
 
+    //Utils.logObjectPretty(params);
+    this.index = params.index;  // for GPaste1
     this.kind = params.kind;
-    this._eclip = params.eclip;
+    this.eclip = params.eclip;
 
     this._password = this.isPassword();
     if (this._password) {
@@ -539,6 +619,21 @@ var Clip = class Clip {
     }
   }
 
+  // based on cyrb53 (https://stackoverflow.com/a/52171480/916462
+  // returns the full 64bit hash as a hex string
+  static hash64(str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
+    //return 4294967296 * (2097151 & h2) + (h1>>>0);
+    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
+  }
+
   timeout_gpaste_password(timeout=undefined) {
     if (this._timeout_gpaste_password === undefined) {
       return false;
@@ -553,8 +648,10 @@ var Clip = class Clip {
     if (now >= timeout) {
       this._timeout_gpaste_password = undefined;
       this.logger.debug('delete GPaste password entry at %s %d ms', new Date(now).toString(), (now-timeout));
-      this.delete();
-      delete timedOutGpastePasswords[this.uuid];
+      if (this.dbus_gpaste.deletePassword(this._password_name)) {
+        this.clippie.delete(this);
+        delete timedOutGpastePasswords[this.uuid];
+      }
       return true;
     }
     return false;
@@ -573,13 +670,15 @@ var Clip = class Clip {
     return undefined;
   }
 
-  static unClip(content, gpaste_uuid=undefined) {
+  static unClip(content, gpaste_uuid=undefined, params={}) {
     let [ label, uuid, eclip ] = Clip.declipser(content);
     if (uuid === undefined || eclip === undefined) {
       // invalid eclip
       return undefined;
     }
-    let clip = new Clip(uuid, label, { kind: 'eClip', eclip: eclip });
+    params.kind = 'eClip';
+    params.eclip = eclip;
+    let clip = new Clip(uuid, label, params);
     clip.gpaste_uuid = gpaste_uuid;
 
     clip.logger.debug('label=%s uuid=%s gpuuid=%s', label, uuid, gpaste_uuid)
@@ -607,6 +706,19 @@ var Clip = class Clip {
     return this._uuid;
   }
 
+  // return idx for GPaste1 and uuid for GPaste2
+  get uuidx() {
+    return this.clippie.gp1 ? this.index : this._uuid;
+  }
+
+  get index() {
+    return this._index;
+  }
+
+  set index(index) {
+    this._index = index;
+  }
+
   get password_name() {
     return this._password_name;
   }
@@ -624,7 +736,7 @@ var Clip = class Clip {
   }
 
   set eclip(e) {
-    this._eclip = e;
+    this._eclip = e ? e : undefined;
   }
 
   get kind() {
@@ -632,8 +744,13 @@ var Clip = class Clip {
   }
 
   set kind(k) {
-    if (k === undefined) {
-      k = this.dbus_gpaste.getElementKind(this.uuid);
+    if (k === undefined || k === null) {
+      if (this.clippie.gp1 && this.index === null) {
+        this.logger.error('index not set when attempting to get kind');
+        k = 'Text';
+      } else {
+        k = this.dbus_gpaste.getElementKind(this.uuidx);
+      }
     }
     this._kind = k;
   }
@@ -643,7 +760,7 @@ var Clip = class Clip {
   }
 
   isPassword() {
-    if (this._kind === 'Password') {
+    if (this._kind !== undefined && this._kind === 'Password') {
       this.logger.debug('%s is a password: %s', this.uuid, this.content);
       return true;
     }
@@ -651,12 +768,12 @@ var Clip = class Clip {
   }
 
   iseClip() {
-    return this._kind === 'eClip';
+    return this.eclip !== undefined;
   }
 
   refresh() {
     if (!this._content) {
-      let content = this.dbus_gpaste.getElement(this.uuid);
+      let content = this.dbus_gpaste.getElement(this.uuidx);
       if (content) {
         this.content = content;
       } else {
@@ -694,22 +811,24 @@ var Clip = class Clip {
   }
 
   label_text() {
-    var label = this.content.trim().replaceAll(/\n/gm, '↲'); // ¶↲
-    label = label.replaceAll(/\s+/g, ' ');
+    var label = this.content.trim().replace(/\n/gm, '↲'); // ¶↲
+    label = label.replace(/\s+/g, ' ');
     label = label.substring(0, 50);
-    label = this.lock ? label.trim() : label.trim();
-    return label;
+    return label.trim();
   }
 
   select() {
-    let uuid = this.gpaste_uuid ? this.gpaste_uuid : this.uuid;
+    let uuid = this.gpaste_uuid ? this.gpaste_uuid : this.uuidx;
     this.dbus_gpaste.select(uuid);
+    if (this.clippie.gp1) {
+      this.clippie.refresh_dbus();
+    }
     return true;
   }
 
-  delete_eclip() {
+  delete_eclip(uuid) {
     // deleting the eclip on disk
-    let file_name = this.uuid+".eclip";
+    let file_name = uuid+".eclip";
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
     this.logger.debug('delete eclip %s', path);
     GLib.unlink(path);
@@ -721,11 +840,12 @@ var Clip = class Clip {
       if (this.gpaste_uuid) {
         this.dbus_gpaste.delete(this.gpaste_uuid);
       } else {
-        this.delete_eclip();
+        this.delete_eclip(this.clippie.gp1 ? this._uuid : this.uuid);
       }
     } else {
-      this.dbus_gpaste.delete(this.uuid);
+      this.dbus_gpaste.delete(this.uuidx);
     }
+    this.clippie.delete(this);
     return true;
   }
 
@@ -763,19 +883,40 @@ var Clip = class Clip {
       // get the index of the clip before setting as password
       let idx = this.clippie.clips.indexOf(this);
 
-      this.clippie.dbus_gpaste.setPassword(this.uuid, label);
-      this.menu_item.trash_self();
-      this.lock = true;
+      this.logger.debug('set entry as password uuid=%s label=%s', this.uuid, label);
+      this.clippie.dbus_gpaste.setPasswordAsync(this.uuidx, label, () => {
+        this.menu_item.trash_self();
+        this.clippie.delete(this);
+        this.clippie.refresh_dbus();
+      });
+
+      // this.clippie.dbus_gpaste.setPassword(this.uuid, label);
+      // this.menu_item.trash_self();
+      // this.lock = true;
 
       // seems to replace the item at the same index with a new uuid
-      if (idx >= 0) {
-        let [uuid, content] = this.clippie.dbus_gpaste.getElementAtIndex(idx);
-        if (uuid) {
-          let clip=new Clip(uuid, content);
-          this.clippie.clips.push(clip);
-          this.clippie.dbus_gpaste.select(uuid);
-        }
-      }
+      // if (idx >= 0) {
+      //   let uuid = idx;
+      //   let content;
+
+      //   if (this.clippie.gp2) {
+      //     let uc = this.clippie.dbus_gpaste.getElementAtIndex(idx);
+      //     if (uc) {
+      //       uuid = uc[0];
+      //       content = uc[1];
+      //     }
+      //   } else {
+      //     content = this.clippie.dbus_gpaste.getElement(idx);
+      //   }
+      //   if (content) {
+      //     let clip=new Clip(uuid, content);
+      //     if (this.clippie.gp1) {
+      //       clip.index = idx;
+      //     }
+      //     this.clippie.clips.push(clip);
+      //     this.clippie.dbus_gpaste.select(uuid);
+      //   }
+      // }
     }
     return true;
   }

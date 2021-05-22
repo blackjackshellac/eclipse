@@ -210,11 +210,11 @@ var ClippieMenu = class ClippieMenu {
       if (this.show_eclips) {
         this._eclipsItem = new EclipsMenu(this);
         //this._addSeparator();
-        this.item_index = this.item_search+2;
+        this.item_index = this.search_item_index+2;
       } else if (this._eclipsItem) {
         this._eclipsItem.destroy();
         this._eclipsItem = undefined;
-        this.item_index = this.item_search+1;
+        this.item_index = this.search_item_index+1;
       }
     }
   }
@@ -268,15 +268,18 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         pack_start: false,
         style_class: 'eclipse-menu-layout'
       });
+
       this.add(box);
 
+      let ltext = clip.label_text();
+      //logger.debug("Adding clip %s", ltext);
       this.label = new St.Label({
         style_class: 'eclipse-menu-content',
         x_expand: true,
         track_hover: false,
-        x_align: St.Align.START
+        x_align: St.Align.START,
+        text: ltext
       });
-      this.label.set_text(clip.label_text());
 
       if (clip.eclip) {
         box.add_child(new ClipItemControlButton(clip, 'edit'));
@@ -302,8 +305,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
         }
       });
 
-      //logger.debug("Adding clip %s", clip.uuid);
-      menu.addMenuItem(this);
+      this.menu.addMenuItem(this);
   }
 
   get clip() {
@@ -319,13 +321,13 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
   }
 
   trash_self() {
-    this.clip.clippie.indicator.clippie_menu.trash(this);
+    this.clippie_menu.trash(this);
     this.destroy();
   }
 
   select() {
     this.clip.select();
-    this.clip.clippie.indicator.clippie_menu.select(this);
+    this.clippie_menu.select(this);
   }
 });
 
@@ -629,7 +631,7 @@ class EclipsMenu extends PopupMenu.PopupSubMenuMenuItem {
     return this.clippie_menu.clippie;
   }
 
-  add_item(clip) {
+  add_eclip_item(clip) {
     new ClipMenuItem(clip, this.menu, this.clippie_menu);
     this.setSubmenuShown(true);
   }

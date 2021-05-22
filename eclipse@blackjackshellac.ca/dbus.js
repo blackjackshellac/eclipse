@@ -22,17 +22,54 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Logger = Me.imports.logger.Logger;
 const DBusGpaste = Me.imports.dbus_gpaste;
 
-const DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGpaste.DBusGPasteIface);
+function detect_GPasteIface() {
+  let sess=Gio.DBus.session
+  let result=sess.call_sync(
+      'org.gnome.GPaste',
+      '/org/gnome/GPaste',
+      'org.freedesktop.DBus.Introspectable',
+      'Introspect',
+      null, null,
+      Gio.DBusCallFlags.NONE,
+      -1,
+      null);
+  let result0=result.get_child_value(0);
+  let DBusGPasteIface = result0.get_string()[0].trim();
+  if (DBusGPasteIface.match('name="org.gnome.GPaste2"')) {
+    return 2;
+  } else if (DBusGPasteIface.match('name="org.gnome.GPaste1"')) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+var DBusGPasteVersion = detect_GPasteIface();
+var DBusGPasteVersions = {
+  2: DBusGpaste.DBusGPasteIface,
+  1: DBusGpaste.DBusGPaste1Iface,
+  0: DBusGpaste.DBusGPasteIface
+}
+
+var DBusGPasteIface = DBusGPasteVersions[DBusGPasteVersion];
+
+var DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGPasteIface);
 
 var DBusGPaste = class DBusGPaste {
   constructor(settings) {
     this._settings = settings;
     this._elements = {};
+    this._version = DBusGPasteVersion;
 
     this.logger = new Logger('cl_dbus', settings);
+    this.logger.debug('Detected interface org.gnome.%s', DBusGPasteVersion);
     this._gpaste_proxy = new DBusGPasteProxy(Gio.DBus.session,
                                              'org.gnome.GPaste',
                                              '/org/gnome/GPaste');
+  }
+
+  get version() {
+    return this._version;
   }
 
   // https://wiki.gnome.org/Gjs/Examples/DBusClient
@@ -51,7 +88,13 @@ var DBusGPaste = class DBusGPaste {
   }
 
   getElement(uuid) {
-    return this.gpaste_proxy.GetElementSync(uuid);
+    try {
+      return this.gpaste_proxy.GetElementSync(uuid);
+    } catch(e) {
+      this.logger.error('getElement failed to get uuid=%s: %s', ""+uuid, e.toString());
+      this.logger.debug(e.stack);
+    }
+    return undefined;
   }
 
   getElementKind(uuid) {
@@ -161,11 +204,32 @@ var DBusGPaste = class DBusGPaste {
     this.gpaste_proxy.SetPasswordSync(uuid, label);
   }
 
+  setPasswordAsync(uuid, label, callback) {
+    try {
+      this.gpaste_proxy.SetPasswordRemote(uuid, label, callback);
+      return true;
+    } catch (e) {
+      this.logger.error('failed to set password for uuid=%s, label=%s');
+    }
+    return false;
+  }
+
   renamePassword(old_name, new_name) {
     try {
       this.logger.debug('rename password %s to %s', old_name, new_name);
       this.gpaste_proxy.RenamePasswordSync(old_name, new_name);
     } catch(e) {
+      return false;
+    }
+    return true;
+  }
+
+  deletePassword(name) {
+    try {
+      this.logger.debug('delete password %s', name);
+      this.gpaste_proxy.DeletePasswordSync(name);
+    } catch(e) {
+      this.logger.error('failed to delete password %s: %s', name, e.message);
       return false;
     }
     return true;

@@ -1,6 +1,6 @@
 {
   "name": "eclipse",
-  "description": "eclipse gpaste interface with clipboard item encryption\n\n(formerly Clippie)\n\nEclipse now uses dbus to communicate with the gpaste daemon\nAdded encryption of clipboard items with eclipse feature\n\nIf updating the extension reports an ERROR it should work after the next reboot or if you logout and login again.\nPlease report issues on github.",
+  "description": "eclipse gpaste interface with clipboard item encryption\n\nEclipse now uses dbus to communicate with the gpaste daemon\nAdded encryption of clipboard items with eclipse feature.\n\nThe following utilities are required, on fedora,\n\n$ sudo dnf install gpaste gpaste-ui gpaste-libs openssl\n\nIf updating the extension reports an ERROR it should work after the next reboot or if you logout and login again.\nPlease report issues on github.",
   "gettext-domain": "eclipse-blackjackshellac",
   "uuid": "eclipse@blackjackshellac.ca",
   "shell-version": [

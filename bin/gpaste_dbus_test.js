@@ -4,6 +4,20 @@ imports.gi.versions.Gtk = "3.0";
 const { Gio, Gtk, GLib } = imports.gi;
 String.prototype.format = imports.format.format;
 
+//  new_for_bus_sync(bus_type, flags, info, name, object_path, interface_name, cancellable) 
+//let sess=Gio.DBus.session
+//let result=sess.call_sync(
+//	'org.gnome.GPaste',
+//	'/org/gnome/GPaste',
+//	'org.freedesktop.DBus.Introspectable',
+//	'Introspect',
+//	null, null,
+//	Gio.DBusCallFlags.NONE,
+//	-1,
+//	null);
+//let result0=result.get_child_value(0);
+//let DBusGPasteIface = result0.get_string()[0].trim();
+
 const DBusGPasteIface = `
 <node>
   <interface name="org.gnome.GPaste2">
