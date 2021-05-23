@@ -32,6 +32,7 @@ const Main = imports.ui.main;
 const Clippie = Me.imports.clippie.Clippie;
 const ClippieMenu = Me.imports.menus.ClippieMenu;
 const Logger = Me.imports.logger.Logger;
+const Utils = Me.imports.utils;
 
 var ClippieIndicator = GObject.registerClass(
 class ClippieIndicator extends PanelMenu.Button {
@@ -58,19 +59,24 @@ class ClippieIndicator extends PanelMenu.Button {
     this.add_child(box);
 
     // systemctl --user status org.gnome.GPaste
-    Shell.util_start_systemd_unit('org.gnome.GPaste.service', 'replace', null, (src, res) => {
-      let ok = Shell.util_start_systemd_unit_finish(res);
-      this.logger.debug('org.gnome.GPaste started %s', ok);
-      let msg;
-      if (ok) {
-        msg=this.logger.debug("successfully started systemd service org.gnome.GPaste version %s", this.clippie.dbus_gpaste.version);
-        this._clippie.attach(this);
-        this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
-      } else {
-        msg = this.logger.error('Failed to start systemd unit org.gnome.GPaste.service');
-        Main.notifyError(msg, 'Ensure that gpaste is installed, for example,\nsudo dnf install gpaste, or\nsudo apt install gpaste');
-      }
-    });
+    if (Utils.isGnome40()) {
+      Shell.util_start_systemd_unit('org.gnome.GPaste.service', 'replace', null, (src, res) => {
+        let ok = Shell.util_start_systemd_unit_finish(res);
+        this.logger.debug('org.gnome.GPaste started %s', ok);
+        let msg;
+        if (ok) {
+          msg=this.logger.debug("successfully started systemd service org.gnome.GPaste version %s", this.clippie.dbus_gpaste.version);
+          this._clippie.attach(this);
+          this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
+        } else {
+          msg = this.logger.error('Failed to start systemd unit org.gnome.GPaste.service');
+          Main.notifyError(msg, 'Ensure that gpaste is installed, for example,\nsudo dnf install gpaste, or\nsudo apt install gpaste');
+        }
+      });
+    } else {
+      this._clippie.attach(this);
+      this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
+    }
 
     // set the filter to an empty string to prevent refreshing on startup
     //this._clippie_menu.build("");
