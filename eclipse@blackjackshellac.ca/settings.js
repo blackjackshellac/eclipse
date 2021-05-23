@@ -116,7 +116,21 @@ var Settings = class Settings {
   }
 
   set entries(val) {
+    if (val > this.entries_max) {
+      val = this.entries_max;
+    }
     this.settings.set_int(val);
+  }
+
+  get entries_max() {
+    if (this._entries_max === undefined) {
+      this._entries_max = this.entries;
+    }
+    return this._entries_max;
+  }
+
+  set entries_max(max) {
+    if (max > 5) { this._entries_max = max };
   }
 
   get cache_password() {

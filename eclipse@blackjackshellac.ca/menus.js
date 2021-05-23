@@ -59,6 +59,8 @@ var ClippieMenu = class ClippieMenu {
     logger.settings = clippie.settings;
 
     this.rebuild(false, false);
+    this.estimate_max_entries();
+
     // this._searchItem = new ClippieSearchItem(this);
     // this._historyMenu = new PopupMenu.PopupSubMenuMenuItem(_("Histories"), { reactive: false, can_focus: true } );
     // this.menu.addMenuItem(this._historyMenu);
@@ -68,6 +70,7 @@ var ClippieMenu = class ClippieMenu {
       logger.debug("menu open="+open);
       if (open) {
         this.rebuild();
+        this.estimate_max_entries();
         global.stage.set_key_focus(this._searchItem.entry);
         //this._searchItem.entry.get_clutter_text().grab_key_focus();
       } else {
@@ -80,6 +83,17 @@ var ClippieMenu = class ClippieMenu {
 
     //logger.debug("menu style=%s", this.menu.box.style_class);
     //this.menu.box.style_class = 'eclipse-menu-content';
+  }
+
+  estimate_max_entries() {
+    // Shell.Global/Meta.Display
+    let monitor = global.display.get_current_monitor();
+    let rect = global.display.get_monitor_geometry(monitor);
+    let monitor_height = rect.height;
+    logger.debug('monitor=%d height=%d', monitor, monitor_height);
+
+    this.clippie.settings.entries_max = Math.floor(monitor_height/this.searchItem.height) - 4;
+    logger.debug('search_height=%d entries_max=%d', this.searchItem.height, this.clippie.settings.entries_max);
   }
 
   add_item(clip) {
@@ -576,6 +590,7 @@ class ClippieSearchItem extends PopupMenu.PopupMenuItem {
       logger.debug('text-changed: '+entry);
       this.clippie_menu.build(entry);
     });
+
   }
 
   get clippie_menu() {
