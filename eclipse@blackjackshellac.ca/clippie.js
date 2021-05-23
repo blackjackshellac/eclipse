@@ -376,17 +376,16 @@ var Clippie = class Clippie {
     if (this.gp2) {
       map.uuid = history[0];
       map.content = history[1];
-      map.index = undefined;
+      map.index = null;
     } else {
       // uuid is a 64bit hash of the content
       let uuid=Clip.hash64(history);
-      //let uuid=Utils.uuid();
-      map = undefined; //this.gp1_map[hash];
+      map = this.gp1_map[uuid];
       if (!map) {
         map = {};
         map.uuid = uuid;
         map.content = history;
-        //this.gp1_map[hash] = map;
+        this.gp1_map[uuid] = map;
       }
       // update index
       map.index = i;
@@ -432,9 +431,6 @@ var Clippie = class Clippie {
             this.logger.debug('deleted expired GPaste password clip %s', clip.content);
             continue;
           }
-        } else {
-          // update index for gp1
-          clip.index = map.index;
         }
 
         clips.push(clip);
@@ -716,7 +712,7 @@ var Clip = class Clip {
   }
 
   set index(index) {
-    this._index = index;
+    this._index = index ? index : undefined;
   }
 
   get password_name() {
@@ -735,8 +731,8 @@ var Clip = class Clip {
     return this._eclip;
   }
 
-  set eclip(e) {
-    this._eclip = e ? e : undefined;
+  set eclip(eclip) {
+    this._eclip = eclip ? eclip : undefined;
   }
 
   get kind() {
@@ -890,33 +886,6 @@ var Clip = class Clip {
         this.clippie.refresh_dbus();
       });
 
-      // this.clippie.dbus_gpaste.setPassword(this.uuid, label);
-      // this.menu_item.trash_self();
-      // this.lock = true;
-
-      // seems to replace the item at the same index with a new uuid
-      // if (idx >= 0) {
-      //   let uuid = idx;
-      //   let content;
-
-      //   if (this.clippie.gp2) {
-      //     let uc = this.clippie.dbus_gpaste.getElementAtIndex(idx);
-      //     if (uc) {
-      //       uuid = uc[0];
-      //       content = uc[1];
-      //     }
-      //   } else {
-      //     content = this.clippie.dbus_gpaste.getElement(idx);
-      //   }
-      //   if (content) {
-      //     let clip=new Clip(uuid, content);
-      //     if (this.clippie.gp1) {
-      //       clip.index = idx;
-      //     }
-      //     this.clippie.clips.push(clip);
-      //     this.clippie.dbus_gpaste.select(uuid);
-      //   }
-      // }
     }
     return true;
   }
