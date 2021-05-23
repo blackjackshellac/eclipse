@@ -372,7 +372,7 @@ var Clippie = class Clippie {
 
   get_uuid_content(i, history) {
     history=history[i];
-    this.logger.debug('get_uuid_content: i=%d gp2=%s [%s]', i, this.gp2, history);
+    //this.logger.debug('get_uuid_content: i=%d gp2=%s [%s]', i, this.gp2, history);
     let map = {};
     if (this.gp2) {
       map.uuid = history[0];
