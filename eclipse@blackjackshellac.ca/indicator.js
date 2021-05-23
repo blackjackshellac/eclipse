@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const { GLib, Gio, GObject, St } = imports.gi;
+const { GLib, Gio, GObject, St, Shell } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -27,6 +27,7 @@ const _ = Gettext.gettext;
 
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Main = imports.ui.main;
 
 const Clippie = Me.imports.clippie.Clippie;
 const ClippieMenu = Me.imports.menus.ClippieMenu;
@@ -39,8 +40,6 @@ class ClippieIndicator extends PanelMenu.Button {
 
     // settings lives in Clippie singleton
     this._clippie = new Clippie();
-
-    this._clippie.attach(this);
 
     this.logger = new Logger('cl_indicator', this.settings);
     this.logger.debug('Initializing extension');
@@ -58,7 +57,21 @@ class ClippieIndicator extends PanelMenu.Button {
     //box.add_child(PopupMenu.arrowIcon(St.Side.BOTTOM));
     this.add_child(box);
 
-    this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
+    // systemctl --user status org.gnome.GPaste
+    Shell.util_start_systemd_unit('org.gnome.GPaste.service', 'replace', null, (src, res) => {
+      let ok = Shell.util_start_systemd_unit_finish(res);
+      this.logger.debug('org.gnome.GPaste started %s', ok);
+      let msg;
+      if (ok) {
+        msg=this.logger.debug("successfully started systemd service org.gnome.GPaste version %s", this.clippie.dbus_gpaste.version);
+        this._clippie.attach(this);
+        this._clippie_menu = new ClippieMenu(this.menu, this.clippie);
+      } else {
+        msg = this.logger.error('Failed to start systemd unit org.gnome.GPaste.service');
+        Main.notifyError(msg, 'Ensure that gpaste is installed, for example,\nsudo dnf install gpaste, or\nsudo apt install gpaste');
+      }
+    });
+
     // set the filter to an empty string to prevent refreshing on startup
     //this._clippie_menu.build("");
 

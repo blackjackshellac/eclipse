@@ -50,27 +50,17 @@ var DBusGPasteVersions = {
   0: DBusGpaste.DBusGPasteIface
 }
 
-var DBusGPasteVersion = undefined;
-var DBusGPasteIface = undefined;
-var DBusGPasteProxy = undefined;
-
 var DBusGPaste = class DBusGPaste {
   constructor(settings) {
     this._settings = settings;
     this._elements = {};
 
-    if (DBusGPasteProxy === undefined) {
-      DBusGPasteVersion = detect_GPasteIface();
-
-      DBusGPasteIface = DBusGPasteVersions[DBusGPasteVersion];
-
-      DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGPasteIface);
-
-      this._version = DBusGPasteVersion;
-    }
+    this._version = detect_GPasteIface();
+    let DBusGPasteIface = DBusGPasteVersions[this._version];
+    let DBusGPasteProxy = Gio.DBusProxy.makeProxyWrapper(DBusGPasteIface);
 
     this.logger = new Logger('cl_dbus', settings);
-    this.logger.debug('Detected interface org.gnome.GPaste%s', DBusGPasteVersion);
+    this.logger.debug('Detected interface org.gnome.GPaste%s', this.version);
 
     this._gpaste_proxy = new DBusGPasteProxy(Gio.DBus.session,
                                              'org.gnome.GPaste',

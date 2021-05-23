@@ -310,6 +310,7 @@ var Clippie = class Clippie {
       this._dbus_gpaste = new DBusGPaste(this.settings);
       this.gp2 = this._dbus_gpaste.version === 2;
       this.gp1 = !this.gp2;
+      this.logger.debug('dbus_gpaste version=%d gp2=%s gp1=%s', this._dbus_gpaste.version, this.gp2, this.gp1);
     }
     return this._dbus_gpaste;
   }
@@ -371,7 +372,7 @@ var Clippie = class Clippie {
 
   get_uuid_content(i, history) {
     history=history[i];
-    //this.logger.debug('i=%d [%s]', i, history);
+    //this.logger.debug('get_uuid_content: i=%d gp2=%s [%s]', i, this.gp2, history);
     let map = {};
     if (this.gp2) {
       map.uuid = history[0];
@@ -410,6 +411,8 @@ var Clippie = class Clippie {
         let uuid = map.uuid;
         let content = map.content;
         map.content = undefined;
+
+        //Utils.logObjectPretty(map);
 
         let params = { index: map.index };
         // find clip with this uuid (if any)
