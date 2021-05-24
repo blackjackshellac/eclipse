@@ -59,7 +59,8 @@ class ClippieIndicator extends PanelMenu.Button {
     this.add_child(box);
 
     // systemctl --user status org.gnome.GPaste
-    if (Utils.isGnome40()) {
+    if (Utils.isGnome40() || Utils.isGnome3_38()) {
+      // failed on GS 3.36
       Shell.util_start_systemd_unit('org.gnome.GPaste.service', 'replace', null, (src, res) => {
         let ok = Shell.util_start_systemd_unit_finish(res);
         this.logger.debug('org.gnome.GPaste started %s', ok);

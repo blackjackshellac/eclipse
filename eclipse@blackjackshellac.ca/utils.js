@@ -28,15 +28,21 @@ const ByteArray = imports.byteArray;
 // https://gjs.guide/extensions/upgrading/gnome-shell-40.html
 const Config = imports.misc.config;
 var gnomeShellVersion = Config.PACKAGE_VERSION; // eg 3.38.4
-//const [major] = gnomeVersion.split('.');
-var shellVersion = Number.parseInt(gnomeShellVersion.split('.')[0]);
+var [majorGSVersion, minorGSVersion, packageGSVersion ] = gnomeShellVersion.split('.', 3);
+majorGSVersion = Number.parseInt(majorGSVersion);
+minorGSVersion = Number.parseInt(minorGSVersion);
+packageGSVersion = Number.parseInt(packageGSVersion);
 
 function isGnome3x() {
-  return (shellVersion < 40);
+  return (majorGSVersion < 40);
 }
 
 function isGnome40() {
-  return (shellVersion >= 40);
+  return (majorGSVersion >= 40);
+}
+
+function isGnome3_38() {
+  return (majorGSVersion === 3 && minorGSVersion === 38);
 }
 
 function prettyPrint(obj) {

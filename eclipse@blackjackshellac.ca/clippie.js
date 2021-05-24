@@ -467,7 +467,7 @@ var Clippie = class Clippie {
 
           let clip = this.eclips.find(c => c.uuid === uuid);
           if (clip) {
-            this.logger.debug('cached eclip %s: %s', clip.content, clip.uuid)
+            //this.logger.debug('found cached eclip %s: %s', clip.uuid, clip.content)
             if (this.eclips_popup) {
               this.eclips_popup.add_eclip_item(clip);
             }
