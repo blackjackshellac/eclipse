@@ -404,7 +404,6 @@ var EncryptModalDialog = GObject.registerClass({
       this.clip.encrypt(this._entry.get_text(), password, (ok, stderr) => {
         if (ok) {
           // success, delete from clipboard
-          this.set_msg('wtf');
           this.clip.delete();
           this.close(global.get_current_time());
           if (this.clip.clippie.cached_pass !== undefined) {
