@@ -7,11 +7,11 @@
     for (var k in exports) {
         sha256[k] = exports[k];
     }
-        
+
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = sha256;
     } else if (typeof define === 'function' && define.amd) {
-        define(function() { return sha256; }); 
+        define(function() { return sha256; });
     } else {
         root.sha256 = sha256;
     }
@@ -309,7 +309,8 @@ var HMAC = /** @class */ (function () {
 exports.HMAC = HMAC;
 // Returns SHA256 hash of data.
 function hash(data) {
-    var h = (new Hash()).update(data);
+    var h = new Hash()
+    h = h.update(data);
     var digest = h.digest();
     h.clean();
     return digest;
@@ -317,6 +318,7 @@ function hash(data) {
 exports.hash = hash;
 // Function hash is both available as module.hash and as default export.
 exports["default"] = hash;
+
 // Returns HMAC-SHA256 of data under the key.
 function hmac(key, data) {
     var h = (new HMAC(key)).update(data);

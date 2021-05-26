@@ -46,7 +46,7 @@ function isGnome3_38() {
 }
 
 function prettyPrint(obj) {
-  return JSON.stringify(obj, null, 2)
+  return JSON.stringify(obj, null, 2);
 }
 function logObjectPretty(obj) {
   log(prettyPrint(obj));

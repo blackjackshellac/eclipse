@@ -1,6 +1,6 @@
 // Based on https://github.com/dchest/fast-sha256-js
 
-//'use strict';
+'use strict';
 
 // SHA-256 (+ HMAC and PBKDF2) for JavaScript.
 //
@@ -15,9 +15,15 @@
 //
 //  Classes:
 //
-//   new sha256.Hash()
+//   new sha256.Sha256()
 //   new sha256.HMAC(key)
 //
+
+// const ExtensionUtils = imports.misc.extensionUtils;
+// const Me = ExtensionUtils.getCurrentExtension();
+
+// const Base64 = Me.imports.base64;
+
 const digestLength = 32;
 const blockSize = 64;
 
@@ -44,100 +50,107 @@ for (let n = 0; n <= 0xff; ++n) {
     byteToHashLookup[n]=hexOctet;
 }
 
-// Hash implements SHA256 hash algorithm.
-var Hash = class Hash {
-  constructor() {
+function hashBlocks(w, v, p, pos, len) {
+  var a, b, c, d, e, f, g, h, u, i, j, t1, t2;
+  while (len >= 64) {
+    a = v[0];
+    b = v[1];
+    c = v[2];
+    d = v[3];
+    e = v[4];
+    f = v[5];
+    g = v[6];
+    h = v[7];
+    for (i = 0; i < 16; i++) {
+      j = pos + i * 4;
+      w[i] = (((p[j] & 0xff) << 24) | ((p[j + 1] & 0xff) << 16) |
+        ((p[j + 2] & 0xff) << 8) | (p[j + 3] & 0xff));
+    }
+    for (i = 16; i < 64; i++) {
+      u = w[i - 2];
+      t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
+      u = w[i - 15];
+      t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
+      w[i] = (t1 + w[i - 7] | 0) + (t2 + w[i - 16] | 0);
+    }
+    for (i = 0; i < 64; i++) {
+      t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
+        (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
+        ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
+      t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
+        (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+      h = g;
+      g = f;
+      f = e;
+      e = (d + t1) | 0;
+      d = c;
+      c = b;
+      b = a;
+      a = (t1 + t2) | 0;
+    }
+    v[0] += a;
+    v[1] += b;
+    v[2] += c;
+    v[3] += d;
+    v[4] += e;
+    v[5] += f;
+    v[6] += g;
+    v[7] += h;
+    pos += 64;
+    len -= 64;
+  }
+  return pos;
+}
+
+// Sha256 implements SHA256 hash algorithm.
+var Sha256 = class Sha256 {
+  constructor(data=undefined) {
     this.digestLength = digestLength;
     this.blockSize = blockSize;
+
     // Note: Int32Array is used instead of Uint32Array for performance reasons.
-    this.state = new Int32Array(8); // hash state
-    this.temp = new Int32Array(64); // temporary state
-    this.buffer = new Uint8Array(128); // buffer for data to hash
+    this.state8 = new Int32Array(8); // hash state
+    this.temp64 = new Int32Array(64); // temporary state
+    this.buffer128 = new Int8Array(128); // buffer for data to hash
+
     this.bufferLength = 0; // number of bytes in buffer
     this.bytesHashed = 0; // number of total bytes hashed
     this.finished = false; // indicates whether the hash was finalized
     this.reset();
-  }
-
-  blocks(w, v, p, pos, len) {
-    var a, b, c, d, e, f, g, h, u, i, j, t1, t2;
-    while (len >= 64) {
-      a = v[0];
-      b = v[1];
-      c = v[2];
-      d = v[3];
-      e = v[4];
-      f = v[5];
-      g = v[6];
-      h = v[7];
-      for (i = 0; i < 16; i++) {
-        j = pos + i * 4;
-        w[i] = (((p[j] & 0xff) << 24) | ((p[j + 1] & 0xff) << 16) |
-          ((p[j + 2] & 0xff) << 8) | (p[j + 3] & 0xff));
-      }
-      for (i = 16; i < 64; i++) {
-        u = w[i - 2];
-        t1 = (u >>> 17 | u << (32 - 17)) ^ (u >>> 19 | u << (32 - 19)) ^ (u >>> 10);
-        u = w[i - 15];
-        t2 = (u >>> 7 | u << (32 - 7)) ^ (u >>> 18 | u << (32 - 18)) ^ (u >>> 3);
-        w[i] = (t1 + w[i - 7] | 0) + (t2 + w[i - 16] | 0);
-      }
-      for (i = 0; i < 64; i++) {
-        t1 = (((((e >>> 6 | e << (32 - 6)) ^ (e >>> 11 | e << (32 - 11)) ^
-          (e >>> 25 | e << (32 - 25))) + ((e & f) ^ (~e & g))) | 0) +
-          ((h + ((K[i] + w[i]) | 0)) | 0)) | 0;
-        t2 = (((a >>> 2 | a << (32 - 2)) ^ (a >>> 13 | a << (32 - 13)) ^
-          (a >>> 22 | a << (32 - 22))) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
-        h = g;
-        g = f;
-        f = e;
-        e = (d + t1) | 0;
-        d = c;
-        c = b;
-        b = a;
-        a = (t1 + t2) | 0;
-      }
-      v[0] += a;
-      v[1] += b;
-      v[2] += c;
-      v[3] += d;
-      v[4] += e;
-      v[5] += f;
-      v[6] += g;
-      v[7] += h;
-      pos += 64;
-      len -= 64;
+    if (data) {
+      this.update(data, data.length);
     }
-    return pos;
   }
 
   // Resets hash state making it possible
   // to re-use this instance to hash other data.
   reset() {
-    this.state[0] = 0x6a09e667;
-    this.state[1] = 0xbb67ae85;
-    this.state[2] = 0x3c6ef372;
-    this.state[3] = 0xa54ff53a;
-    this.state[4] = 0x510e527f;
-    this.state[5] = 0x9b05688c;
-    this.state[6] = 0x1f83d9ab;
-    this.state[7] = 0x5be0cd19;
+    this.state8[0] = 0x6a09e667;
+    this.state8[1] = 0xbb67ae85;
+    this.state8[2] = 0x3c6ef372;
+    this.state8[3] = 0xa54ff53a;
+    this.state8[4] = 0x510e527f;
+    this.state8[5] = 0x9b05688c;
+    this.state8[6] = 0x1f83d9ab;
+    this.state8[7] = 0x5be0cd19;
     this.bufferLength = 0;
     this.bytesHashed = 0;
     this.finished = false;
     return this;
   }
-   // Cleans internal buffers and re-initializes hash state.
+
+  // Cleans internal buffers and re-initializes hash state.
   clean() {
-    for (var i = 0; i < this.buffer.length; i++) {
-      this.buffer[i] = 0;
+    for (var i = 0; i < this.buffer128.length; i++) {
+      this.buffer128[i] = 0;
     }
-    for (var i = 0; i < this.temp.length; i++) {
-      this.temp[i] = 0;
+    for (var i = 0; i < this.temp64.length; i++) {
+      this.temp64[i] = 0;
     }
     this.reset();
   }
-   // Updates hash state with the given data.
+
+  // Updates hash state with the given data.
   //
   // Optionally, length of the data can be specified to hash
   // fewer bytes than data.length.
@@ -153,20 +166,24 @@ var Hash = class Hash {
     this.bytesHashed += dataLength;
     if (this.bufferLength > 0) {
       while (this.bufferLength < 64 && dataLength > 0) {
-        this.buffer[this.bufferLength++] = data[dataPos++];
+        this.buffer128[this.bufferLength++] = data[dataPos++];
         dataLength--;
       }
       if (this.bufferLength === 64) {
-        this.blocks(this.temp, this.state, this.buffer, 0, 64);
+        //profile_step('update_hashBlocks1', () => {
+          hashBlocks(this.temp64, this.state8, this.buffer128, 0, 64);
+        //});
         this.bufferLength = 0;
       }
     }
     if (dataLength >= 64) {
-      dataPos = this.blocks(this.temp, this.state, data, dataPos, dataLength);
+      //profile_step('update_hashBlocks2', () => {
+        dataPos = hashBlocks(this.temp64, this.state8, data, dataPos, dataLength);
+      //});
       dataLength %= 64;
     }
     while (dataLength > 0) {
-      this.buffer[this.bufferLength++] = data[dataPos++];
+      this.buffer128[this.bufferLength++] = data[dataPos++];
       dataLength--;
     }
     return this;
@@ -182,45 +199,52 @@ var Hash = class Hash {
       var bitLenHi = (bytesHashed / 0x20000000) | 0;
       var bitLenLo = bytesHashed << 3;
       var padLength = (bytesHashed % 64 < 56) ? 64 : 128;
-      this.buffer[left] = 0x80;
+      this.buffer128[left] = 0x80;
       for (var i = left + 1; i < padLength - 8; i++) {
-        this.buffer[i] = 0;
+        this.buffer128[i] = 0;
       }
-      this.buffer[padLength - 8] = (bitLenHi >>> 24) & 0xff;
-      this.buffer[padLength - 7] = (bitLenHi >>> 16) & 0xff;
-      this.buffer[padLength - 6] = (bitLenHi >>> 8) & 0xff;
-      this.buffer[padLength - 5] = (bitLenHi >>> 0) & 0xff;
-      this.buffer[padLength - 4] = (bitLenLo >>> 24) & 0xff;
-      this.buffer[padLength - 3] = (bitLenLo >>> 16) & 0xff;
-      this.buffer[padLength - 2] = (bitLenLo >>> 8) & 0xff;
-      this.buffer[padLength - 1] = (bitLenLo >>> 0) & 0xff;
-      this.blocks(this.temp, this.state, this.buffer, 0, padLength);
+      this.buffer128[padLength - 8] = (bitLenHi >>> 24) & 0xff;
+      this.buffer128[padLength - 7] = (bitLenHi >>> 16) & 0xff;
+      this.buffer128[padLength - 6] = (bitLenHi >>>  8) & 0xff;
+      this.buffer128[padLength - 5] = (bitLenHi >>>  0) & 0xff;
+      this.buffer128[padLength - 4] = (bitLenLo >>> 24) & 0xff;
+      this.buffer128[padLength - 3] = (bitLenLo >>> 16) & 0xff;
+      this.buffer128[padLength - 2] = (bitLenLo >>>  8) & 0xff;
+      this.buffer128[padLength - 1] = (bitLenLo >>>  0) & 0xff;
+      //profile_step('finish_hashBlocks', () => {
+        hashBlocks(this.temp64, this.state8, this.buffer128, 0, padLength);
+      //});
       this.finished = true;
     }
     for (var i = 0; i < 8; i++) {
-      out[i * 4 + 0] = (this.state[i] >>> 24) & 0xff;
-      out[i * 4 + 1] = (this.state[i] >>> 16) & 0xff;
-      out[i * 4 + 2] = (this.state[i] >>> 8) & 0xff;
-      out[i * 4 + 3] = (this.state[i] >>> 0) & 0xff;
+      out[i * 4 + 0] = (this.state8[i] >>> 24) & 0xff;
+      out[i * 4 + 1] = (this.state8[i] >>> 16) & 0xff;
+      out[i * 4 + 2] = (this.state8[i] >>> 8) & 0xff;
+      out[i * 4 + 3] = (this.state8[i] >>> 0) & 0xff;
     }
     return this;
   }
+
   // Returns the final hash digest.
   digest() {
     var out = new Uint8Array(this.digestLength);
-    this.finish(out);
+    //profile_step('finish', () => {
+      this.finish(out);
+    //})
     return out;
   }
+
   // Internal function for use in HMAC for optimization.
   _saveState(out) {
-    for (var i = 0; i < this.state.length; i++) {
-      out[i] = this.state[i];
+    for (var i = 0; i < this.state8.length; i++) {
+      out[i] = this.state8[i];
     }
   }
+
   // Internal function for use in HMAC for optimization.
   _restoreState(from, bytesHashed) {
-    for (var i = 0; i < this.state.length; i++) {
-      this.state[i] = from[i];
+    for (var i = 0; i < this.state8.length; i++) {
+      this.state8[i] = from[i];
     }
     this.bytesHashed = bytesHashed;
     this.finished = false;
@@ -231,13 +255,13 @@ var Hash = class Hash {
 // HMAC implements HMAC-SHA256 message authentication algorithm.
 var HMAC = class HMAC {
   constructor(key) {
-    this.inner = new Hash();
-    this.outer = new Hash();
+    this.inner = new Sha256();
+    this.outer = new Sha256();
     this.blockSize = this.inner.blockSize;
     this.digestLength = this.inner.digestLength;
     var pad = new Uint8Array(this.blockSize);
     if (key.length > this.blockSize) {
-      (new Hash()).update(key).finish(pad).clean();
+      (new Sha256()).update(key).finish(pad).clean();
     }
     else {
       for (var i = 0; i < key.length; i++) {
@@ -304,8 +328,7 @@ var HMAC = class HMAC {
   }
 }
 
-function hash_hex(buff)
-{
+function hash_hex(buff) {
     const hexOctets = new Array(buff.length);
 
     for (let i = 0; i < buff.length; ++i) {
@@ -314,31 +337,90 @@ function hash_hex(buff)
     return hexOctets.join("");
 }
 
+function profile_step_init() {
+  return {
+    count: 0,
+    total: 0,
+    ave: 0
+  };
+}
+var profile_steps=[ ];
+function profile_init() {
+  let prof={count: 0};
+  for (let i=0; i < profile_steps.length; i++) {
+    let step=profile_steps[i];
+    prof[step] = profile_step_init();
+  }
+  return prof;
+}
+var profile_results=profile_init();
+function profile_step(key, callback) {
+  if (!profile_results[key]) {
+    print("Creating step "+key);
+    profile_results[key] = profile_step_init();
+    profile_steps.push(key);
+  }
+  let s = Date.now();
+  callback();
+  profile_results[key].total += (Date.now()-s);
+  profile_results[key].count++;
+}
+
+function profile() {
+  let count = profile_results.count;
+  let result={ count: count };
+  for (let i=0; i < profile_steps.length; i++) {
+    let step=profile_steps[i];
+    result[step] = {
+      count: profile_results[step].count,
+      total: profile_results[step].total,
+      ave: profile_results[step].total/profile_results[step].count
+    }
+  }
+  // reset
+  profile_results=profile_init();
+  return JSON.stringify(result, null, 2);
+}
+
 // Returns SHA256 hash of data.
 function hash(data) {
-  var h = (new Hash()).update(data);
-  var digest = h.digest();
-  h.clean();
+  var h;
+  var digest;
+
+  //profile_step('new Sha256', () => {
+    h = new Sha256();
+  //});
+  //profile_step('update', () => {
+    h.update(data);
+  //});
+  //profile_step('digest', () => {
+    digest = h.digest();
+  //});
+  //profile_step('clean', () => {
+    h.clean();
+  //});
+  //profile_results.count++;
   return digest;
 }
 
 function hash2hex(data) {
-  var h = (new Hash()).update(data);
-  var digest = h.digest();
-  h.clean();
-  return hash_hex(digest);
+  return hash_hex(hash(data));
+}
+
+function hash2base64(data) {
+  return Base64.base64ToBytes(hash(data));
 }
 
 // Returns HMAC-SHA256 of data under the key.
 function hmac(key, data) {
-  var h = (new HMAC(key)).update(data);
-  var digest = h.digest();
+  var h = new HMAC(key);
+  var digest = h.update(data).digest();
   h.clean();
   return digest;
 }
 
 // Fills hkdf buffer like this:
-// T(1) = HMAC-Hash(PRK, T(0) | info | 0x01)
+// T(1) = HMAC-Sha256(PRK, T(0) | info | 0x01)
 function fillBuffer(buffer, hmac, info, counter) {
   // Counter is a byte value: check if it overflowed.
   var num = counter[0];
@@ -347,16 +429,16 @@ function fillBuffer(buffer, hmac, info, counter) {
   }
   // Prepare HMAC instance for new data with old key.
   hmac.reset();
-  // Hash in previous output if it was generated
+  // Sha256 in previous output if it was generated
   // (i.e. counter is greater than 1).
   if (num > 1) {
     hmac.update(buffer);
   }
-  // Hash in info if it exists.
+  // Sha256 in info if it exists.
   if (info) {
     hmac.update(info);
   }
-  // Hash in the counter.
+  // Sha256 in the counter.
   hmac.update(counter);
   // Output result to buffer and clean HMAC instance.
   hmac.finish(buffer);
