@@ -1,5 +1,7 @@
 #!/usr/bin/env gjs
 
+String.prototype.format = imports.format.format;
+
 const GLib = imports.gi.GLib;
 const ByteArray = imports.byteArray;
 
@@ -43,14 +45,13 @@ for (let n = 0; n <= 0xff; ++n) {
     byteToHash[n]=hexOctet;
 }
 
-function hash_hex(buff)
-{
+function hash_hex(buff) {
   const hexOctets = new Array(buff.length);
 
-    for (let i = 0; i < buff.length; ++i) {
+  for (let i = 0; i < buff.length; ++i) {
     hexOctets[i] = byteToHash[buff[i]]
   }
-    return hexOctets.join("");
+  return hexOctets.join("");
 }
 
 function base64ToHex(str) {
@@ -63,8 +64,17 @@ function base64ToHex(str) {
   return result.toUpperCase();
 }
 
-let input_data=ARGV.length === 0 ? new Date().toString() : ARGV.join(' ');
-print(input_data);
+let input_string=ARGV.length === 0 ? new Date().toString() : ARGV.join(' ');
+print("'"+input_string+"'");
+
+let input_data = ByteArray.fromString(input_string);
+
+let digest=FastSha256.sha256(input_data);
+// for (let i=0; i < digest.length; i++) {
+//   print("i=%d %02x".format(i, digest[i])); //i="+i+" "+hex);
+// }
+
+print("digest="+digest);
 
 function perf_test(desc, input_data, loops, callback) {
   print("\nloops="+loops);
@@ -78,7 +88,9 @@ function perf_test(desc, input_data, loops, callback) {
   let end=new Date();
   let ms=(end-start);
   let rate=Math.floor(loops/ms*1000);
-  print(desc+": ms="+ms+" rate="+rate+"/sec");
+  let data_len=input_data.length*loops;
+  let mbps = (data_len/ms*1000/1024/1024).toFixed(2);
+  print(desc+": ms="+ms+" msg rate="+rate+"/sec "+" data rate="+mbps+" MB/s");
 }
 
 let count=0;
@@ -106,6 +118,17 @@ perf_test("sha256.hash.base64", input_data, loops, (data) => {
   return Base64.bytesToBase64(digest);
 });
 
+print(input_data);
+//bash -c "echo -n 'this is a test' | sha256sum"
 
+
+let cmd="bash -c 'echo -n \"%s\" | sha256sum -'".format(input_string);
+print(cmd);
+let [ ok, stdout, stderr, status] = GLib.spawn_command_line_sync(cmd);
+if (ok) {
+  print(ByteArray.toString(stdout));
+} else {
+  print(ByteArray.toString(stderr));
+}
 //print(count);
 //print(Sha256.profile());

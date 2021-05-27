@@ -25,6 +25,10 @@ String.prototype.format = imports.format.format;
 const { Gio, GLib} = imports.gi;
 const ByteArray = imports.byteArray;
 
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const FastSha256 = Me.imports.fast_sha256;
+
 // https://gjs.guide/extensions/upgrading/gnome-shell-40.html
 const Config = imports.misc.config;
 var gnomeShellVersion = Config.PACKAGE_VERSION; // eg 3.38.4
@@ -223,3 +227,29 @@ function exec_path(executable) {
 function isObjectEmpty(obj) {
   return (obj && obj.constructor === Object && Object.keys(obj).length === 0);
 }
+
+const byteToHexLookup = (() => {
+  let b2hl=[];
+  for (let n = 0; n <= 0xff; ++n) {
+    // convert byte to two digit hex string
+    b2hl[n]=n.toString(16).padStart(2, "0");
+  }
+  return b2hl;
+})();
+
+function digest2hex(buff) {
+  const hexOctets = new Array(buff.length);
+
+  for (let i = 0; i < buff.length; ++i) {
+    hexOctets[i] = byteToHexLookup[buff[i]]
+  }
+  return hexOctets.join("");
+}
+
+function sha256hex(str) {
+  let data=ByteArray.fromString(str);
+  // input should be a uint8array
+  let digest=FastSha256.sha256(data);
+  return digest2hex(digest);
+}
+

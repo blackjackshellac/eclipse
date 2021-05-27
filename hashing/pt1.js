@@ -65,6 +65,7 @@ function base64ToHex(str) {
 let now=ARGV.length === 0 ? new Date().toString() : ARGV.join(' ');
 print(now);
 
+now=ByteArray.fromString(now);
 function perf_test(desc, h, loops, callback) {
   print("\nloops="+loops);
   let z;

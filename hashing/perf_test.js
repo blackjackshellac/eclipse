@@ -16,40 +16,34 @@ function bufferToHex (buffer) {
 }
 
 const byteToHex = [];
-
 for (let n = 0; n <= 0xff; ++n) {
     const hexOctet = n.toString(16).padStart(2, "0");
     byteToHex.push(hexOctet);
 }
 
-function hex(buff)
-{
-  //const buff = arrayBuffer; //new Uint8Array(arrayBuffer);
-  //const hexOctets = []; // new Array(buff.length) is even faster (preallocates necessary array size), then use hexOctets[i] instead of .push()
+function hex(buff) {
   const hexOctets = new Array(buff.length);
-
-    for (let i = 0; i < buff.length; ++i) {
+  for (let i = 0; i < buff.length; ++i) {
     hexOctets[i] = byteToHex[buff[i]]
-        //hexOctets.push(byteToHex[buff[i]]);
   }
-
-    return hexOctets.join("");
+  return hexOctets.join("");
 }
 
-const byteToHash = {};
-for (let n = 0; n <= 0xff; ++n) {
-    const hexOctet = n.toString(16).padStart(2, "0");
-    byteToHash[n]=hexOctet;
-}
+const byteToHexLookup = (() => {
+  let b2hl=[];
+  for (let n = 0; n <= 0xff; ++n) {
+    // convert byte to two digit hex string
+    b2hl[n]=n.toString(16).padStart(2, "0");
+  }
+  return b2hl;
+})();
 
-function hash_hex(buff)
-{
+function digest2hex(buff) {
   const hexOctets = new Array(buff.length);
-
-    for (let i = 0; i < buff.length; ++i) {
-    hexOctets[i] = byteToHash[buff[i]]
+  for (let i = 0; i < buff.length; ++i) {
+    hexOctets[i] = byteToHexLookup[buff[i]]
   }
-    return hexOctets.join("");
+  return hexOctets.join("");
 }
 
 function base64ToHex(str) {
@@ -64,6 +58,8 @@ function base64ToHex(str) {
 
 let now=new Date().toString();
 print(now);
+
+now=ByteArray.fromString(now);
 
 let h = FastSha256.sha256(now);
 
@@ -90,36 +86,41 @@ function perf_test(desc, h, loops, callback) {
   print(desc+": ms="+ms+" rate="+rate+"/sec");
 }
 
-let loops=1000000;
-perf_test("fast_sha256+hash_hex", FastSha256.sha256(now), loops, (uint8array) => {
+let loops=100000;
+perf_test("fast_sha256+digest2hex", now, loops, (uint8array) => {
   let hh=FastSha256.sha256(now);
-  return hash_hex(hh);
+  return digest2hex(hh);
 });
 
-perf_test("sha256.hash.hex", Sha256.hash(now), loops, (uint8array) => {
+perf_test("fast_sha256+hex", now, loops, (uint8array) => {
+  let hh=FastSha256.sha256(uint8array);
+  return hex(hh);
+});
+
+perf_test("sha256.digest2hex", now, loops, (uint8array) => {
   let hh=Sha256.hash(now);
-  return hash_hex(hh);
+  return digest2hex(hh);
 });
 
-perf_test("bufferToHex", h, loops, (uint8array) => {
+perf_test("sha256.hex", now, loops, (uint8array) => {
+  let hh=Sha256.hash(now);
+  return hex(hh);
+});
+
+perf_test("bufferToHex", now, loops, (uint8array) => {
   return bufferToHex(uint8array);
 });
 
-perf_test("hex", h, loops, (uint8array) => {
+perf_test("hex", now, loops, (uint8array) => {
   return hex(uint8array);
 });
 
-perf_test("hash_hex", h, loops, (uint8array) => {
-  return hash_hex(uint8array);
+perf_test("digest2hex", now, loops, (uint8array) => {
+  return digest2hex(uint8array);
 });
 
-perf_test("base64", h, loops, (uint8array) => {
+perf_test("base64", now, loops, (uint8array) => {
   return Base64.bytesToBase64(uint8array);
-});
-
-perf_test("fast_sha256+hex", h, loops, (uint8array) => {
-  let hh=FastSha256.sha256(now);
-  return hex(hh);
 });
 
 

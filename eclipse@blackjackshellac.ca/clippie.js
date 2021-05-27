@@ -36,7 +36,6 @@ const Settings = Me.imports.settings.Settings;
 const Logger = Me.imports.logger.Logger;
 const DBusGPaste = Me.imports.dbus.DBusGPaste;
 const KeyboardShortcuts = Me.imports.keyboard_shortcuts.KeyboardShortcuts;
-const Sha256 = Me.imports.sha256;
 
 var clippieInstance;
 var timedOutGpastePasswords = {};
@@ -381,7 +380,7 @@ var Clippie = class Clippie {
       map.index = null;
     } else {
       // uuid is a 64bit hash of the content
-      let uuid=Sha256.hash2hex(history); // Clip.hash64(history);
+      let uuid=Utils.sha256(history); // Clip.hash64(history);
       map = this.gp1_map[uuid];
       if (!map) {
         map = {};
@@ -594,6 +593,7 @@ var Clip = class Clip {
     this.logger = clippieInstance.logger;
     this._uuid = uuid;
     this._content = content;
+    this._hash = Utils.sha256hex(content);
 
     this._menu_item = undefined; // clippie menu
 
