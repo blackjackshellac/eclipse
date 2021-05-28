@@ -415,6 +415,8 @@ var Clippie = class Clippie {
             this.logger.debug('deleted expired GPaste password clip %s', clip.preview);
             continue;
           }
+        } else {
+          this.logger.debug('found clip=%s', clip);
         }
 
         clips.push(clip);
@@ -725,7 +727,7 @@ var Clip = class Clip {
     Utils.logObjectPretty(params);
     let clip = new Clip(Utils.uuid(), label.slice(), params);
 
-    clip.logger.debug('label=%s hash=%s gp_uuid=%s', label, hash, gp_uuidx)
+    clip.logger.debug('label=%s hash=%s gp_uuidx=%s', label, hash, gp_uuidx)
     return clip;
   }
 
@@ -889,7 +891,7 @@ var Clip = class Clip {
     } else {
       uuidx = this.uuidx;
     }
-    if (uuidx) {
+    if (uuidx !== undefined) {
       this.dbus_gpaste.select(uuidx);
     }
     if (this.clippie.gp1) {
@@ -913,7 +915,7 @@ var Clip = class Clip {
   delete() {
     if (this.iseClip()) {
       /* if the gp_uuidx is set we delete the gpaste entry but leave our eclip on disk */
-      if (this.gp_uuidx) {
+      if (this.gp_uuidx !== undefined) {
         this.dbus_gpaste.delete(this.gp_uuidx);
       } else {
         this.clippie.delete_eclip(this);
