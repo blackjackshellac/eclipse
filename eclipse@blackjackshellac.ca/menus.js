@@ -286,7 +286,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       this.add(box);
 
       let ltext = clip.preview;
-      logger.debug("Adding clip %s", ltext);
+      //logger.debug("Adding clip %s", ltext);
       this.label = new St.Label({
         style_class: 'eclipse-menu-content',
         x_expand: true,

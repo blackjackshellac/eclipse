@@ -717,7 +717,7 @@ var ReEncryptModalDialog = GObject.registerClass({
       this.clip.reencrypt(label, opass, password, (ok, stderr) => {
         if (ok) {
           this.clip.delete();
-          //this.clip.delete_eclip();
+          //this.clip.delete_eclip_file();
           this.close(global.get_current_time());
         } else {
           this.set_msg(stderr);
