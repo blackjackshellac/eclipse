@@ -430,32 +430,25 @@ var Clippie = class Clippie {
   }
 
   decode_eclip(file_name) {
-    const label_hash_re=/^(?:.*?_)([-0-9a-f]*).eclip/;
-    const hash_re=/^([0-9a-f]*).eclip/;
+    const label_hash_re=/^(.*?_)([-0-9a-f]*).eclip/;
     const uuid_re=/^([-0-9a-f]*).eclip/;
 
     //let hash = file_name.replace(/\.[^/.]+$/, '');
     //let m = file_name.match(/^(.*)?_([0-9a-f]*).eclip/);
     let m = file_name.match(label_hash_re);
     if (m) {
-      this.logger.debug('%s matched label_hash %s', file_name, m[1]);
-      return m[1];
-    }
-
-    m = file_name.match(hash_re);
-    if (m) {
-      this.logger.debug('%s matched hash %s', file_name, m[1]);
-      return m[1];
+      this.logger.debug('%s matched label_hash %s %s', file_name, m[1], m[2]);
+      return [ m[2], m[1] ];
     }
 
     m = file_name.match(uuid_re);
     if (m) {
       this.logger.debug('%s matched uuid %s', file_name, m[1]);
-      return m[1];
+      return [ m[1] ];
     }
 
     this.logger.debug('%s no match', file_name);
-    return undefined;
+    return [ undefined ];
   }
 
   refresh_eclips_async(menu=undefined) {
@@ -478,18 +471,24 @@ var Clippie = class Clippie {
           break;
         }
         let file_name = file_info.get_name();
-        let hash = this.decode_eclip(file_name);
+        let [ hash, label ] = this.decode_eclip(file_name);
         if (!hash) {
           continue;
         }
 
         let clip = this.eclips.find(c => c.hash === hash);
         if (clip) {
-          this.logger.debug('found cached %s', clip);
-          if (this.eclips_popup) {
-            this.eclips_popup.add_eclip_item(clip);
+          if (label === undefined) {
+            clip.delete_old_eclip_file();
+            // create a new one below
+          } else {
+            this.logger.debug('found cached %s', clip);
+            if (this.eclips_popup) {
+              this.eclips_popup.add_eclip_item(clip);
+              clip.save_eclip(false);
+            }
+            continue;
           }
-          continue;
         }
         this.logger.debug("eclip name=%s hash=%s", file_name, hash);
 
@@ -513,6 +512,9 @@ var Clippie = class Clippie {
             }
             this.eclips.push(clip);
             clip.eclip_file = file_name;
+            if (label === undefined) {
+              clip.delete_old_eclip_file();
+            }
           }
         } catch(e) {
           this.logger.error("Failed to read eclip %s [%s]", path, e.message);
@@ -525,15 +527,21 @@ var Clippie = class Clippie {
     });
   }
 
-  save_eclip_async(label, hash, eclipse) {
+  save_eclip_async(label, hash, eclipse, force=true) {
     if (this.settings.save_eclips === false) {
       return;
     }
 
     let file_name = Clip.eclip_file(label, hash);
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
-    let gfile = Gio.file_new_for_path(path);
 
+    if (!force) {
+      if (GLib.file_test(path, GLib.FileTest.EXISTS & GLib.FileTest.IS_REGULAR)) {
+        return;
+      }
+    }
+
+    let gfile = Gio.file_new_for_path(path);
     gfile.replace_readwrite_async(null, false,
         Gio.FileCreateFlags.PRIVATE | Gio.FileCreateFlags.REPLACE_DESTINATION,
         GLib.PRIORITY_DEFAULT, null, (gfile, res) => {
@@ -907,6 +915,9 @@ var Clip = class Clip {
   }
 
   static eclip_file(label, hash) {
+    if (label === undefined) {
+      return hash+".eclip";
+    }
     return label+"_"+hash+".eclip";
   }
 
@@ -914,9 +925,22 @@ var Clip = class Clip {
     // deleting the eclip on disk
     let file_name = this.eclip_file || Clip.eclip_file(this.label, this.hash);
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
-    this.logger.debug('delete eclip %s', path);
-    if (GLib.unlink(path) === -1) {
-      this.logger.error('failed to delete eclip %s', path);
+    if (GLib.file_test(path, GLib.FileTest.EXISTS & GLib.FileTest.IS_REGULAR)) {
+      this.logger.debug('delete eclip %s', path);
+      if (GLib.unlink(path) === -1) {
+        this.logger.error('failed to delete eclip %s', path);
+      }
+    }
+  }
+
+  delete_old_eclip_file() {
+    let file_name = Clip.eclip_file(undefined, this.hash);
+    let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
+    if (GLib.file_test(path, GLib.FileTest.EXISTS & GLib.FileTest.IS_REGULAR)) {
+      this.logger.debug('delete eclip %s', path);
+      if (GLib.unlink(path) === -1) {
+        this.logger.error('failed to delete eclip %s', path);
+      }
     }
   }
 
@@ -974,9 +998,9 @@ var Clip = class Clip {
     return true;
   }
 
-  save_eclip() {
+  save_eclip(force=true) {
     let eclipse = this.eclipser(this.label, this.hash, this.eclip);
-    this.clippie.save_eclip_async(this.label, this.hash, eclipse);
+    this.clippie.save_eclip_async(this.label, this.hash, eclipse, force);
   }
 
   /* add gpaste entry with ~~eclipse~~label~~hash~~eclipse~~
