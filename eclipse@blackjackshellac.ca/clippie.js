@@ -204,7 +204,7 @@ var Clippie = class Clippie {
         this.logger.debug("Select clip %d in history: %d", this.cur_clip+1, this.clips.length);
         let clip = this.get_next_clip();
         if (clip !== undefined) {
-          this.logger.debug("Select clip %d in history: %s", this.cur_clip, clip.label_text());
+          this.logger.debug("Select clip %d in history: %s", this.cur_clip, clip.preview);
           clip.menu_item.select();
         } else {
           this.logger.debug("No clips %s", clip);
@@ -427,14 +427,42 @@ var Clippie = class Clippie {
     });
   }
 
+  decode_eclip(file_name) {
+    const label_hash_re=/^(?:.*?_)([-0-9a-f]*).eclip/;
+    const hash_re=/^([0-9a-f]*).eclip/;
+    const uuid_re=/^([-0-9a-f]*).eclip/;
+
+    //let hash = file_name.replace(/\.[^/.]+$/, '');
+    //let m = file_name.match(/^(.*)?_([0-9a-f]*).eclip/);
+    let m = file_name.match(label_hash_re);
+    if (m) {
+      this.logger.debug('%s matched label_hash %s', file_name, m[1]);
+      return m[1];
+    }
+
+    m = file_name.match(hash_re);
+    if (m) {
+      this.logger.debug('%s matched hash %s', file_name, m[1]);
+      return m[1];
+    }
+
+    m = file_name.match(uuid_re);
+    if (m) {
+      this.logger.debug('%s matched uuid %s', file_name, m[1]);
+      return m[1];
+    }
+
+    this.logger.debug('%s no match', file_name);
+    return undefined;
+  }
+
   refresh_eclips_async(menu=undefined) {
     if (this.settings.save_eclips === false) {
       return;
     }
 
-    const label_hash_re=/^(.*)?_([0-9a-f]*).eclip/;
-    const hash_re=/^([0-9a-f]*).eclip/;
-    const uuid_re=/^([-0-9a-f]*).eclip/;
+    this.logger.debug("***** CLEARING CACHE *****");
+    this.eclips = [];
 
     this.eclips_popup = menu;
     // use async version in refresh
@@ -451,29 +479,14 @@ var Clippie = class Clippie {
         if (!file_name.endsWith('.eclip')) {
           continue;
         }
-        let label, hash;
-        //let hash = file_name.replace(/\.[^/.]+$/, '');
-        //let m = file_name.match(/^(.*)?_([0-9a-f]*).eclip/);
-        let m = file_name.match(label_hash_re);
-        if (!m) {
-          m = file_name.match(hash_re);
-          if (!m) {
-            m = file_name.match(uuid_re);
-            if (!m) {
-              continue;
-            }
-            hash = m[1];
-          } else {
-            hash = m[1];
-          }
-        } else {
-          label = m[1];
-          hash = m[2];
+        let hash = this.decode_eclip(file_name);
+        if (!hash) {
+          continue;
         }
 
         let clip = this.eclips.find(c => c.hash === hash);
         if (clip) {
-          this.logger.debug('found cached eclip %s: %s', clip.uuidx, clip.preview)
+          this.logger.debug('found cached %s', clip);
           if (this.eclips_popup) {
             this.eclips_popup.add_eclip_item(clip);
           }
@@ -494,8 +507,9 @@ var Clippie = class Clippie {
           if (clip === undefined) {
             this.logger.error("Invalid eclip: %s", path);
           } else {
+            this.logger.debug('Created %s', clip);
             if (this.eclips_popup) {
-              this.logger.debug('Adding eclip %s to eclip popup menu', clip.preview);
+              this.logger.debug('Adding to eclips_popup %s', clip);
               this.eclips_popup.add_eclip_item(clip);
             }
             this.eclips.push(clip);
@@ -609,9 +623,11 @@ var Clip = class Clip {
     this.logger.debug('new Clip %s: %s', uuidx, this.preview);
 
     this.kind = params.kind;
-    this.eclip = params.eclip;
-    this.label = params.label;  // eclip label, see Clip.unClip()
-    this.gp_uuidx = params.gp_uuidx;
+    if (this.kind === 'eClip') {
+      this.eclip = params.eclip;
+      this.label = params.label;  // eclip label, see Clip.unClip()
+      this.gp_uuidx = params.gp_uuidx;
+    }
 
     this._password = this.isPassword();
     if (this._password) {
@@ -628,7 +644,16 @@ var Clip = class Clip {
     }
     //Utils.logObjectPretty(params);
 
-    this._content = undefined;
+    this.logger.debug("new %s", this);
+
+    //this._content = undefined;
+  }
+
+  toString() {
+    if (this.eclip) {
+      return "%s: %s [%s] %s".format(this.kind, this.label, this.eclip, this.hash)
+    }
+    return "%s: %s [%s] %s".format(this.kind, this.uuidx, this.preview, this.hash);
   }
 
   // based on cyrb53 (https://stackoverflow.com/a/52171480/916462
@@ -697,7 +722,8 @@ var Clip = class Clip {
       hash: hash,
       gp_uuidx: gp_uuidx
     }
-    let clip = new Clip(Utils.uuid(), label, params);
+    Utils.logObjectPretty(params);
+    let clip = new Clip(Utils.uuid(), label.slice(), params);
 
     clip.logger.debug('label=%s hash=%s gp_uuid=%s', label, hash, gp_uuidx)
     return clip;
@@ -729,7 +755,7 @@ var Clip = class Clip {
   }
 
   get label() {
-    this._label;
+    return this._label;
   }
 
   set label(l) {
@@ -857,8 +883,15 @@ var Clip = class Clip {
   }
 
   select() {
-    let uuid = this.gp_uuidx ? this.gp_uuidx : this.uuidx;
-    this.dbus_gpaste.select(uuid);
+    let uuidx = undefined;
+    if (this.eclip) {
+      uuidx = this.gp_uuidx;
+    } else {
+      uuidx = this.uuidx;
+    }
+    if (uuidx) {
+      this.dbus_gpaste.select(uuidx);
+    }
     if (this.clippie.gp1) {
       this.clippie.refresh_dbus();
     }
@@ -890,10 +923,6 @@ var Clip = class Clip {
     }
     this.clippie.delete(this);
     return true;
-  }
-
-  toString() {
-    return "uuidx=%s [%s]".format(this.uuidx, this.preview);
   }
 
   search(filter_re) {

@@ -100,6 +100,7 @@ var DecryptModalDialog = GObject.registerClass({
       style_class: 'eclipse-msg-text'
     });
 
+    clip.logger.debug('decrypt clip: %s', clip.toString());
     this._label = new St.Label({
       text: clip.label,
       x_align: Clutter.ActorAlign.CENTER,
