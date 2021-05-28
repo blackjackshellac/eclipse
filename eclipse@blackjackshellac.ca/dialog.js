@@ -101,7 +101,7 @@ var DecryptModalDialog = GObject.registerClass({
     });
 
     this._label = new St.Label({
-      text: clip.content,
+      text: clip.label,
       x_align: Clutter.ActorAlign.CENTER,
       style_class: 'eclipse-label-text'
     });
@@ -475,7 +475,7 @@ var ReEncryptModalDialog = GObject.registerClass({
     let etext = this._entry.get_clutter_text();
     etext.set_activatable(false);
     etext.set_editable(true);
-    etext.set_text(clip.content);
+    etext.set_text(clip.label);
 
     this._password_old = new St.PasswordEntry({
       x_expand: true,
@@ -654,7 +654,7 @@ var ReEncryptModalDialog = GObject.registerClass({
     let otext = this._password_old.get_text().trim();
     let ptext = this._password_entry.get_text().trim();
     let ctext = this._password_confirm.get_text().trim();
-    if (label !== this.clip.content && (otext.length === 0 && ptext.length === 0 && ctext.length === 0)) {
+    if (label !== this.clip.label && (otext.length === 0 && ptext.length === 0 && ctext.length === 0)) {
       this.set_buttons(_("Rename"));
     } else {
       this.set_buttons(_("ReEncrypt"));
@@ -680,7 +680,7 @@ var ReEncryptModalDialog = GObject.registerClass({
     }
 
     let opass = this._password_old.get_text().trim();
-    let renaming = (this.clip.content !== label && opass.length === 0);
+    let renaming = (this.clip.label !== label && opass.length === 0);
     if (renaming) {
       // no encryption change, just rename
       this.rename(label);
@@ -728,9 +728,9 @@ var ReEncryptModalDialog = GObject.registerClass({
   rename(label) {
     // renaming
     this.clip.delete();
-    this.clip.content = label;
+    this.clip.label = label;
     this.clip.save_eclip();
-    this.clip.logger.debug("renamed clip %s: %s [%s]", this.clip.uuid, this.clip.content, this.clip.eclip);
+    this.clip.logger.debug("renamed clip %s: %s [%s]", this.clip.uuidx, label, this.clip.eclip);
     this.close(global.get_current_time());
   }
 

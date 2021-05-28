@@ -86,22 +86,22 @@ var DBusGPaste = class DBusGPaste {
     this.gpaste_proxy.GetHistoryRemote(callback);
   }
 
-  getElement(uuid) {
+  getElement(uuidx) {
     try {
-      return this.gpaste_proxy.GetElementSync(uuid);
+      return this.gpaste_proxy.GetElementSync(uuidx);
     } catch(e) {
-      this.logger.error('getElement failed to get uuid=%s: %s', ""+uuid, e.toString());
+      this.logger.error('getElement failed to get uuidx=%s: %s', ""+uuidx, e.toString());
       this.logger.debug(e.stack);
     }
     return undefined;
   }
 
-  getElementKind(uuid) {
+  getElementKind(uuidx) {
     try {
-      let kind=this.gpaste_proxy.GetElementKindSync(uuid);
+      let kind=this.gpaste_proxy.GetElementKindSync(uuidx);
       return kind[0];
     } catch (e) {
-      this.logger.error('getElementKind failed uuid=%s: %s', uuid, e.toString());
+      this.logger.error('getElementKind failed uuidx=%s: %s', uuidx, e.toString());
       this.logger.debug(e.stack);
     }
     return undefined;
@@ -109,8 +109,8 @@ var DBusGPaste = class DBusGPaste {
 
   getElementAtIndex(idx) {
     try {
-      let [ uuid, content ]=this.gpaste_proxy.GetElementAtIndexSync(idx);
-      return [ uuid, content ];
+      let [ uuidx, content ]=this.gpaste_proxy.GetElementAtIndexSync(idx);
+      return [ uuidx, content ];
     } catch (e) {
       this.logger.error('getElementAtIndex failed idx=%d: %s', idx, e.toString());
     }
@@ -199,16 +199,16 @@ var DBusGPaste = class DBusGPaste {
     return true;
   }
 
-  setPassword(uuid, label) {
-    this.gpaste_proxy.SetPasswordSync(uuid, label);
+  setPassword(uuidx, label) {
+    this.gpaste_proxy.SetPasswordSync(uuidx, label);
   }
 
-  setPasswordAsync(uuid, label, callback) {
+  setPasswordAsync(uuidx, label, callback) {
     try {
-      this.gpaste_proxy.SetPasswordRemote(uuid, label, callback);
+      this.gpaste_proxy.SetPasswordRemote(uuidx, label, callback);
       return true;
     } catch (e) {
-      this.logger.error('failed to set password for uuid=%s, label=%s');
+      this.logger.error('failed to set password for uuidx=%s, label=%s');
     }
     return false;
   }
@@ -234,21 +234,21 @@ var DBusGPaste = class DBusGPaste {
     return true;
   }
 
-  select(uuid) {
+  select(uuidx) {
     try {
-      this.gpaste_proxy.SelectSync(uuid);
+      this.gpaste_proxy.SelectSync(uuidx);
     } catch(e) {
-      this.logger.error("select failed for uuid=%s: %s", uuid, e.toString());
+      this.logger.error("select failed for uuidx=%s: %s", uuidx, e.toString());
       return false;
     }
     return true;
   }
 
-  delete(uuid) {
+  delete(uuidx) {
     try {
-      this.gpaste_proxy.DeleteSync(uuid);
+      this.gpaste_proxy.DeleteSync(uuidx);
     } catch(e) {
-      this.logger.error("delete failed for uuid=%s: %s", uuid, e.toString());
+      this.logger.error("delete failed for uuidx=%s: %s", uuidx, e.toString());
       return false;
     }
     return true;

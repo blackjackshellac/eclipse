@@ -308,7 +308,7 @@ class ClipMenuItem extends PopupMenu.PopupMenuItem {
       box.add_child(new ClipItemControlButton(clip, 'delete'));
 
       this.connect('activate', (mi) => {
-        logger.debug("Selected %s", mi.clip.uuid);
+        logger.debug("Selected %s", mi.clip.uuidx);
         if (mi.clip.select()) {
           mi.menu.moveMenuItem(mi, mi.clippie_menu.item_index);
           if (mi.clip.isEclipsed()) {
