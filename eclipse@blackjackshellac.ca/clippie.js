@@ -48,7 +48,6 @@ var Clippie = class Clippie {
 
     // id => clip
     this._lookup = {};
-    this._gp1_map = {};
 
     this._settings = new Settings();
     this._attached = false;
@@ -136,7 +135,6 @@ var Clippie = class Clippie {
       this.clips = [];
       this.eclips = [];
       this.cur_clip = 0;
-      this._gp1_map = {};
 
       clippieInstance = undefined;
       this._settings = undefined;
@@ -217,10 +215,6 @@ var Clippie = class Clippie {
     this._accel.remove('accel-show-menu');
     this._accel.remove('accel-show-history');
     this._accel.remove('accel-next');
-  }
-
-  get gp1_map() {
-    return this._gp1_map;
   }
 
   get clippie() {
@@ -368,6 +362,16 @@ var Clippie = class Clippie {
       }
     }
     return entries;
+  }
+
+  reset() {
+    this.logger.debug("Clearing %d clips", this.clips.length);
+    for (let i=0; i < this.clips.length; i++) {
+      this.clips[i]=undefined;
+    }
+    this.clips = [];
+    this.eclips = [];
+    this.cur_clip = 0;
   }
 
   get_history_content(i, history) {

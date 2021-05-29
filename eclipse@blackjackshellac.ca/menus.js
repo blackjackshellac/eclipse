@@ -908,6 +908,7 @@ class ClippieHistoryItem extends PopupMenu.PopupMenuItem {
       if (name !== current) {
         logger.debug("clicked item=%s", name);
         this.clippie.dbus_gpaste.switchHistory(name);
+        this.clippie.reset();
         this.clippie.indicator.clippie_menu.history_menu_open(false);
         this.clippie.indicator.clippie_menu.rebuild();
       } else {
