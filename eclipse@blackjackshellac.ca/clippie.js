@@ -826,7 +826,8 @@ var Clip = class Clip {
 
   set kind(k) {
     if (k === undefined || k === null) {
-      if (this.clippie.gp1 && this.uuidx === null) {
+      // if (val == null) console.log('val is null or undefined')
+      if (this.clippie.gp1 && this.uuidx == null) {
         this.logger.error('uuidx not set when attempting to get kind');
         k = 'Text';
       } else {
@@ -922,7 +923,8 @@ var Clip = class Clip {
     } else {
       uuidx = this.uuidx;
     }
-    if (uuidx !== undefined) {
+    // if (val != null) console.log('val is neither null nor undefined')
+    if (uuidx != null) {
       this.dbus_gpaste.select(uuidx);
     }
     if (this.clippie.gp1) {
@@ -970,7 +972,11 @@ var Clip = class Clip {
     } else {
       uuidx = this.uuidx;
     }
-    if (uuidx) {
+
+    // https://stackoverflow.com/a/27757708/916462
+    // if (val != null) console.log('val is neither null nor undefined')
+    // Note: not val !== null
+    if (uuidx != null) {
       // might not be set if this is an eclip
       if (this.clippie.gp1) {
         let content = this.dbus_gpaste.getElement(uuidx);
