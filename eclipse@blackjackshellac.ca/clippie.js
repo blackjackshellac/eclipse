@@ -945,13 +945,28 @@ var Clip = class Clip {
   }
 
   delete() {
+    let uuidx=undefined;
     if (this.iseClip()) {
       /* if the gp_uuidx is set we delete the gpaste entry but leave our eclip on disk */
-      if (this.gp_uuidx !== undefined) {
-        this.dbus_gpaste.delete(this.gp_uuidx);
-      }
+      uuidx = this.gp_uuidx;
     } else {
-      this.dbus_gpaste.delete(this.uuidx);
+      uuidx = this.uuidx;
+    }
+    if (uuidx) {
+      if (this.clippie.gp1) {
+        let content = this.dbus_gpaste.getElement(uuidx);
+        if (content === undefined) {
+          this.logger.error('no element for uuidx=%s', uuidx);
+          return false;
+        }
+        let hash = Utils.sha256hex(content);
+        if (hash !== this.hash) {
+          this.logger.error('hash mismatch for uuidx=%s content=%s', uuidx, content);
+          this.logger.debug('%s !== %s', hash, this.hash);
+          return false;
+        }
+      }
+      this.dbus_gpaste.delete(uuidx);
     }
     this.clippie.delete(this);
     return true;

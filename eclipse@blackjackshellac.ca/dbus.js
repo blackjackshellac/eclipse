@@ -88,7 +88,7 @@ var DBusGPaste = class DBusGPaste {
 
   getElement(uuidx) {
     try {
-      return this.gpaste_proxy.GetElementSync(uuidx);
+      return this.gpaste_proxy.GetElementSync(uuidx)[0];
     } catch(e) {
       this.logger.error('getElement failed to get uuidx=%s: %s', ""+uuidx, e.toString());
       this.logger.debug(e.stack);

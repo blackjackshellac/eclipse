@@ -247,7 +247,10 @@ function digest2hex(buff) {
 }
 
 function sha256hex(str) {
-  if (typeof str !== 'string') { return undefined; }
+  if (typeof str !== "string") {
+    throw new Error("Utils.sha256hex(str) should be a String");
+  }
+  if (typeof str !== 'string') { log(typeof str); return undefined; }
   let data=ByteArray.fromString(str);
   // input should be a uint8array
   let digest=FastSha256.sha256(data);
