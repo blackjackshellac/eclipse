@@ -423,6 +423,10 @@ var Clippie = class Clippie {
           //this.logger.debug('found clip=%s', clip);
         }
 
+        if (this.gp1) {
+          clip.uuidx = i;
+        }
+
         clips.push(clip);
         if (menu !== undefined) {
           //this.logger.debug('Adding to menu clip=%s', clip.toString())
@@ -1148,6 +1152,7 @@ var Clip = class Clip {
       let [ ok, stdout, stderr, status ] = result;
       if (ok && status === 0) {
         this.clippie.dbus_gpaste.addPassword(this.label, stdout);
+        this.clippie.reset();
         this.clippie.refresh_dbus();
       } else {
         this.logger.debug("%s failed status=%d: %s", cmdargs, status, stderr.trimEnd());
