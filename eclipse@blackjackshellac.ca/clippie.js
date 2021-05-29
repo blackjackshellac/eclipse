@@ -911,7 +911,7 @@ var Clip = class Clip {
   }
 
   search(filter_re) {
-    let m = this.preview.match(filter_re);
+    let m = this.content.match(filter_re);
     return (m) ? true : false;
   }
 
