@@ -406,7 +406,7 @@ var Clippie = class Clippie {
           } else {
             // encrypted clip, make sure it has been saved to disk
             //this.logger.debug('created eclip %s', uuidx);
-            clip.save_eclip();
+            clip.save_eclip(false);
           }
         } else if (clip.hash && timedOutGpastePasswords[clip.hash] !== undefined) {
           //this.logger.debug('test clip hash=%s %d', clip.hash, timedOutGpastePasswords[clip.hash]);
@@ -430,20 +430,20 @@ var Clippie = class Clippie {
   }
 
   decode_eclip(file_name) {
-    const label_hash_re=/^(.*?_)([-0-9a-f]*).eclip/;
-    const uuid_re=/^([-0-9a-f]*).eclip/;
+    const hash_label_re=/^([-0-9a-f]*)_(.*?).eclip/;
+    const hash_re=/^([-0-9a-f]*).eclip/;
 
     //let hash = file_name.replace(/\.[^/.]+$/, '');
     //let m = file_name.match(/^(.*)?_([0-9a-f]*).eclip/);
-    let m = file_name.match(label_hash_re);
+    let m = file_name.match(hash_label_re);
     if (m) {
-      this.logger.debug('%s matched label_hash %s %s', file_name, m[1], m[2]);
-      return [ m[2], m[1] ];
+      this.logger.debug('%s matched hash_label %s [%s]', file_name, m[1], m[2]);
+      return [ m[1], m[2] ];
     }
 
-    m = file_name.match(uuid_re);
+    m = file_name.match(hash_re);
     if (m) {
-      this.logger.debug('%s matched uuid %s', file_name, m[1]);
+      this.logger.debug('%s matched hash %s', file_name, m[1]);
       return [ m[1] ];
     }
 
@@ -478,17 +478,12 @@ var Clippie = class Clippie {
 
         let clip = this.eclips.find(c => c.hash === hash);
         if (clip) {
-          if (label === undefined) {
-            clip.delete_old_eclip_file();
-            // create a new one below
-          } else {
-            this.logger.debug('found cached %s', clip);
-            if (this.eclips_popup) {
-              this.eclips_popup.add_eclip_item(clip);
-              clip.save_eclip(false);
-            }
-            continue;
+          //this.logger.debug('found cached %s', clip);
+          if (this.eclips_popup) {
+            this.eclips_popup.add_eclip_item(clip);
+            clip.save_eclip(false);
           }
+          continue;
         }
         this.logger.debug("eclip name=%s hash=%s", file_name, hash);
 
@@ -510,11 +505,8 @@ var Clippie = class Clippie {
               this.logger.debug('Adding to eclips_popup %s', clip);
               this.eclips_popup.add_eclip_item(clip);
             }
-            this.eclips.push(clip);
+            this.cache_eclip(clip);
             clip.eclip_file = file_name;
-            if (label === undefined) {
-              clip.delete_old_eclip_file();
-            }
           }
         } catch(e) {
           this.logger.error("Failed to read eclip %s [%s]", path, e.message);
@@ -536,7 +528,7 @@ var Clippie = class Clippie {
     let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
 
     if (!force) {
-      if (GLib.file_test(path, GLib.FileTest.EXISTS & GLib.FileTest.IS_REGULAR)) {
+      if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
         return;
       }
     }
@@ -566,6 +558,12 @@ var Clippie = class Clippie {
 
   clips_has(clip) {
     return this.clips.some(c => c.hash === clip.hash);
+  }
+
+  cache_eclip(clip) {
+    if (!this.eclips.some(c => c.hash === clip.hash)) {
+      this.eclips.push(clip);
+    }
   }
 
   delete_eclip(clip) {
@@ -622,14 +620,12 @@ var Clip = class Clip {
     });
 
     this.logger = clippieInstance.logger;
-    this._uuidx = uuidx;
-    this._content = content;
-    this._hash = params.hash === null ? Utils.sha256hex(content) : params.hash;
-    this._preview = this.content_preview(content);
+    this.uuidx = uuidx;
+    this.content = content;
+    this.hash = params.hash === null ? Utils.sha256hex(content) : params.hash;
+    this.preview = this.content_preview(content);
 
     this._menu_item = undefined; // clippie menu
-
-    this.logger.debug('new Clip %s: %s', uuidx, this.preview);
 
     this.kind = params.kind;
     if (this.kind === 'eClip') {
@@ -653,7 +649,7 @@ var Clip = class Clip {
     }
     //Utils.logObjectPretty(params);
 
-    this.logger.debug("new %s", this);
+    // this.logger.debug("Created new %s", this);
 
     //this._content = undefined;
   }
@@ -692,12 +688,8 @@ var Clip = class Clip {
     }
     let now=Date.now();
     if (now >= timeout) {
-      this._timeout_gpaste_password = undefined;
-      this.logger.debug('delete GPaste password entry at %s %d ms', new Date(now).toString(), (now-timeout));
-      if (this.dbus_gpaste.deletePassword(this._password_name)) {
-        this.clippie.delete(this);
-        timedOutGpastePasswords[this.hash] = undefined;
-      }
+      this.logger.debug('delete password %s at %s %d ms', this._password_name, new Date(now).toString(), (now-timeout));
+      this.delete_password(this._password_name);
       return true;
     }
     return false;
@@ -718,12 +710,27 @@ var Clip = class Clip {
 
   static unClip(content, gp_uuidx=undefined) {
     let [ label, hash, eclip ] = Clip.declipser(content);
-    clippieInstance.logger.debug('label=%s hash=%s eclip=%s', label, hash, eclip);
     if (hash === undefined || eclip === undefined) {
-      // invalid eclip
-      clippieInstance.logger.debug('not an eclip');
+      //clippieInstance.logger.debug('not an eclip');
       return undefined;
     }
+
+    let uuid=hash;
+    if (hash.includes('-')) {
+      /* TODO need to rehash these uuids used as hashes
+       *
+       * - delete hash.eclip file
+       * - Clip.delete_old_eclip_file(hash)
+       * - rehash encrypted data Utils.sha256hex(eclip)
+       * - update params.hash
+       * - create new Clip
+       * - clip.save_eclip()
+       */
+      clippieInstance.logger.debug('rehashing eclip %s', uuid);
+      Clip.delete_old_eclip_file(uuid);
+      hash = Utils.sha256hex(eclip);
+    }
+
     let params={
       kind: 'eClip',
       eclip: eclip,
@@ -731,10 +738,15 @@ var Clip = class Clip {
       hash: hash,
       gp_uuidx: gp_uuidx
     }
-    Utils.logObjectPretty(params);
+
+    //Utils.logObjectPretty(params);
     let clip = new Clip(Utils.uuid(), label.slice(), params);
 
-    clip.logger.debug('label=%s hash=%s gp_uuidx=%s', label, hash, gp_uuidx)
+    if (hash !== uuid) {
+      clip.save_eclip();
+    }
+
+    clip.logger.debug('unClip %s', clip.toString());
     return clip;
   }
 
@@ -824,6 +836,17 @@ var Clip = class Clip {
     this._kind = k;
   }
 
+  get preview() {
+    if (!this._preview) {
+      this.preview = this.content_preview(this.content);
+    }
+    return this._preview;
+  }
+
+  set preview(label) {
+    this._preview = label;
+  }
+
   isEclipsed() {
     return this.eclip !== undefined;
   }
@@ -838,17 +861,6 @@ var Clip = class Clip {
 
   iseClip() {
     return this.eclip !== undefined;
-  }
-
-  get preview() {
-    if (!this._preview) {
-      this.preview = this.content_preview(this.content);
-    }
-    return this._preview;
-  }
-
-  set preview(label) {
-    this._preview;
   }
 
   // was label_text
@@ -898,6 +910,11 @@ var Clip = class Clip {
     this._menu_item = m;
   }
 
+  search(filter_re) {
+    let m = this.preview.match(filter_re);
+    return (m) ? true : false;
+  }
+
   select() {
     let uuidx = undefined;
     if (this.eclip) {
@@ -918,7 +935,7 @@ var Clip = class Clip {
     if (label === undefined) {
       return hash+".eclip";
     }
-    return label+"_"+hash+".eclip";
+    return hash+"_"+label+".eclip";
   }
 
   delete_eclip_file() {
@@ -933,13 +950,14 @@ var Clip = class Clip {
     }
   }
 
-  delete_old_eclip_file() {
-    let file_name = Clip.eclip_file(undefined, this.hash);
-    let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
-    if (GLib.file_test(path, GLib.FileTest.EXISTS & GLib.FileTest.IS_REGULAR)) {
-      this.logger.debug('delete eclip %s', path);
+  static delete_old_eclip_file(uuid) {
+    let file_name = Clip.eclip_file(undefined, uuid);
+    let path = GLib.build_filenamev( [ clippieInstance.settings.save_eclips_path, file_name ] );
+    clippieInstance.logger.debug('exists? %s', path);
+    if (GLib.file_test(path, GLib.FileTest.EXISTS)) {
+      clippieInstance.logger.debug('delete uuid eclip %s', path);
       if (GLib.unlink(path) === -1) {
-        this.logger.error('failed to delete eclip %s', path);
+        clippieInstance.logger.error('failed to delete eclip %s', path);
       }
     }
   }
@@ -947,12 +965,13 @@ var Clip = class Clip {
   delete() {
     let uuidx=undefined;
     if (this.iseClip()) {
-      /* if the gp_uuidx is set we delete the gpaste entry but leave our eclip on disk */
+      /* if the gp_uuidx is set we delete the gpaste entry but leave the eclip on disk */
       uuidx = this.gp_uuidx;
     } else {
       uuidx = this.uuidx;
     }
     if (uuidx) {
+      // might not be set if this is an eclip
       if (this.clippie.gp1) {
         let content = this.dbus_gpaste.getElement(uuidx);
         if (content === undefined) {
@@ -966,15 +985,19 @@ var Clip = class Clip {
           return false;
         }
       }
+      this.logger.debug('deleting gpaste %s: %s', uuidx, this.preview);
       this.dbus_gpaste.delete(uuidx);
     }
     this.clippie.delete(this);
     return true;
   }
 
-  search(filter_re) {
-    let m = this.preview.match(filter_re);
-    return (m) ? true : false;
+  delete_password(name) {
+    this._timeout_gpaste_password = undefined;
+    if (this.dbus_gpaste.deletePassword(name)) {
+      this.clippie.delete(this);
+      timedOutGpastePasswords[this.hash] = undefined;
+    }
   }
 
   set_password(label) {
@@ -1014,7 +1037,7 @@ var Clip = class Clip {
   }
 
   save_eclip(force=true) {
-    let eclipse = this.eclipser(this.label, this.hash, this.eclip);
+    let eclipse = Clip.eclipser(this.label, this.hash, this.eclip);
     this.clippie.save_eclip_async(this.label, this.hash, eclipse, force);
   }
 
@@ -1026,7 +1049,7 @@ var Clip = class Clip {
    *
    * returns eclipse coded string
    */
-  eclipser(label, hash, eclip) {
+  static eclipser(label, hash, eclip) {
     eclip = eclip.replace(/\r?\n$/, '');
     return "~~eclipse~~%s~~%s~~%s~~".format(label, hash, eclip);
   }
@@ -1075,7 +1098,7 @@ var Clip = class Clip {
         this.logger.debug("Encrypted %s [%s]", label, stdout);
         // test decryption with same password
         let hash = Utils.sha256hex(stdout);
-        let eclipse = this.eclipser(label, hash, stdout);
+        let eclipse = Clip.eclipser(label, hash, stdout);
         this.clippie.dbus_gpaste.add(eclipse);
         this.clippie.save_eclip_async(label, hash, eclipse);
       } else {
