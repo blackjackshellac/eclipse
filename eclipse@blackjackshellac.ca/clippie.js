@@ -451,13 +451,13 @@ var Clippie = class Clippie {
     //let m = file_name.match(/^(.*)?_([0-9a-f]*).eclip/);
     let m = file_name.match(hash_label_re);
     if (m) {
-      this.logger.debug('%s matched hash_label %s [%s]', file_name, m[1], m[2]);
+      //this.logger.debug('%s matched hash_label %s [%s]', file_name, m[1], m[2]);
       return [ m[1], m[2] ];
     }
 
     m = file_name.match(hash_re);
     if (m) {
-      this.logger.debug('%s matched hash %s', file_name, m[1]);
+      //this.logger.debug('%s matched hash %s', file_name, m[1]);
       return [ m[1] ];
     }
 
@@ -499,7 +499,7 @@ var Clippie = class Clippie {
           }
           continue;
         }
-        this.logger.debug("eclip name=%s hash=%s", file_name, hash);
+        //this.logger.debug("eclip name=%s hash=%s", file_name, hash);
 
         let path = GLib.build_filenamev( [ this.settings.save_eclips_path, file_name ] );
         try {
@@ -514,7 +514,7 @@ var Clippie = class Clippie {
           if (clip === undefined) {
             this.logger.error("Invalid eclip: %s", path);
           } else {
-            this.logger.debug('Created %s', clip);
+            //this.logger.debug('Created %s', clip);
             if (this.eclips_popup) {
               this.logger.debug('Adding to eclips_popup %s', clip);
               this.eclips_popup.add_eclip_item(clip);
@@ -765,7 +765,7 @@ var Clip = class Clip {
       clip.save_eclip();
     }
 
-    clip.logger.debug('unClip %s', clip.toString());
+    //clip.logger.debug('unClip %s', clip.toString());
     return clip;
   }
 
@@ -1086,7 +1086,7 @@ var Clip = class Clip {
       let label = m[1];
       let hash = m[2];
       let eclip = m[3];
-      clippieInstance.logger.debug('declipser: %s "%s" eclipse=[%s]', hash, label, eclip);
+      //clippieInstance.logger.debug('declipser: %s "%s" eclipse=[%s]', hash, label, eclip);
       return [ label, hash, eclip ];
     }
     // clippieInstance.logger.debug('entry not encrypted: %s', content);
