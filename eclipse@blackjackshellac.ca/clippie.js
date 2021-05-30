@@ -391,40 +391,46 @@ var Clippie = class Clippie {
       if (history.length === 0) {
         return;
       }
+
       history = history[0];
+      let hlen = history.length;
+      this.logger.debug("history %d", hlen);
+
       let clips = [];
-      this.logger.debug("history %d", history.length);
-      for (let i=0; i < history.length; i++) {
+      let delta = 0;  // for gp1 if a password has been timed out and deleted
+      for (let i=0; i < hlen; i++) {
         let [ uuidx, content ] = this.get_history_content(i, history);
 
+        let hash = Utils.sha256hex(content);
+
         //this.logger.debug('uuidx=%s [%s]', uuidx, content);
-        // find clip with this uuidx (if any)
-        let clip = this.find_uuidx(uuidx);
+        // find clip with this hash (if any)
+        let clip = this.find_clip(hash);
         if (clip === undefined) {
           // clip not found in clips, create a new one
           //this.logger.debug('try to unclip content [%s]', content);
           clip = Clip.unClip(content, uuidx);
           if (clip === undefined) {
             //this.logger.debug('create new clip %s', uuidx);
-            clip = new Clip(uuidx, content);
+            clip = new Clip(uuidx, content, {hash: hash});
           } else {
             // encrypted clip, make sure it has been saved to disk
             //this.logger.debug('created eclip %s', uuidx);
             clip.save_eclip(false);
           }
-        } else if (clip.hash && timedOutGpastePasswords[clip.hash] !== undefined) {
+        } else if (timedOutGpastePasswords[clip.hash] !== undefined) {
           //this.logger.debug('test clip hash=%s %d', clip.hash, timedOutGpastePasswords[clip.hash]);
           if (clip.timeout_gpaste_password(timedOutGpastePasswords[clip.hash])) {
             // clip has expired and has been deleted
             this.logger.debug('deleted expired GPaste password clip %s', clip.preview);
+            delta++;
             continue;
           }
-        } else {
-          //this.logger.debug('found clip=%s', clip);
         }
 
-        if (this.gp1) {
-          clip.uuidx = i;
+        if (this.gp1 && delta > 0) {
+          // adjust the idx for gp1
+          clip.uuidx -= delta;
         }
 
         clips.push(clip);
@@ -560,6 +566,11 @@ var Clippie = class Clippie {
     return this.clips.findIndex(c => c.hash === clip.hash);
   }
 
+  find_clip(hash) {
+    this.clips.find(c => c.hash === hash);
+  }
+
+  // obsolete - gp1 idx can change (find with hash)
   find_uuidx(uuidx) {
     return this.clips.find(c => (c.uuidx === uuidx || (c.gp_uuidx !== undefined && c.gp_uuidx === uuidx)));
   }
@@ -630,7 +641,7 @@ var Clip = class Clip {
     this.logger = clippieInstance.logger;
     this.uuidx = uuidx;
     this.content = content;
-    this.hash = params.hash === null ? Utils.sha256hex(content) : params.hash;
+    this.hash = params.hash == null ? Utils.sha256hex(content) : params.hash;
     this.preview = this.content_preview(content);
 
     this._menu_item = undefined; // clippie menu
